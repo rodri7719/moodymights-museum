@@ -1,26 +1,2628 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MoodyMights Museum</title>
-  <script>
-    fetch('./moody_album_v6.html',{cache:'no-store'})
-      .then(r=>r.text())
-      .then(html=>{
-        document.open();
-        document.write(html);
-        document.close();
-      })
-      .catch(()=>{
-        document.addEventListener('DOMContentLoaded',()=>{
-          const el=document.getElementById('boot');
-          if(el)el.textContent='Could not load MoodyMights Museum.';
-        });
-      });
-  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MoodyMights Museum</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:wght@300;400;600;700&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&family=Share+Tech+Mono&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#ff3c00;--gold:#c9a84c;--gold-bright:#ffd770;--gold-dark:#8a6a1f;
+  --purple:#cc00ff;--green:#00ff88;--cream:#f5ead0;
+  /* v2 vars */
+  --bg:#06070b;--panel:rgba(15,17,26,.72);--text:#f3f5fb;--muted:rgba(243,245,251,.62);
+  --gold2:#d4ad63;--gold-2:#ffd68a;--violet:#9d7cff;--cyan:#62e5ff;
+  --danger:#ff6f61;--shadow:0 20px 60px rgba(0,0,0,.42);--radius:24px;
+}
+html,body{min-height:100vh}
+body{background:#000;font-family:'Cormorant Garamond',serif;color:var(--cream);overflow-x:hidden}
+body.museum-home{overflow:hidden}
+#bg{position:fixed;inset:0;z-index:0;background:linear-gradient(180deg,rgba(8,5,2,.08),rgba(10,7,3,.48)),url('fondo 1920.png') center center/cover no-repeat #050402;background-attachment:fixed;background-size:cover}
+#bg::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.32))}
+#bg::after{content:'';position:absolute;inset:-10%;background:
+  radial-gradient(circle at 18% 24%,rgba(255,170,70,.08),transparent 26%),
+  radial-gradient(circle at 78% 18%,rgba(170,80,255,.08),transparent 24%),
+  radial-gradient(circle at 52% 72%,rgba(60,180,255,.06),transparent 28%);
+  filter:blur(26px);opacity:.9;animation:bgPulse 16s ease-in-out infinite alternate}
+#bgCanvas{position:fixed;inset:0;z-index:1;pointer-events:none}
+.chain-corner{position:fixed;bottom:20px;z-index:3;display:flex;align-items:center;gap:10px;opacity:.88;pointer-events:none;filter:drop-shadow(0 0 24px rgba(255,255,255,.14))}
+.chain-corner img{height:42px;width:auto;object-fit:contain}
+.chain-corner.left{left:20px}
+.chain-corner.right{right:20px}
+
+.app{position:relative;z-index:2;max-width:1400px;margin:0 auto;padding:28px 20px 34px;min-height:100vh}
+.museum-exit{position:fixed;top:18px;right:18px;z-index:40;display:none;padding:10px 14px;border-radius:10px;border:1px solid rgba(255,215,120,.4);background:linear-gradient(180deg,rgba(35,24,9,.92),rgba(14,9,4,.96));color:var(--gold-bright);font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;box-shadow:0 12px 28px rgba(0,0,0,.34)}
+body.museum-fullscreen .museum-exit{display:inline-flex;align-items:center;justify-content:center}
+body.museum-fullscreen .header,
+body.museum-fullscreen .stats,
+body.museum-fullscreen .toolbar,
+body.museum-fullscreen .collection-panel,
+body.museum-fullscreen .bottom-links,
+body.museum-fullscreen .toolbar .controls span,
+body.museum-fullscreen #vbtn-carousel,
+body.museum-fullscreen #vbtn-my,
+body.museum-fullscreen #vbtn-auto,
+body.museum-fullscreen #vbtn-4,
+body.museum-fullscreen #vbtn-6,
+body.museum-fullscreen #vbtn-10,
+body.museum-fullscreen #vbtn-12,
+body.museum-fullscreen #shareBtn{display:none!important}
+body.museum-fullscreen .app{max-width:none;padding:10px 20px 16px;display:flex;flex-direction:column;justify-content:center}
+body.museum-fullscreen .toolbar{margin-bottom:0}
+body.museum-fullscreen .carousel-outer{margin:10px auto 0;width:min(1600px,98vw)}
+body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
+@keyframes uiFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.header,.stats,.toolbar,.add-section{position:relative;transform-style:preserve-3d;will-change:transform}
+.stats::before,.toolbar::before,.add-section::before{content:'';position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:none;transform:none;animation:none}
+.logo{font-family:'Cinzel',serif;font-size:clamp(38px,4.6vw,62px);font-weight:900;letter-spacing:10px;
+  color:transparent;background:linear-gradient(180deg,var(--gold-bright),var(--gold),var(--gold-dark));-webkit-background-clip:text;background-clip:text;
+  filter:drop-shadow(0 0 30px rgba(201,168,76,.34));width:100%;text-align:center;line-height:1.02}
+.logo span{display:inline-block;background:linear-gradient(135deg,#d7c8ff 0%,#9d7cff 28%,#62e5ff 72%,#ffffff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(157,124,255,.32)) drop-shadow(0 0 28px rgba(98,229,255,.16));text-shadow:none}
+.toolbar::before{animation-delay:0s}.add-section::before{animation-delay:0s}
+@keyframes uiSheen{0%{transform:translateX(-140%)}18%,100%{transform:translateX(160%)}}
+.logo-line{height:2px;background:linear-gradient(90deg,transparent,var(--gold-dark),var(--gold-bright),var(--gold),transparent);
+  margin:8px auto 0;max-width:420px;width:min(420px,72vw);animation:lineGlow 3s ease-in-out infinite}
+@keyframes lineGlow{0%,100%{opacity:.5}50%{opacity:1;box-shadow:0 0 16px var(--gold)}}
+@keyframes bgPulse{0%{transform:translate3d(0,0,0) scale(1);opacity:.62}100%{transform:translate3d(0,-8px,0) scale(1.04);opacity:.96}}
+
+/* ══ TOOLBAR ══ */
+.stats{display:flex;gap:14px;margin-bottom:20px;flex-wrap:wrap}
+.stat{background:rgba(20,15,6,.24);border:1px solid rgba(201,168,76,.15);border-radius:8px;padding:7px 12px;backdrop-filter:blur(8px);min-width:94px}
+.sl{font:10px Cinzel,serif;letter-spacing:2px;color:rgba(255,223,150,.66);text-transform:uppercase}
+.sv{font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:var(--gold)}
+.sv.dim{color:rgba(255,200,0,.4);animation:blink .8s ease-in-out infinite}
+.floor-note{font-size:7px;color:rgba(245,234,208,.42);margin-top:2px}
+.toolbar{margin-bottom:16px}
+.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;padding:10px 14px;border-radius:16px;background:linear-gradient(180deg,rgba(18,13,5,.34),rgba(10,8,5,.12));border:1px solid rgba(201,168,76,.14);box-shadow:0 14px 36px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.05)}
+.vbtn{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid rgba(255,220,140,.16);
+  color:rgba(255,244,220,.72);padding:10px 16px;border-radius:10px;cursor:pointer;
+  font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:1px;transition:all .22s;box-shadow:0 8px 18px rgba(0,0,0,.16);position:relative;overflow:hidden}
+.vbtn.active,.vbtn:hover{background:linear-gradient(135deg,rgba(255,80,20,.28),rgba(150,60,255,.18));border-color:rgba(255,160,80,.55);color:#fff;transform:translateY(-2px);box-shadow:0 12px 28px rgba(255,90,40,.18),0 0 24px rgba(170,80,255,.08)}
+.vbtn::after{content:'';position:absolute;top:-20%;bottom:-20%;width:38%;left:-45%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);transform:skewX(-20deg);transition:left .6s ease;pointer-events:none}
+.vbtn:hover::after{left:120%}
+.btn-share{font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.8px;
+  padding:10px 16px;border-radius:10px;cursor:pointer;border:1px solid rgba(255,200,0,.4);
+  background:linear-gradient(135deg,rgba(255,200,0,.14),rgba(255,150,30,.08));color:var(--gold);transition:all .2s;white-space:nowrap;box-shadow:0 8px 18px rgba(201,168,76,.14);position:relative;overflow:hidden}
+.btn-share:hover{background:linear-gradient(135deg,rgba(255,200,0,.24),rgba(255,150,30,.14));border-color:var(--gold);transform:translateY(-2px);box-shadow:0 12px 28px rgba(201,168,76,.24)}
+.btn-share:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-share::after{content:'';position:absolute;top:-20%;bottom:-20%;width:38%;left:-45%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);transform:skewX(-20deg);transition:left .6s ease;pointer-events:none}
+.btn-share:hover::after{left:120%}
+
+/* ══ CAROUSEL ══ */
+.carousel-outer{position:relative;overflow:hidden;padding:18px 0 26px;width:min(1440px,94vw);margin:56px auto 0;background:transparent}
+.carousel-outer::before,.carousel-outer::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:10;pointer-events:none}
+.carousel-outer::before{left:0;background:linear-gradient(90deg,rgba(5,4,2,.18),transparent)}
+.carousel-outer::after{right:0;background:linear-gradient(-90deg,rgba(5,4,2,.18),transparent)}
+.carousel-outer:hover .carousel-track{animation-play-state:paused}
+.carousel-track{display:flex;gap:28px;animation:scrollLeft 48s linear infinite,trackFloat 7.5s ease-in-out infinite;will-change:transform;align-items:flex-end}
+@keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(var(--sd,-50%))}}
+@keyframes trackFloat{0%,100%{margin-top:0}50%{margin-top:-6px}}
+.grid{display:grid;gap:20px;justify-items:center}
+.g2{grid-template-columns:repeat(2,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.g6{grid-template-columns:repeat(6,1fr)}.g10{grid-template-columns:repeat(10,1fr)}.g12{grid-template-columns:repeat(12,1fr)}
+@media(max-width:1400px){.g12{grid-template-columns:repeat(8,1fr)}.g10{grid-template-columns:repeat(6,1fr)}}
+@media(max-width:1100px){.g12,.g10,.g6{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:800px){.g12,.g10,.g6,.g4{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.g12,.g10,.g6,.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:820px){
+ body.museum-home{overflow:auto}
+ #bg{background-attachment:scroll}
+ .app{padding:18px 12px 24px}
+ .stats{gap:8px;margin-bottom:14px}
+ .stat{min-width:unset;padding:6px 9px}
+ .controls{gap:8px;padding:10px 10px}
+ .vbtn,.btn-share{padding:9px 12px;font-size:11px}
+ .carousel-outer{margin:24px auto 0;width:100%;padding:8px 0 18px}
+ .carousel-outer::before,.carousel-outer::after{width:28px}
+ .card-outer.in-carousel{width:min(72vw,270px)}
+ .chain-corner{display:none}
+}
+.empty{grid-column:1/-1;text-align:center;padding:70px 20px;color:rgba(255,255,255,.1)}
+.empty-icon{font-size:40px;margin-bottom:12px;opacity:.2}
+.card-outer{position:relative;animation:cardIn .5s ease-out both;animation-delay:var(--d,0s);flex:none}
+.card-outer.in-carousel{width:356px}
+.grid .card-outer{width:min(188px,100%)}
+.g10 .card-outer{width:min(132px,100%)}
+.g12 .card-outer{width:min(116px,100%)}
+.g10 .nft-name,.g12 .nft-name{font-size:10px}
+@keyframes cardIn{from{opacity:0;transform:translateY(22px) scale(.94)}to{opacity:1;transform:none}}
+.aura{position:absolute;inset:-14px;border-radius:22px;pointer-events:none;z-index:0;filter:blur(14px);
+  background:radial-gradient(ellipse at 50% 50%,rgba(180,80,255,.28) 0%,rgba(255,60,0,.1) 50%,transparent 70%);
+  animation:auraPulse 3s ease-in-out infinite;animation-delay:var(--d,0s)}
+@keyframes auraPulse{0%,100%{opacity:.45;transform:scale(1)}50%{opacity:1;transform:scale(1.1)}}
+.card{position:relative;width:100%;border-radius:14px;overflow:hidden;background:transparent;
+  transform-style:preserve-3d;cursor:pointer;z-index:1;
+  animation:cardGlow 4s ease-in-out infinite;animation-delay:var(--d,0s)}
+@keyframes cardGlow{
+  0%,100%{box-shadow:0 0 0 1px rgba(255,255,255,.06),0 14px 34px rgba(0,0,0,.34),0 0 18px rgba(180,80,255,.06)}
+  50%{box-shadow:0 0 0 1.5px rgba(255,255,255,.12),0 14px 34px rgba(0,0,0,.34),0 0 28px rgba(255,60,0,.16),0 0 42px rgba(180,80,255,.06)}}
+.img-wrap{position:relative;width:100%;aspect-ratio:1/1;overflow:hidden}
+.nft-img{width:100%;height:100%;display:block;object-fit:cover;position:relative;z-index:1;transition:transform .6s ease}
+.card:hover .nft-img{transform:scale(1.05)}
+.holo-layer{position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:screen;
+  opacity:var(--holo-op,.22);
+  background:
+    repeating-linear-gradient(calc(var(--ang,125deg)),
+      hsla(calc(var(--hue,200)+0deg),100%,95%,.07) 0px,transparent 7px,
+      hsla(calc(var(--hue,200)+60deg),100%,95%,.05) 13px,transparent 19px,
+      hsla(calc(var(--hue,200)+120deg),100%,95%,.07) 25px,transparent 31px,
+      hsla(calc(var(--hue,200)+180deg),100%,95%,.05) 37px,transparent 43px,
+      hsla(calc(var(--hue,200)+240deg),100%,95%,.07) 49px,transparent 55px,
+      hsla(calc(var(--hue,200)+300deg),100%,95%,.05) 61px,transparent 67px),
+    radial-gradient(ellipse 55% 55% at var(--mx,50%) var(--my,50%),rgba(255,255,255,.16) 0%,rgba(255,255,255,.03) 45%,transparent 70%)}
+.card:hover .holo-layer{opacity:.85}
+.rb{position:absolute;inset:0;border-radius:14px;z-index:3;pointer-events:none;padding:2px;
+  opacity:.28;transition:opacity .3s;
+  background:conic-gradient(from 0deg,#ff3c00,#ff8c00,#ffd700,#00ffcc,#0088ff,#cc00ff,#ff3c00);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:destination-out;mask-composite:exclude;animation:spinRB 5s linear infinite}
+.card:hover .rb{opacity:1;animation:spinRB 1.8s linear infinite}
+@keyframes spinRB{to{filter:hue-rotate(360deg)}}
+.sw{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden}
+.sc{position:absolute;left:0;right:0;height:55px;opacity:.45;
+  background:linear-gradient(180deg,transparent,rgba(255,255,255,.05),transparent);
+  animation:scanD var(--spd,3.2s) linear infinite;animation-delay:var(--d,0s)}
+.card:hover .sc{opacity:.85}
+@keyframes scanD{0%{top:-55px}100%{top:110%}}
+.gl{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden;opacity:0}
+.card:hover .gl{animation:glFl 6s ease-in-out infinite}
+.gl-r,.gl-b{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.5}
+.gl-r{transform:translateX(4px);mix-blend-mode:screen;filter:hue-rotate(330deg) saturate(3)}
+.gl-b{transform:translateX(-4px);mix-blend-mode:screen;filter:hue-rotate(210deg) saturate(3)}
+@keyframes glFl{0%,88%,100%{opacity:0}90%{opacity:1}91%{opacity:0}93%{opacity:1}95%{opacity:0}}
+.spk{position:absolute;inset:0;z-index:3;pointer-events:none}
+.pc{position:absolute;inset:0;z-index:6;pointer-events:none}
+.info{position:relative;z-index:7;padding:12px 14px 14px;
+  background:linear-gradient(180deg,rgba(32,10,44,.92),rgba(10,4,24,.82));backdrop-filter:blur(8px)}
+.info-line{height:2px;background:linear-gradient(90deg,transparent,var(--red),var(--gold),var(--purple),transparent);
+  margin-bottom:8px;animation:lineGlow 3s ease-in-out infinite;animation-delay:var(--d,0s)}
+.nft-name{font-family:'Cinzel',serif;font-size:15px;font-weight:900;color:#fff;margin-bottom:7px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  text-shadow:0 0 18px rgba(255,180,80,.55),0 0 32px rgba(255,60,0,.22);
+  letter-spacing:.04em}
+.price-tag{display:inline-flex;align-items:center;
+  background:rgba(255,200,0,.08);border:1px solid rgba(255,200,0,.28);
+  padding:4px 11px;border-radius:4px;animation:pGlow 2.5s ease-in-out infinite;animation-delay:var(--d,0s)}
+@keyframes pGlow{0%,100%{box-shadow:0 0 5px rgba(255,200,0,.14)}50%{box-shadow:0 0 16px rgba(255,200,0,.48)}}
+.ptext{font-family:'Cinzel',serif;font-size:12px;font-weight:700;color:var(--gold);letter-spacing:2px}
+.btn-rm{position:absolute;top:8px;right:8px;z-index:10;
+  background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.12);
+  color:rgba(255,255,255,.35);font-size:12px;width:24px;height:24px;
+  border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.btn-rm:hover{background:rgba(255,60,0,.8);color:#fff;border-color:var(--red)}
+
+/* ══ MY COLLECTION PANEL (from v2) ══ */
+.collection-panel{display:none;flex-direction:column;gap:16px;margin:0 auto 20px;width:100%;padding-bottom:8px}
+.collection-panel.visible{display:flex}
+
+/* v2 style inputs and buttons adapted */
+.my-col-header{
+  padding:16px 20px;border-radius:20px;
+  background:linear-gradient(180deg,rgba(12,13,22,.54),rgba(7,8,15,.68));
+  border:1px solid rgba(255,255,255,.09);backdrop-filter:blur(20px);
+  box-shadow:0 20px 60px rgba(0,0,0,.42);position:relative;overflow:hidden
+}
+.my-col-header::before{content:'';position:absolute;inset:-1px;background:linear-gradient(135deg,rgba(255,214,138,.18),transparent 30%,transparent 70%,rgba(98,229,255,.14));opacity:.6;pointer-events:none}
+.my-col-title{font-family:'Cinzel',serif;font-size:24px;font-weight:900;letter-spacing:.08em;color:var(--text);margin-bottom:6px;text-shadow:0 0 16px rgba(255,220,150,.16)}
+.my-col-sub{font-size:15px;color:rgba(245,234,208,.72);font-family:'Cormorant Garamond',serif;letter-spacing:.04em}
+
+/* Wallet + scan row */
+.scan-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+@media(max-width:600px){.scan-row{grid-template-columns:1fr;display:flex;flex-wrap:wrap}}
+.v2-input{
+  width:100%;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);
+  color:var(--text);border-radius:18px;padding:14px 18px;outline:none;font-size:14px;
+  font-family:'Share Tech Mono',monospace;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.03);transition:border-color .2s,box-shadow .2s
+}
+.v2-input:focus{border-color:rgba(98,229,255,.45);box-shadow:0 0 0 4px rgba(98,229,255,.08)}
+.v2-input::placeholder{color:rgba(243,245,251,.35)}
+.v2-btn{padding:13px 20px;border-radius:16px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04);
+  color:var(--text);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;
+  font-family:'Cinzel',serif;letter-spacing:.08em;
+  transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease,background .22s ease}
+.v2-btn:hover{transform:translateY(-1px);box-shadow:0 16px 30px rgba(0,0,0,.2);border-color:rgba(255,255,255,.18)}
+.v2-btn.primary{background:linear-gradient(135deg,rgba(212,173,99,.95),rgba(255,214,138,.92));color:#0d0f16;border-color:rgba(255,214,138,.55);box-shadow:0 12px 30px rgba(212,173,99,.22)}
+.v2-btn.primary:hover{transform:translateY(-2px);box-shadow:0 18px 36px rgba(212,173,99,.32)}
+.v2-btn.ghost{background:rgba(255,255,255,.03)}
+.v2-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* ETH / Abstract load buttons */
+.chain-btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.v2-chain-btn{padding:10px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04);
+  color:var(--text);font-size:11px;font-weight:700;cursor:pointer;
+  font-family:'Cinzel',serif;letter-spacing:.08em;
+  transition:transform .22s,box-shadow .22s,border-color .22s,background .22s}
+.v2-chain-btn:hover{transform:translateY(-1px);box-shadow:0 12px 24px rgba(0,0,0,.2)}
+.v2-chain-btn.eth{border-color:rgba(98,229,255,.25);color:var(--cyan);background:rgba(98,229,255,.06)}
+.v2-chain-btn.eth:hover{border-color:rgba(98,229,255,.55);background:rgba(98,229,255,.12)}
+.v2-chain-btn.abs{border-color:rgba(157,124,255,.25);color:#d0c2ff;background:rgba(157,124,255,.06)}
+.v2-chain-btn.abs:hover{border-color:rgba(157,124,255,.55);background:rgba(157,124,255,.12)}
+.v2-chain-btn.clear{border-color:rgba(255,111,97,.2);color:var(--danger);background:rgba(255,111,97,.04)}
+.v2-chain-btn.clear:hover{border-color:rgba(255,111,97,.45);background:rgba(255,111,97,.1)}
+.v2-chain-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* Status */
+.v2-status{display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding:13px 16px;border-radius:18px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);min-height:50px;margin-top:14px}
+.v2-status.ok{border-color:rgba(126,240,190,.2)}
+.v2-status.error{border-color:rgba(255,111,97,.2)}
+.v2-status.loading{border-color:rgba(212,173,99,.2)}
+.status-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.22);flex-shrink:0}
+.v2-status.loading .status-dot{background:var(--gold-2);animation:pulseDot 1s infinite}
+.v2-status.ok .status-dot{background:var(--green)}
+.v2-status.error .status-dot{background:var(--danger)}
+.status-copy{font-size:14px;color:rgba(245,234,208,.72);font-family:'Cormorant Garamond',serif;letter-spacing:.03em}
+.v2-status strong{color:var(--text)}
+@keyframes pulseDot{50%{box-shadow:0 0 0 8px rgba(212,173,99,0);opacity:.7}}
+
+/* Stats metrics */
+.v2-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.v2-metric{padding:18px;border-radius:22px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(16px)}
+.v2-metric label{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;font-family:'Inter',sans-serif}
+.v2-metric strong{display:block;font-family:'Space Grotesk',sans-serif;font-size:28px;color:var(--text)}
+.v2-metric small{display:block;margin-top:6px;color:var(--muted);font-size:11px;font-family:'Inter',sans-serif}
+
+/* Collection toolbar (filters + search) */
+.col-toolbar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.col-toolbar-left,.col-toolbar-right{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.v2-chip{padding:10px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04);
+  color:var(--text);font-size:11px;font-weight:700;cursor:pointer;font-family:'Cinzel',serif;
+  transition:transform .22s,box-shadow .22s,border-color .22s,background .22s}
+.v2-chip:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.18)}
+.v2-chip.active{background:rgba(255,255,255,.11);border-color:rgba(255,255,255,.18);box-shadow:0 0 0 1px rgba(255,255,255,.04) inset}
+.search-wrap{min-width:220px;max-width:320px}
+.sort-sel{width:100%;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);
+  color:var(--text);border-radius:18px;padding:13px 18px;outline:none;font-size:13px;
+  transition:border-color .2s;cursor:pointer}
+.sort-sel:focus{border-color:rgba(98,229,255,.45)}
+
+/* Gallery shell */
+.gallery-shell{padding:22px;border-radius:28px;background:linear-gradient(180deg,rgba(9,10,18,.52),rgba(7,8,14,.68));border:1px solid rgba(255,255,255,.08);box-shadow:0 20px 60px rgba(0,0,0,.42);backdrop-filter:blur(14px)}
+.v2-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
+.v2-grid-4{grid-template-columns:repeat(4,1fr)!important}
+.v2-grid-6{grid-template-columns:repeat(6,1fr)!important}
+.v2-grid-10{grid-template-columns:repeat(10,1fr)!important}
+.v2-grid-12{grid-template-columns:repeat(12,1fr)!important}
+@media(max-width:1200px){.v2-grid-10,.v2-grid-12{grid-template-columns:repeat(6,1fr)!important}}
+@media(max-width:900px){.v2-grid-6,.v2-grid-10,.v2-grid-12{grid-template-columns:repeat(4,1fr)!important}}
+@media(max-width:700px){.v2-grid-4,.v2-grid-6,.v2-grid-10,.v2-grid-12{grid-template-columns:repeat(3,1fr)!important}}
+@media(max-width:500px){.v2-grid-4,.v2-grid-6,.v2-grid-10,.v2-grid-12{grid-template-columns:repeat(2,1fr)!important}}
+/* v2 card light visual effects — CSS only, no canvas (performance safe for 110+ NFTs) */
+.v2-card-media::after{
+  content:'';position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      transparent 0px,
+      rgba(255,255,255,.025) 2px,
+      transparent 4px,
+      transparent 14px
+    ),
+    linear-gradient(180deg,transparent 60%,rgba(0,0,0,.4));
+  opacity:0;transition:opacity .4s ease
+}
+.v2-card:hover .v2-card-media::after{opacity:1}
+/* rainbow border on hover */
+.v2-card::before{
+  content:'';position:absolute;inset:0;border-radius:24px;z-index:0;pointer-events:none;
+  padding:1.5px;
+  background:conic-gradient(from 0deg,#ff3c00,#ff8c00,#ffd700,#00ffcc,#0088ff,#cc00ff,#ff3c00);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:destination-out;mask-composite:exclude;
+  opacity:0;transition:opacity .35s ease;animation:none
+}
+.v2-card:hover::before{opacity:.7}
+/* scan line sweep */
+.v2-card-media{overflow:hidden}
+.v2-card-media .v2-scan{
+  position:absolute;left:0;right:0;height:50px;z-index:3;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(255,255,255,.04),transparent);
+  transform:translateY(-60px);transition:none;
+  animation:none
+}
+.v2-card:hover .v2-card-media .v2-scan{
+  animation:v2ScanMove 1.6s linear infinite
+}
+/* v2 cards */
+.v2-card{position:relative;border-radius:24px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.08);box-shadow:0 14px 34px rgba(0,0,0,.24);transform:translateY(0) scale(1);transition:transform .28s ease,box-shadow .28s ease,border-color .28s ease;cursor:pointer;animation:fadeUp .45s ease both,cardGlow 4s ease-in-out infinite}
+.v2-card:hover{transform:translateY(-6px) scale(1.01);border-color:rgba(255,255,255,.18);box-shadow:0 22px 44px rgba(0,0,0,.36)}
+.v2-card-aura{position:absolute;inset:-14px;border-radius:22px;pointer-events:none;z-index:0;filter:blur(14px);background:radial-gradient(ellipse at 50% 50%,rgba(180,80,255,.28) 0%,rgba(255,60,0,.1) 50%,transparent 70%);animation:auraPulse 3s ease-in-out infinite}
+.v2-card::after{content:'';position:absolute;left:-14%;right:-14%;bottom:-22%;height:40%;border-radius:50%;background:radial-gradient(circle at 50% 20%,rgba(157,124,255,.16),transparent 34%),radial-gradient(circle at 50% 90%,rgba(98,229,255,.14),transparent 34%);pointer-events:none}
+.v2-card:hover::after{transform:translateY(0)}
+.v2-card-media{position:relative;aspect-ratio:1/1;background:linear-gradient(135deg,rgba(18,21,35,.9),rgba(10,12,18,.96));overflow:hidden}
+.v2-card-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s,filter .45s}
+.v2-card:hover .v2-card-media img{transform:scale(1.05);filter:saturate(1.1)}
+.v2-card-rb{position:absolute;inset:0;border-radius:24px;z-index:3;pointer-events:none;padding:2px;opacity:.22;transition:opacity .3s;background:conic-gradient(from 0deg,#ff3c00,#ff8c00,#ffd700,#00ffcc,#0088ff,#cc00ff,#ff3c00);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;animation:spinRB 5s linear infinite}
+.v2-card:hover .v2-card-rb{opacity:.9;animation:spinRB 1.8s linear infinite}
+.v2-card-holo{position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:screen;opacity:.26;
+  background:
+    repeating-linear-gradient(calc(var(--vang,125deg)),
+      hsla(calc(var(--vhue,200)+0deg),100%,95%,.07) 0px,transparent 7px,
+      hsla(calc(var(--vhue,200)+60deg),100%,95%,.05) 13px,transparent 19px,
+      hsla(calc(var(--vhue,200)+120deg),100%,95%,.07) 25px,transparent 31px,
+      hsla(calc(var(--vhue,200)+180deg),100%,95%,.05) 37px,transparent 43px),
+    radial-gradient(ellipse 58% 58% at var(--vmx,50%) var(--vmy,50%),rgba(255,255,255,.16) 0%,rgba(255,255,255,.03) 42%,transparent 72%);
+  transition:opacity .3s ease}
+.v2-card:hover .v2-card-holo{opacity:.7}
+.v2-card-glow{position:absolute;inset:-30%;background:radial-gradient(circle at 50% 20%,rgba(157,124,255,.18),transparent 34%),radial-gradient(circle at 50% 90%,rgba(98,229,255,.14),transparent 34%);pointer-events:none}
+.v2-card-rgb{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden;opacity:0}
+.v2-card:hover .v2-card-rgb{animation:v2RgbFlicker 6s ease-in-out infinite}
+.v2-card-r,.v2-card-b{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.42}
+.v2-card-r{transform:translateX(3px);mix-blend-mode:screen;filter:hue-rotate(325deg) saturate(2.6)}
+.v2-card-b{transform:translateX(-3px);mix-blend-mode:screen;filter:hue-rotate(205deg) saturate(2.6)}
+.v2-card-scan-wrap{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden}
+.v2-card-glow::after{content:'';position:absolute;left:-32%;right:-32%;top:10%;height:26%;background:linear-gradient(115deg,transparent 12%,rgba(255,255,255,.05) 35%,rgba(255,214,138,.10) 50%,rgba(98,229,255,.07) 65%,transparent 88%);transform:translateX(-42%) skewX(-18deg);opacity:.26;animation:v2Sheen 5.2s ease-in-out infinite}
+.v2-card-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:8px}
+.v2-card-title{font-family:'Cinzel',serif;font-size:14px;line-height:1.1;color:#fff;font-weight:700;letter-spacing:.04em;text-shadow:0 0 10px rgba(255,255,255,.18)}
+.v2-card-sub{font-size:14px;color:rgba(245,234,208,.66);margin-top:4px;font-family:'Cormorant Garamond',serif}
+.v2-card-content{padding:12px 14px 14px;background:linear-gradient(180deg,rgba(32,10,44,.88),rgba(10,4,24,.74));backdrop-filter:blur(6px);position:relative;z-index:7}
+.v2-card-content::before{content:'';display:block;height:2px;background:linear-gradient(90deg,transparent,var(--red),var(--gold),var(--purple),transparent);margin-bottom:8px;animation:lineGlow 3s ease-in-out infinite}
+.v2-card.fx-lite .v2-card-glow{opacity:.68}
+.v2-card.fx-lite{animation-duration:6s}
+.v2-card.fx-lite .v2-card-aura{opacity:.48}
+.v2-card.fx-lite .v2-card-rb{opacity:.12;animation-duration:7s}
+.v2-card.fx-lite .v2-card-holo{opacity:.2}
+.v2-card.fx-lite .v2-scan{opacity:.18}
+.v2-card.fx-lite .v2-card-rgb{opacity:.14}
+.v2-card.fx-static::before,.v2-card.fx-static::after{opacity:.4}
+.v2-card.fx-static .v2-card-aura{animation:none!important;opacity:.26}
+.v2-card.fx-static .v2-scan,.v2-card.fx-static .v2-card-glow::after,.v2-card.fx-static .v2-card-rgb,.v2-card.fx-static .v2-card-rb{animation:none!important}
+.v2-card.fx-static .v2-card-holo{opacity:.14}
+.v2-card.fx-static:hover .v2-card-media img{transform:scale(1.02);filter:saturate(1.06)}
+.v2-card.fx-mass{animation:none;transform:none!important}
+.v2-card.fx-mass::before,.v2-card.fx-mass::after,.v2-card.fx-mass .v2-card-aura,.v2-card.fx-mass .v2-card-rb,.v2-card.fx-mass .v2-card-glow::after{display:none!important}
+.v2-card.fx-mass .v2-card-holo{opacity:.08}
+.v2-card.fx-mass .v2-scan{opacity:.08;animation:none!important}
+.v2-card.fx-mass .v2-card-rgb{opacity:.05;animation:none!important}
+.v2-card.fx-mass:hover{transform:translateY(-2px)!important}
+.v2-card.fx-mass:hover .v2-card-media img{transform:scale(1.025);filter:saturate(1.03)}
+.v2-card.fx-ultra,.v2-card.fx-ultra:hover{transform:none!important}
+.v2-card.fx-ultra::before,.v2-card.fx-ultra::after,.v2-card.fx-ultra .v2-card-aura,.v2-card.fx-ultra .v2-card-rb,.v2-card.fx-ultra .v2-card-holo,.v2-card.fx-ultra .v2-scan,.v2-card.fx-ultra .v2-card-rgb,.v2-card.fx-ultra .v2-card-glow,.v2-card.fx-ultra .v2-card-pc{display:none!important}
+.v2-card.fx-ultra .v2-card-media img{transform:none!important;filter:none!important}
+.v2-card-fallback{width:100%;height:100%;display:grid;place-items:center;font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(243,245,251,.4);letter-spacing:.14em;text-transform:uppercase}
+.chain-badge{padding:7px 10px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:1px solid rgba(255,255,255,.1);white-space:nowrap}
+.chain-badge.ethereum{color:var(--cyan);background:rgba(98,229,255,.08)}
+.chain-badge.abstract{color:#d6c6ff;background:rgba(157,124,255,.12)}
+.v2-card-meta{display:flex;justify-content:space-between;gap:10px;align-items:center;color:rgba(245,234,208,.64);font-size:12px;margin-top:6px;font-family:'Cormorant Garamond',serif}
+.v2-card-id{font-family:'Share Tech Mono',monospace}
+.v2-card-action{margin-top:12px;width:100%;padding:10px;border-radius:14px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04);color:var(--text);font-size:11px;font-weight:700;cursor:pointer;font-family:'Cinzel',serif;letter-spacing:.08em;transition:all .22s}
+.v2-card-action:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.18)}
+.empty-state{padding:56px 22px;text-align:center;border:1px dashed rgba(255,255,255,.12);border-radius:24px;background:rgba(255,255,255,.03)}
+.empty-state h3{font-family:'Space Grotesk',sans-serif;font-size:26px;margin-bottom:10px;color:var(--text)}
+.empty-state p{color:var(--muted);max-width:56ch;margin:0 auto;line-height:1.7;font-size:14px;font-family:'Inter',sans-serif}
+.spinner{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.18);border-top-color:var(--gold-2);animation:spin 1s linear infinite;flex-shrink:0}
+@keyframes auraPulse{0%,100%{opacity:.45;transform:scale(1)}50%{opacity:1;transform:scale(1.1)}}
+@keyframes cardGlow{0%,100%{box-shadow:0 0 0 1px rgba(255,255,255,.06),0 14px 34px rgba(0,0,0,.34),0 0 18px rgba(180,80,255,.06)}50%{box-shadow:0 0 0 1.5px rgba(255,255,255,.12),0 14px 34px rgba(0,0,0,.34),0 0 28px rgba(255,60,0,.16),0 0 42px rgba(180,80,255,.06)}}
+@keyframes spinRB{to{filter:hue-rotate(360deg)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes v2Sheen{0%,100%{transform:translateX(-42%) skewX(-18deg);opacity:.18}50%{transform:translateX(42%) skewX(-18deg);opacity:.42}}
+@keyframes v2RgbFlicker{0%,88%,100%{opacity:0}90%{opacity:.75}91%{opacity:0}93%{opacity:.65}95%{opacity:0}}
+
+/* ══ V2 MODAL ══ */
+.v2-modal{position:fixed;inset:0;background:rgba(4,6,10,.78);backdrop-filter:blur(18px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:500}
+.v2-modal.open{opacity:1;pointer-events:auto}
+.v2-modal-card{width:min(980px,100%);max-height:90vh;overflow:auto;border-radius:28px;background:linear-gradient(180deg,rgba(16,18,28,.97),rgba(10,12,18,.99));border:1px solid rgba(255,255,255,.1);box-shadow:0 0 80px rgba(180,0,255,.18),0 20px 80px rgba(0,0,0,.7);padding:22px;position:relative}
+.v2-modal-grid{display:grid;grid-template-columns:340px 1fr;gap:22px}
+@media(max-width:800px){.v2-modal-grid{grid-template-columns:1fr}}
+.v2-modal-media{position:relative;border-radius:22px;overflow:hidden;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);aspect-ratio:1/1;box-shadow:0 0 0 1px rgba(255,255,255,.08),0 24px 60px rgba(0,0,0,.55)}
+.v2-modal-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+.v2-modal-media:hover img{transform:scale(1.04)}
+.v2m-holo{position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:screen;opacity:.38;border-radius:22px;background:repeating-linear-gradient(calc(var(--vmang,125deg)),hsla(calc(var(--vmhue,200)+0deg),100%,95%,.08) 0px,transparent 7px,hsla(calc(var(--vmhue,200)+90deg),100%,95%,.06) 13px,transparent 19px,hsla(calc(var(--vmhue,200)+180deg),100%,95%,.08) 25px,transparent 31px,hsla(calc(var(--vmhue,200)+270deg),100%,95%,.06) 37px,transparent 43px),radial-gradient(ellipse 55% 55% at var(--vmmx,50%) var(--vmmy,50%),rgba(255,255,255,.18) 0%,transparent 65%)}
+.v2m-rb{position:absolute;inset:0;border-radius:22px;z-index:3;pointer-events:none;padding:2.5px;opacity:.34;background:conic-gradient(from 0deg,#ff3c00,#ff8c00,#ffd700,#00ffcc,#0088ff,#cc00ff,#ff3c00);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;animation:spinRB 4s linear infinite}
+.v2m-sw{position:absolute;inset:0;z-index:4;overflow:hidden;pointer-events:none;border-radius:22px}
+.v2m-sc{position:absolute;left:0;right:0;height:64px;opacity:.5;background:linear-gradient(180deg,transparent,rgba(255,255,255,.05),transparent);animation:scanD 3s linear infinite}
+.v2m-gl{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden;opacity:0;border-radius:22px;animation:glFl 5s ease-in-out infinite}
+.v2m-gl-r,.v2m-gl-b{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.5}
+.v2m-gl-r{transform:translateX(5px);mix-blend-mode:screen;filter:hue-rotate(330deg) saturate(3)}
+.v2m-gl-b{transform:translateX(-5px);mix-blend-mode:screen;filter:hue-rotate(210deg) saturate(3)}
+.v2m-pc,.v2m-spk{position:absolute;inset:0;pointer-events:none;border-radius:22px}
+.v2m-spk{z-index:3}.v2m-pc{z-index:6}
+.v2m-tv{position:absolute;inset:0;z-index:7;pointer-events:none;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,0) 16%,rgba(0,0,0,.08) 55%,rgba(255,255,255,.05) 100%);mix-blend-mode:screen;opacity:.16;animation:v2ModalTv 4.2s steps(1,end) infinite}
+.v2m-tv::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(255,255,255,.045) 0px,rgba(255,255,255,0) 2px,rgba(0,0,0,.05) 3px,rgba(0,0,0,0) 5px);opacity:.38}
+.v2-modal-copy h3{font-family:'Space Grotesk',sans-serif;font-size:30px;margin-bottom:8px;color:var(--text)}
+.v2-modal-copy p{color:var(--muted);line-height:1.7;font-size:14px;font-family:'Inter',sans-serif}
+.v2-meta-pills{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 18px}
+.v2-meta-pill{padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:11px;color:var(--muted);font-family:'Share Tech Mono',monospace}
+.v2-traits{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:14px}
+.v2-trait{padding:12px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+.v2-trait label{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;font-family:'Inter',sans-serif}
+.v2-trait strong{font-size:13px;color:var(--text);font-family:'Space Grotesk',sans-serif}
+.v2-close-btn{position:absolute;top:18px;right:18px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.v2-close-btn:hover{background:rgba(255,60,0,.5);color:#fff;border-color:var(--red)}
+
+/* ══ KEYS MODAL ══ */
+.keys-modal{position:fixed;inset:0;background:rgba(4,6,10,.72);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:600}
+.keys-modal.open{opacity:1;pointer-events:auto}
+.keys-card{width:min(520px,100%);padding:24px;border-radius:28px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,rgba(14,16,24,.97),rgba(9,11,17,.99));box-shadow:0 20px 60px rgba(0,0,0,.6);position:relative}
+.keys-card h3{font-family:'Space Grotesk',sans-serif;font-size:22px;margin-bottom:8px;color:var(--text)}
+.keys-card p{color:var(--muted);line-height:1.7;margin-bottom:18px;font-size:13px;font-family:'Inter',sans-serif}
+.key-label{font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em;font-family:'Inter',sans-serif}
+.keys-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+
+/* ══ V6 MODAL ══ */
+.modal-overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.64);
+  backdrop-filter:blur(10px) saturate(1.1);display:flex;align-items:center;justify-content:center;
+  padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.v6-modal{position:relative;width:100%;max-width:1020px;max-height:92vh;overflow-y:auto;
+  background:linear-gradient(135deg,rgba(14,0,34,.94),rgba(5,0,18,.9));
+  border-radius:20px;border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 0 80px rgba(180,0,255,.24),0 0 160px rgba(255,60,0,.08);
+  animation:modalIn .3s ease-out}
+@keyframes modalIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-close{position:sticky;top:12px;float:right;margin:14px 14px 0 0;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+  color:rgba(255,255,255,.55);width:34px;height:34px;border-radius:50%;
+  cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;z-index:10}
+.modal-close:hover{background:rgba(255,60,0,.5);color:#fff;border-color:var(--red)}
+.modal-body{padding:28px;display:grid;grid-template-columns:400px 1fr;gap:32px}
+@media(max-width:800px){.modal-body{grid-template-columns:1fr}}
+.modal-img-wrap{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:1/1;
+  box-shadow:0 0 0 2px rgba(255,255,255,.1),0 24px 60px rgba(0,0,0,.7)}
+.modal-img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+.modal-img-wrap:hover .modal-img{transform:scale(1.04)}
+.mholo{position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:screen;
+  opacity:.4;border-radius:14px;
+  background:repeating-linear-gradient(calc(var(--mang,125deg)),
+      hsla(calc(var(--mhue,200)+0deg),100%,95%,.08) 0px,transparent 7px,
+      hsla(calc(var(--mhue,200)+90deg),100%,95%,.06) 13px,transparent 19px,
+      hsla(calc(var(--mhue,200)+180deg),100%,95%,.08) 25px,transparent 31px,
+      hsla(calc(var(--mhue,200)+270deg),100%,95%,.06) 37px,transparent 43px),
+    radial-gradient(ellipse 55% 55% at var(--mmx,50%) var(--mmy,50%),rgba(255,255,255,.2) 0%,transparent 65%)}
+.mrb{position:absolute;inset:0;border-radius:14px;z-index:3;pointer-events:none;padding:2.5px;
+  opacity:.4;background:conic-gradient(from 0deg,#ff3c00,#ff8c00,#ffd700,#00ffcc,#0088ff,#cc00ff,#ff3c00);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:destination-out;mask-composite:exclude;animation:spinRB 4s linear infinite}
+.msw{position:absolute;inset:0;z-index:4;overflow:hidden;pointer-events:none;border-radius:14px}
+.msc{position:absolute;left:0;right:0;height:70px;opacity:.55;
+  background:linear-gradient(180deg,transparent,rgba(255,255,255,.05),transparent);animation:scanD 3s linear infinite}
+.mgl{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden;opacity:0;border-radius:14px;animation:glFl 5s ease-in-out infinite}
+.mgl-r,.mgl-b{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.5}
+.mgl-r{transform:translateX(5px);mix-blend-mode:screen;filter:hue-rotate(330deg) saturate(3)}
+.mgl-b{transform:translateX(-5px);mix-blend-mode:screen;filter:hue-rotate(210deg) saturate(3)}
+.mpc{position:absolute;inset:0;z-index:6;pointer-events:none;border-radius:14px}
+.mspk{position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:14px}
+.modal-info{display:flex;flex-direction:column;gap:0;overflow-y:auto;max-height:calc(92vh - 56px)}
+.m-header{margin-bottom:20px;padding:16px 18px;border:1px solid rgba(255,255,255,.08);border-radius:16px;background:linear-gradient(135deg,rgba(255,60,0,.08),rgba(120,30,255,.12))}
+.m-collection{display:inline-flex;align-items:center;gap:8px;font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:4px;color:#ffd770;margin-bottom:10px;text-shadow:0 0 16px rgba(255,180,80,.35)}
+.m-name{font-family:'Cinzel',serif;font-size:32px;font-weight:900;color:#fff;text-shadow:0 0 22px rgba(255,255,255,.18);line-height:1.08;margin-bottom:14px}
+.m-price-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.m-floor{display:inline-flex;flex-direction:column;background:rgba(0,255,136,.07);border:1px solid rgba(0,255,136,.2);padding:9px 18px;border-radius:6px}
+.m-floor-label{font-size:8px;letter-spacing:2px;color:rgba(0,255,136,.6);text-transform:uppercase;margin-bottom:3px}
+.m-floor-val{font-family:'Share Tech Mono',monospace;font-size:13px;font-weight:700;color:var(--green)}
+.tabs{display:flex;gap:0;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:16px}
+.tab{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  padding:9px 16px;cursor:pointer;color:rgba(255,255,255,.35);border-bottom:2px solid transparent;
+  margin-bottom:-1px;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none}
+.tab.active{color:#fff;border-bottom-color:var(--red)}
+.tab:hover{color:rgba(255,255,255,.7)}
+.tab-content{display:none;padding-bottom:8px}.tab-content.active{display:block}
+.traits-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;padding:4px 0}
+.trait-card{background:linear-gradient(135deg,rgba(180,0,255,.14),rgba(255,60,0,.1));border:1px solid rgba(255,180,80,.2);
+  border-radius:12px;padding:14px 12px;text-align:center;transition:all .2s}
+.trait-card:hover{background:linear-gradient(135deg,rgba(180,0,255,.24),rgba(255,60,0,.18));transform:translateY(-3px);box-shadow:0 10px 28px rgba(180,0,255,.22)}
+.tt{font-size:9px;letter-spacing:2px;color:#ffd770;text-transform:uppercase;margin-bottom:7px}
+.tv{font-size:14px;color:#fff;font-weight:bold;margin-bottom:5px}
+.tr{font-size:10px;color:rgba(255,200,0,.8)}
+.activity-list{display:flex;flex-direction:column;gap:8px}
+.activity-item{display:grid;grid-template-columns:36px 1fr auto;gap:12px;align-items:center;padding:10px 14px;background:rgba(255,255,255,.03);border-radius:8px;border:1px solid rgba(255,255,255,.06)}
+.ai-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.ai-sale{background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.2)}
+.ai-transfer{background:rgba(0,120,255,.1);border:1px solid rgba(0,120,255,.2)}
+.ai-offer{background:rgba(255,200,0,.1);border:1px solid rgba(255,200,0,.2)}
+.ai-list{background:rgba(180,0,255,.1);border:1px solid rgba(180,0,255,.2)}
+.ai-other{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}
+.ai-info{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ai-event{font-size:12px;font-weight:bold;color:#fff;text-transform:capitalize}
+.ai-addr{font-size:9px;color:rgba(255,255,255,.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ai-right{text-align:right;flex-shrink:0}
+.ai-price{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--gold);font-weight:700}
+.ai-date{font-size:9px;color:rgba(255,255,255,.25);margin-top:2px}
+.offers-list{display:flex;flex-direction:column;gap:8px}
+.offer-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(255,255,255,.03);border-radius:8px;border:1px solid rgba(255,255,255,.06)}
+.offer-price{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--gold);font-weight:700}
+.offer-from{font-size:9px;color:rgba(255,255,255,.35);margin-top:2px}
+.offer-exp{font-size:9px;color:rgba(0,255,136,.6);background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);padding:2px 8px;border-radius:3px}
+.no-data{text-align:center;padding:28px;font-size:11px;color:rgba(255,255,255,.22);letter-spacing:1px}
+.m-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.m-link{display:inline-flex;align-items:center;gap:7px;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;padding:11px 18px;border-radius:8px;text-decoration:none;cursor:pointer;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.4);background:rgba(255,255,255,.04);transition:all .2s;font-family:'Share Tech Mono',monospace;font-weight:700;min-height:42px}
+.m-link:hover{border-color:var(--red);color:#fff;background:rgba(255,60,0,.15)}
+.skel{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.09) 50%,rgba(255,255,255,.04) 75%);background-size:200% 100%;animation:skelA 1.5s infinite;border-radius:6px;height:52px;margin-bottom:8px}
+@keyframes skelA{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ══ SHARE OVERLAY ══ */
+.share-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;opacity:0;pointer-events:none;transition:opacity .3s;padding:20px;overflow:auto}
+.share-overlay.open{opacity:1;pointer-events:all}
+.share-canvas-wrap{position:relative;max-width:min(1040px,92vw);width:100%;max-height:76vh;display:flex;justify-content:center;align-items:center;padding:18px;border-radius:20px;background:linear-gradient(180deg,rgba(18,10,28,.82),rgba(8,4,16,.72));border:1px solid rgba(255,255,255,.08)}
+.share-canvas-wrap canvas{width:auto;max-width:100%;max-height:70vh;object-fit:contain;border-radius:16px;box-shadow:0 0 60px rgba(180,0,255,.4),0 0 120px rgba(255,60,0,.15)}
+.share-title{font-family:'Share Tech Mono',monospace;font-size:14px;letter-spacing:3px;color:var(--gold);text-align:center}
+.share-note{font-size:11px;color:rgba(255,255,255,.35);letter-spacing:1px;text-align:center}
+.share-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.ss-btn{font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700;letter-spacing:2px;padding:10px 22px;border-radius:7px;cursor:pointer;border:none;transition:all .2s}
+.ss-dl{background:linear-gradient(135deg,var(--red),#ff7700);color:#fff;box-shadow:0 4px 16px rgba(255,60,0,.4)}
+.ss-dl:hover{transform:translateY(-2px)}
+.ss-close{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.15)}
+.ss-close:hover{background:rgba(255,255,255,.15);color:#fff}
+
+/* Bottom links */
+.bottom-links{display:grid;grid-template-columns:minmax(320px,1fr) auto minmax(320px,1fr);align-items:start;gap:18px;width:min(1180px,100%);margin:26px auto 0;padding:10px 0 40px;overflow:visible}
+.social-links{display:flex;flex-direction:column;gap:8px;align-items:flex-start;max-width:420px;justify-self:start;padding-bottom:8px}
+.social-title{font:11px 'Cinzel',serif;letter-spacing:3px;color:rgba(201,168,76,.7);text-transform:uppercase;padding-left:4px}
+.social-grid{display:flex;flex-wrap:wrap;gap:10px;align-content:flex-start}
+.social-link{display:inline-flex;align-items:center;justify-content:center;padding:11px 15px;border-radius:10px;text-decoration:none;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:1px;color:#f3dfb4;background:linear-gradient(180deg,rgba(63,42,19,.96),rgba(24,15,6,.98));border:1px solid rgba(201,168,76,.35);box-shadow:inset 0 1px 0 rgba(255,234,180,.14),0 10px 24px rgba(0,0,0,.28),0 0 0 1px rgba(120,84,24,.18);transition:transform .2s,box-shadow .2s,filter .2s}
+.social-link:hover{transform:translateY(-2px);box-shadow:inset 0 1px 0 rgba(255,234,180,.18),0 14px 28px rgba(0,0,0,.34),0 0 0 1px rgba(160,118,38,.24);filter:saturate(1.06)}
+.creator-links{display:flex;justify-content:flex-end;align-items:flex-start;justify-self:end;padding-bottom:8px}
+.footer-links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:0 auto;width:min(880px,100%);justify-self:center}
+.footer-link{display:inline-flex;align-items:center;justify-content:center;padding:11px 19px;border-radius:9px;text-decoration:none;font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:1px;color:#120b04;background:linear-gradient(135deg,var(--gold-dark),var(--gold),var(--gold-dark));box-shadow:0 6px 18px rgba(201,168,76,.22);transition:transform .2s,box-shadow .2s}
+.footer-link:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(201,168,76,.32)}
+@media(max-width:1150px){.bottom-links{grid-template-columns:1fr;justify-items:center;padding-bottom:56px}.social-links,.creator-links,.footer-links{justify-self:center;align-items:center}.social-links{text-align:center}.creator-links{justify-content:center}}
+
+/* ══ GIF STUDIO ══ */
+#gifStudio{position:fixed;inset:0;z-index:3000;background:rgba(2,3,8,.97);backdrop-filter:blur(24px);display:none;align-items:center;justify-content:center;padding:12px}
+#gifStudio.open{display:flex}
+.gs-wrap{width:min(1140px,100%);height:min(92vh,740px);border-radius:22px;background:linear-gradient(135deg,rgba(10,0,26,.99),rgba(4,0,14,.99));border:1px solid rgba(255,255,255,.11);box-shadow:0 0 60px rgba(157,124,255,.16);display:grid;grid-template-columns:1fr 300px}
+@media(max-width:820px){.gs-wrap{grid-template-columns:1fr;height:auto;overflow-y:auto}}
+/* left panel */
+.gs-left{display:flex;flex-direction:column;padding:16px;gap:10px}
+.gs-head{display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.gs-head h2{font-family:'Cinzel',serif;font-size:15px;color:var(--gold-bright);letter-spacing:2px}
+.gs-x{width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.gs-x:hover{background:rgba(255,60,0,.5);color:#fff}
+/* canvas area */
+.gs-cv-wrap{flex:1;min-height:0;position:relative;border-radius:12px;overflow:hidden;background:repeating-conic-gradient(rgba(255,255,255,.05) 0% 25%,transparent 0% 50%) 0 0/14px 14px;border:1px solid rgba(255,255,255,.09);cursor:crosshair;user-select:none;touch-action:none}
+.gs-cv-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
+#gsBase{z-index:1}
+#gsBrush{z-index:3;display:none;inset:auto;width:auto;height:auto;pointer-events:none;image-rendering:auto;transform-origin:center center}
+/* crop selection box */
+#gsCropBox{position:absolute;z-index:4;border:2px solid #62e5ff;box-shadow:0 0 0 9999px rgba(0,0,0,.5);pointer-events:none;display:none}
+#gsCropBox.active{display:block;pointer-events:all;cursor:move}
+.gs-ch{position:absolute;width:14px;height:14px;background:#62e5ff;border:2px solid #fff;border-radius:3px}
+.gs-ch.tl{top:-7px;left:-7px;cursor:nwse-resize}
+.gs-ch.tr{top:-7px;right:-7px;cursor:nesw-resize}
+.gs-ch.bl{bottom:-7px;left:-7px;cursor:nesw-resize}
+.gs-ch.br{bottom:-7px;right:-7px;cursor:nwse-resize}
+/* cursor ring for brush */
+#gsCursor{position:absolute;border-radius:50%;border:2px solid #00ff88;pointer-events:none;display:none;z-index:10;transform:translate(-50%,-50%)}
+/* tabs */
+.gs-tabs{display:flex;gap:0;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.gs-tab{font-family:'Cinzel',serif;font-size:14px;letter-spacing:1.8px;text-transform:uppercase;padding:14px 20px;cursor:pointer;color:rgba(255,255,255,.42);border-bottom:3px solid transparent;margin-bottom:-1px;background:none;border-top:none;border-left:none;border-right:none;transition:all .2s;white-space:nowrap;font-weight:800}
+.gs-tab.act{color:#fff;border-bottom-color:#62e5ff}
+.gs-tab:hover{color:rgba(255,255,255,.65)}
+/* zoom row */
+.gs-zoom{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.gs-zoom input{flex:1;accent-color:#62e5ff}
+.gs-zoom span{font-size:10px;color:var(--muted);font-family:'Share Tech Mono',monospace;min-width:30px;text-align:right}
+/* right panel */
+.gs-right{padding:14px;display:flex;flex-direction:column;gap:9px;border-left:1px solid rgba(255,255,255,.07);overflow-y:auto}
+.gs-thumb{aspect-ratio:1/1;max-height:110px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.1);flex-shrink:0}
+.gs-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.gs-sec{display:flex;flex-direction:column;gap:6px}
+.gs-lbl{font-size:9px;letter-spacing:2px;color:rgba(255,223,150,.65);text-transform:uppercase;font-family:'Cinzel',serif}
+.gs-row{display:flex;gap:6px;flex-wrap:wrap}
+.gs-btn{padding:12px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:var(--text);font-size:14px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all .2s;white-space:nowrap}
+.gs-btn:hover{border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.1);transform:translateY(-1px)}
+.gs-btn.cta{background:linear-gradient(135deg,rgba(212,173,99,.92),rgba(255,214,138,.88));color:#0d0f16;border-color:rgba(255,214,138,.5);font-weight:700}
+.gs-btn.cta:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(212,173,99,.26)}
+.gs-btn.on{background:rgba(0,255,136,.14);border-color:rgba(0,255,136,.45);color:#7ef0be}
+.gs-btn.er{background:rgba(255,60,0,.14);border-color:rgba(255,60,0,.45);color:#ff8866}
+.gs-btn.sec{background:rgba(98,229,255,.1);border-color:rgba(98,229,255,.3);color:#62e5ff}
+.gs-btn.dng{background:rgba(255,60,0,.08);border-color:rgba(255,60,0,.25);color:#ff7755}
+.gs-btn:disabled{opacity:.32;cursor:not-allowed;transform:none!important}
+.gs-btn.big{font-size:16px;padding:16px 18px;width:100%;justify-content:center}
+.gs-div{height:1px;background:rgba(255,255,255,.07);margin:2px 0}
+.gs-swatches{display:flex;gap:6px}
+.gs-sw{width:28px;height:28px;border-radius:7px;border:2px solid rgba(255,255,255,.1);cursor:pointer;transition:border-color .2s}
+.gs-sw.act{border-color:#62e5ff;box-shadow:0 0 8px rgba(98,229,255,.35)}
+.gs-sw.transp{background:repeating-conic-gradient(rgba(255,255,255,.2) 0% 25%,rgba(0,0,0,.2) 0% 50%) 0 0/8px 8px}
+.gs-sw.black{background:#000}.gs-sw.white{background:#fff}
+.gs-st{padding:8px 10px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);font-size:11px;color:var(--muted);font-family:'Share Tech Mono',monospace;line-height:1.4;min-height:34px;word-wrap:break-word;overflow-wrap:break-word;max-width:100%;box-sizing:border-box}
+.gs-st.load{border-color:rgba(212,173,99,.3);color:var(--gold-2)}
+.gs-st.ok{border-color:rgba(0,255,136,.25);color:#7ef0be}
+.gs-st.err{border-color:rgba(255,111,97,.3);color:#ff8875}
+.gs-brush-sz{display:flex;align-items:center;gap:8px}
+.gs-brush-sz input{flex:1;accent-color:#62e5ff}
+.gs-brush-sz span{font-size:10px;color:var(--muted);font-family:'Share Tech Mono',monospace;min-width:28px;text-align:right}
+.gif-machine-modal{position:fixed;inset:0;z-index:2800;background:rgba(4,6,10,.82);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s}
+.gif-machine-modal.open{opacity:1;pointer-events:auto}
+.gif-machine-card{width:min(520px,100%);padding:26px;border-radius:26px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,rgba(16,18,28,.98),rgba(9,11,17,.99));box-shadow:0 24px 70px rgba(0,0,0,.58);display:flex;flex-direction:column;gap:14px;position:relative}
+.gif-machine-card h3{font-family:'Cinzel',serif;font-size:24px;letter-spacing:1px;color:var(--gold-bright)}
+.gif-machine-card p{font-size:15px;line-height:1.55;color:rgba(245,234,208,.82)}
+.gif-machine-card .v2-input{font-size:18px;padding:16px 18px}
+.gif-machine-actions{display:flex;gap:10px;flex-wrap:wrap}
+.gif-machine-note{font-size:12px;color:rgba(255,255,255,.45);font-family:'Inter',sans-serif;line-height:1.45}
+.gs-guide{margin-top:6px;padding:14px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);display:flex;flex-direction:column;gap:8px}
+.gs-guide-title{font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:rgba(255,223,150,.8);text-transform:uppercase}
+.gs-guide-copy{font-size:13px;line-height:1.6;color:rgba(245,234,208,.82);font-family:'Inter',sans-serif}
+
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#000}
+::-webkit-scrollbar-thumb{background:#ff3c0055;border-radius:2px}
+</style>
 </head>
 <body>
-  <p id="boot">Loading MoodyMights Museum...</p>
+<div id="bg"></div>
+<canvas id="bgCanvas"></canvas>
+
+<!-- SHARE OVERLAY -->
+<div class="share-overlay" id="shareOverlay">
+  <div class="share-title">📸 Share your collection</div>
+  <div class="share-canvas-wrap"><canvas id="shareCanvas"></canvas></div>
+  <div class="share-note">Right-click → Copy image, or download below</div>
+  <div class="share-actions">
+    <button class="ss-btn ss-dl" id="dlBtn">⬇ Download PNG</button>
+    <button class="ss-btn ss-close" onclick="document.getElementById('shareOverlay').classList.remove('open')">✕ Close</button>
+  </div>
+</div>
+
+<div class="gif-machine-modal" id="gifMachineModal">
+  <div class="gif-machine-card">
+    <button class="gs-x" style="position:absolute;top:16px;right:16px" onclick="closeGifMachine()">✕</button>
+    <h3>GIF Machine</h3>
+    <p>Enter your <strong>MoodyMights #</strong> to open GIF Studio directly with that NFT.</p>
+    <input class="v2-input" id="gifMachineToken" placeholder="MoodyMights #" inputmode="numeric" autocomplete="off">
+    <div class="gif-machine-actions">
+      <button class="v2-btn primary" onclick="submitGifMachine()">Open GIF Studio</button>
+      <button class="v2-btn ghost" onclick="closeGifMachine()">Cancel</button>
+    </div>
+    <div class="gif-machine-note">Example: if your NFT is MoodyMights #427, type <strong>427</strong> and we will load it directly into the editor.</div>
+  </div>
+</div>
+
+<button class="museum-exit" id="museumExit" onclick="exitMuseumFullscreen()">✕ Exit Museum</button>
+
+<div class="app">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">MOODY<span>MIGHTS</span> MUSEUM</div>
+    <div class="logo-line"></div>
+  </div>
+
+  <!-- TOOLBAR (v6) -->
+  <div class="toolbar">
+    <div class="controls">
+      <button class="vbtn active" id="vbtn-carousel" onclick="setView('carousel')">🏛 Moody Museum</button>
+      <button class="vbtn" id="vbtn-my" onclick="setView('my')">🖼 My Collection</button>
+      <button class="vbtn" id="vbtn-gifmachine" onclick="openGifMachine()">✂️ Gif Machine</button>
+      <button class="vbtn" id="vbtn-auto" onclick="setView('auto')">▶ Auto</button>
+      <button class="vbtn" id="vbtn-4" onclick="setView(4)">4</button>
+      <button class="vbtn" id="vbtn-6" onclick="setView(6)">6</button>
+      <button class="vbtn" id="vbtn-10" onclick="setView(10)">10</button>
+      <button class="vbtn" id="vbtn-12" onclick="setView(12)">12</button>
+      <button class="btn-share" id="shareBtn" onclick="takeScreenshot()">📸 Share</button>
+    </div>
+  </div>
+
+  <!-- MY COLLECTION PANEL (v2 system — visible only in my/4/6/10/12/auto views) -->
+  <div class="collection-panel" id="collectionPanel">
+
+    <!-- Header + wallet scanner -->
+    <div class="my-col-header">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div>
+          <div class="my-col-title">My Collection</div>
+          <div class="my-col-sub">Scan your wallet on Ethereum &amp; Abstract</div>
+        </div>
+        <div class="chain-btns">
+          <button class="v2-chain-btn clear" id="btnClearEth" onclick="clearChain('ethereum')">Clear ETH</button>
+          <button class="v2-chain-btn clear" id="btnClearAbs" onclick="clearChain('abstract')">Clear Abstract</button>
+          <button class="v2-chain-btn clear" id="btnClearAll" onclick="clearAll()">Clear All</button>
+        </div>
+      </div>
+      <div class="scan-row" style="margin-top:14px">
+        <input class="v2-input" id="walletAddress" placeholder="Wallet address (0x...)" autocomplete="off">
+        <button class="v2-btn primary" id="btnScan" onclick="scanWallet()">Scan Wallet</button>
+      </div>
+      <!-- Status -->
+      <div class="v2-status" id="v2Status" style="margin-top:10px">
+        <div class="status-dot"></div>
+        <div class="status-copy" id="v2StatusText"><strong>Ready.</strong> Enter a wallet address and press Scan Wallet.</div>
+      </div>
+    </div>
+
+    <!-- Collection toolbar -->
+    <div class="col-toolbar">
+      <div class="col-toolbar-left">
+        <button class="v2-chip active" data-chain="all" onclick="setChainFilter(this,'all')">All Chains</button>
+        <button class="v2-chip" data-chain="ethereum" onclick="setChainFilter(this,'ethereum')">Ethereum</button>
+        <button class="v2-chip" data-chain="abstract" onclick="setChainFilter(this,'abstract')">Abstract</button>
+      </div>
+      <div class="col-toolbar-right">
+        <div class="search-wrap">
+          <input class="v2-input" style="padding:11px 16px;font-size:13px" id="v2Search" placeholder="Search by name or ID" oninput="refreshCurrentView()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Gallery -->
+    <div class="gallery-shell">
+      <div class="v2-grid" id="v2Grid"></div>
+    </div>
+
+  </div>
+
+  <!-- MUSEUM / CAROUSEL container -->
+  <div id="container"></div>
+
+  <!-- BOTTOM LINKS -->
+  <div class="bottom-links">
+    <div class="social-links">
+      <div class="social-title">Moody Network</div>
+      <div class="social-grid">
+        <a class="social-link" href="https://x.com/AlexMaze_" target="_blank">CEO · Alex Maze</a>
+        <a class="social-link" href="https://x.com/Nedi_Games" target="_blank">CEO · Nedi</a>
+        <a class="social-link" href="https://x.com/Deepak_Khatrii" target="_blank">Community · Deepak</a>
+        <a class="social-link" href="https://x.com/Meta_Tomix" target="_blank">Ambassador · Meta-Tomix</a>
+        <a class="social-link" href="https://x.com/GMB_AOB" target="_blank">Ambassador · GMB</a>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a class="footer-link" href="https://moodymadness.com/game" target="_blank">🎮 Moody Madness Game</a>
+      <a class="footer-link" href="https://moodymadness.com/moody-drops" target="_blank">⚙ Moody Drops</a>
+      <a class="footer-link" href="https://opensea.io/es/collection/moody-mights" target="_blank">🛒 OpenSea Collection</a>
+    </div>
+    <div class="creator-links">
+      <a class="social-link" href="https://x.com/Jordan23Zk" target="_blank">Creator · Jordan23Zk · Capo Mafia</a>
+    </div>
+  </div>
+</div>
+
+<!-- V6 MODAL (for carousel / museum cards) -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeMO(event)">
+  <div class="v6-modal">
+    <button class="modal-close" onclick="closeM()">✕</button>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- V2 MODAL (for My Collection cards) -->
+<div class="v2-modal" id="v2Modal">
+  <div class="v2-modal-card">
+    <button class="v2-close-btn" onclick="closeV2Modal()">✕</button>
+    <div class="v2-modal-grid" id="v2ModalBody"></div>
+  </div>
+</div>
+
+<script>
+// ══ CONSTANTS ══
+const ETH_CONTRACT='0x1d4c28d4d484f494f58869192bc8de56c384c0f0';
+const ABSTRACT_CONTRACT='0x35ffe9d966e35bd1b0e79f0d91e438701ea1c644';
+const MOODY_IMAGE_CDN='https://cryptomazeapp.fra1.digitaloceanspaces.com/moodymights/png';
+const SLUG='moody-mights';
+const ALCHEMY_PROXY='/.netlify/functions/alchemy';
+const MOODY_COLLECTION_URL='https://opensea.io/es/collection/moody-mights';
+const ABSTRACT_COLLECTION_URL='https://opensea.io/es/collection/moody-archives';
+const FEATURED_STREAM_IDS=['319','427','505','768','796','898','950','991','1002','1035','1593','2110','2456'];
+const MIN_STREAM_TOKEN=101,MAX_STREAM_TOKEN=2500,RANDOM_STREAM_COUNT=6,FULLSCREEN_RANDOM_COUNT=22;
+const LARGE_COLLECTION_THRESHOLD=15;
+const STORAGE_KEY='moodyMuseumHybridV1';
+const STREAM_KEY='moodyMuseumHybridStream';
+const ALCHEMY_KEY_STORAGE='moodyMuseumAlchemyKey';
+const OPENSEA_API_KEY=(globalThis.MOODY_OPENSEA_KEY||localStorage.getItem('moodyOpenseaKey')||'').trim();
+
+// ══ STATE ══
+let allNFTs=[];
+let streamNFTs=[];
+let activeChainFilter='all';
+let curView='carousel';
+let museumFullscreen=false;
+let modalAnimId=0;
+let currentPreviewNFT=null;
+let currentV2NFT=null;
+let FLOOR_ETH=null,ETH_USD=null;
+const cardStates=new Map();
+let v2RenderJob=0;
+function isMobileLite(){
+  return (window.matchMedia&&window.matchMedia('(max-width: 820px), (pointer: coarse)').matches)||((navigator.maxTouchPoints||0)>0);
+}
+
+// Load from storage
+try{allNFTs=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');}catch{allNFTs=[];}
+try{streamNFTs=JSON.parse(localStorage.getItem(STREAM_KEY)||'[]');}catch{streamNFTs=[];}
+
+function save(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(allNFTs));
+  localStorage.setItem(STREAM_KEY,JSON.stringify(streamNFTs));
+}
+
+// ══ HELPERS ══
+const $=id=>document.getElementById(id);
+function validWallet(v){return /^0x[a-fA-F0-9]{40}$/.test(String(v||'').trim());}
+function normalizeImage(url){
+  const s=String(url||'').trim();
+  if(!s)return '';
+  if(s.startsWith('ipfs://'))return s.replace('ipfs://','https://cloudflare-ipfs.com/ipfs/');
+  // Force https
+  if(s.startsWith('http://'))return s.replace('http://','https://');
+  return s;
+}
+function tokenToStr(v){if(typeof v==='number')return String(v);if(!v)return '';const s=String(v);if(s.startsWith('0x')){try{return BigInt(s).toString(10);}catch{return s}}return s;}
+function nftKey(n){return `${String(n.chain||n.contractAddress||'').toLowerCase()}:${String(n.id||'')}`;}
+function isAbstract(n){return String(n.contractAddress||n.chain||'').toLowerCase()===ABSTRACT_CONTRACT.toLowerCase()||n.chain==='abstract';}
+function fmtAddr(a){return a?a.substring(0,6)+'...'+a.substring(a.length-4):'?'}
+function fmtDate(ts){return ts?new Date(ts*1000).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):''}
+const hex=a=>Math.floor(Math.max(0,Math.min(1,a))*255).toString(16).padStart(2,'0');
+const PCOLS=['#ff3c00','#ffc930','#fff','#cc66ff','#00ffcc','#ff69b4','#00aaff','#aaff00'];
+function mkP(W,H,rand){return{x:Math.random()*W,y:rand?Math.random()*H:H+5,vx:(Math.random()-.5)*1.2,vy:-(Math.random()*1.8+.2),r:Math.random()*3+.4,life:rand?Math.random()*.5:0,max:Math.random()*.7+.25,c:PCOLS[Math.floor(Math.random()*PCOLS.length)]}}
+function drawStar4(ctx,cx,cy,o,i){ctx.beginPath();for(let p=0;p<8;p++){const a=p*Math.PI/4-Math.PI/4,r=p%2===0?o:i;p===0?ctx.moveTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r):ctx.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r)}ctx.closePath();ctx.fill();}
+
+// ══ IMAGE CANDIDATES ══
+function imageCandidates(raw,contractAddress=ETH_CONTRACT){
+  const tid=String(raw.tokenId||raw.id?.tokenId||raw.token_id||raw.identifier||'');
+  const moodyFB=tid&&String(contractAddress).toLowerCase()===ETH_CONTRACT.toLowerCase()?`${MOODY_IMAGE_CDN}/${tid}.png`:'';
+  return [
+    moodyFB,  // own CDN first — always CORS-safe, avoids broken external sources
+    raw.image?.pngUrl,raw.image?.originalUrl,raw.image?.cachedUrl,raw.image?.thumbnailUrl,
+    raw.image_url,raw.display_image_url,
+    raw.raw?.metadata?.image,raw.raw?.metadata?.image_url,
+    raw.metadata?.image,raw.media?.[0]?.gateway,raw.media?.[0]?.thumbnail,raw.media?.[0]?.raw
+  ].map(normalizeImage).filter(Boolean);
+}
+function normalizeTraits(list){return(list||[]).map(t=>({type:t.trait_type||t.type||t.key||'Trait',value:t.value??t.trait_value??'—',rarity:t.trait_count||''}));}
+
+// ══ NORMALIZE NFT ══
+function normalizeNFT(raw,chain){
+  const contractAddress=chain==='abstract'?ABSTRACT_CONTRACT:ETH_CONTRACT;
+  const id=tokenToStr(raw.tokenId||raw.id?.tokenId||raw.token_id||raw.identifier||'');
+  const candidates=imageCandidates(raw,contractAddress);
+  const fallbackName=chain==='abstract'?`Abstract Racer #${id}`:`Moody Might #${id}`;
+  return {
+    id,name:raw.name||fallbackName,
+    image:candidates[0]||'',imageCandidates:candidates,
+    description:raw.description||raw.raw?.metadata?.description||'',
+    traits:normalizeTraits(raw.raw?.metadata?.attributes||raw.attributes||raw.traits||[]),
+    chain,contractAddress,price:'',source:'alchemy'
+  };
+}
+function mergeNFTs(items){
+  const map=new Map();
+  for(const nft of allNFTs)map.set(nftKey(nft),nft);
+  for(const nft of items){if(nft?.id)map.set(nftKey(nft),nft);}
+  allNFTs=[...map.values()];save();
+}
+function findMoodyByTokenId(id){
+  const sid=String(id||'').trim();
+  if(!sid)return null;
+  return [...allNFTs,...streamNFTs].find(n=>String(n?.id)===sid&&String(n?.contractAddress||'').toLowerCase()===ETH_CONTRACT.toLowerCase())||null;
+}
+function wireImageFallback(imgEl,nft){
+  if(!imgEl||imgEl.tagName!=='IMG'||imgEl.dataset.fallbackWired==='1')return;
+  imgEl.dataset.fallbackWired='1';
+  const tried=new Set();
+  const candidates=[...(nft?.imageCandidates||[]),nft?.image].filter(Boolean);
+  let idx=0;
+  const advance=()=>{while(idx<candidates.length&&tried.has(candidates[idx]))idx++;if(idx>=candidates.length){imgEl.onerror=null;return;}const next=candidates[idx++];tried.add(next);imgEl.src=next.includes('?')?`${next}&cb=${Date.now()}`:`${next}?cb=${Date.now()}`;};
+  imgEl.onerror=advance;
+}
+
+// ══ V2 STATUS BAR ══
+function setV2Status(msg,type=''){const bar=$('v2Status');bar.className='v2-status'+(type?' '+type:'');$('v2StatusText').innerHTML=msg;}
+function setLoading(on){
+  document.body.classList.toggle('loading',on);
+  const btnScan=$('btnScan');if(btnScan)btnScan.disabled=on;
+}
+
+// ══ FETCH ══
+async function fetchAlchemyJson(params,key=''){
+  const qs=new URLSearchParams(params).toString();
+  if(key){
+    const network=params.network||'eth-mainnet';
+    if(params.action==='wallet'){
+      const suffix=params.pageKey?`&pageKey=${encodeURIComponent(params.pageKey)}`:'';
+      const url=`https://${network}.g.alchemy.com/nft/v3/${key}/getNFTsForOwner?owner=${encodeURIComponent(params.owner)}&contractAddresses[]=${encodeURIComponent(params.contractAddress)}&withMetadata=true&pageSize=${encodeURIComponent(params.pageSize||50)}${suffix}`;
+      const r=await fetch(url);
+      if(!r.ok)throw new Error(`Could not load NFTs (${r.status})`);
+      return await r.json();
+    }
+    if(params.action==='metadata'){
+      const url=`https://${network}.g.alchemy.com/nft/v3/${key}/getNFTMetadata?contractAddress=${encodeURIComponent(params.contractAddress)}&tokenId=${encodeURIComponent(params.tokenId)}&refreshCache=false`;
+      const r=await fetch(url);
+      if(!r.ok)throw new Error(`Alchemy error ${r.status}`);
+      return await r.json();
+    }
+  }
+  const proxyUrl=`${ALCHEMY_PROXY}?${qs}`;
+  const r=await fetch(proxyUrl,{headers:{accept:'application/json'}});
+  const text=await r.text();
+  let data={};
+  try{data=text?JSON.parse(text):{};}catch{data={error:text||'Invalid server response'};}
+  if(!r.ok)throw new Error(data.error||`Alchemy proxy error ${r.status}`);
+  return data;
+}
+
+async function fetchWalletByContract(owner,key,network,contract,chain){
+  let pageKey='';const out=[];
+  do{
+    const data=await fetchAlchemyJson({action:'wallet',owner,contractAddress:contract,network,pageSize:50,pageKey},key);
+    out.push(...(data.ownedNfts||[]).map(n=>normalizeNFT(n,chain)));
+    pageKey=data.pageKey||'';
+  }while(pageKey&&out.length<300);
+  return out;
+}
+async function fetchAlchemyNFT(id){
+  const key=localStorage.getItem(ALCHEMY_KEY_STORAGE)||'';
+  return normalizeNFT(await fetchAlchemyJson({action:'metadata',contractAddress:ETH_CONTRACT,tokenId:id,network:'eth-mainnet'},key),'ethereum');
+}
+
+// ══ STREAM NFTs (for carousel) ══
+function pickRandomMuseumIds(count,excludedIds=[]){
+  const picked=[];const excluded=new Set(excludedIds.map(String));
+  while(picked.length<count){const id=String(Math.floor(Math.random()*(MAX_STREAM_TOKEN-MIN_STREAM_TOKEN+1))+MIN_STREAM_TOKEN);if(parseInt(id,10)<=100||excluded.has(id)||picked.includes(id))continue;picked.push(id);}
+  return picked;
+}
+async function fetchStreamNFTs(){
+  const ids=[...FEATURED_STREAM_IDS,...pickRandomMuseumIds(RANDOM_STREAM_COUNT,FEATURED_STREAM_IDS)];
+  const res=await Promise.allSettled(ids.map(id=>fetchAlchemyNFT(id)));
+  const pool=res.filter(r=>r.status==='fulfilled').map(r=>r.value).filter(n=>n.id&&n.image&&parseInt(n.id,10)>100);
+  if(pool.length){
+    streamNFTs=pool;
+    save();
+    if(curView==='carousel'||curView==='auto')renderAll();
+  }
+}
+async function expandFullscreenMuseumPool(){
+  if(!museumFullscreen)return;
+  const excludedIds=streamNFTs.map(n=>n.id);
+  const randomIds=pickRandomMuseumIds(FULLSCREEN_RANDOM_COUNT,excludedIds);
+  const res=await Promise.allSettled(randomIds.map(id=>fetchAlchemyNFT(id)));
+  const extra=res.filter(r=>r.status==='fulfilled').map(r=>r.value).filter(n=>n.id&&n.image&&parseInt(n.id,10)>100);
+  streamNFTs=[...streamNFTs,...extra];save();
+  if(curView==='carousel'&&museumFullscreen)renderAll();
+}
+function getMuseumItems(){
+  const base=streamNFTs.length?streamNFTs:allNFTs.filter(n=>!isAbstract(n));
+  if(!museumFullscreen)return base;
+  return [...new Map([...base,...allNFTs.filter(n=>!isAbstract(n))].map(n=>[nftKey(n),n])).values()];
+}
+// Try fetching stream on load via proxy, falling back to browser key if present
+fetchStreamNFTs().catch(()=>{});
+
+// ══ V2 GRID RENDERING ══
+function getFilteredV2(){
+  const search=$('v2Search').value.trim().toLowerCase();
+  const sort=$('v2Sort')?.value||'chain';
+  let items=allNFTs.filter(n=>activeChainFilter==='all'||n.chain===activeChainFilter);
+  if(search)items=items.filter(n=>`${n.name} ${n.id} ${n.chain}`.toLowerCase().includes(search));
+  items=[...items];
+  if(sort==='id-asc')items.sort((a,b)=>Number(a.id)-Number(b.id));
+  else if(sort==='id-desc')items.sort((a,b)=>Number(b.id)-Number(a.id));
+  else if(sort==='name')items.sort((a,b)=>String(a.name).localeCompare(String(b.name)));
+  else items.sort((a,b)=>String(a.chain).localeCompare(String(b.chain))||Number(a.id)-Number(b.id));
+  return items;
+}
+function isCardInViewport(el,margin=220){
+  if(!el)return false;
+  const r=el.getBoundingClientRect();
+  return r.bottom>=-margin&&r.right>=-margin&&r.top<=(window.innerHeight||document.documentElement.clientHeight)+margin&&r.left<=(window.innerWidth||document.documentElement.clientWidth)+margin;
+}
+function renderV2Grid(cols){
+  const grid=$('v2Grid');
+  // apply column count if specified (4/6/10/12 views)
+  if(cols&&[4,6,10,12].includes(cols)){
+    grid.className='v2-grid v2-grid-'+cols;
+  } else {
+    grid.className='v2-grid';
+  }
+  v2RenderJob++;
+  const renderJob=v2RenderJob;
+  const items=getFilteredV2();
+  const reduceVisualFx=items.length>=18;
+  const disableMotionFx=items.length>=36;
+  const massLiteFx=items.length>=72;
+  const ultraLiteFx=items.length>=120;
+  const batchSize=ultraLiteFx?10:massLiteFx?16:28;
+  grid.innerHTML='';
+  cardStates.forEach((_,card)=>{if(card.classList&&card.classList.contains('v2-card'))cardStates.delete(card);});
+  if(!items.length){
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><h3>Ready for your first scan</h3><p>Enter a wallet address above and load Ethereum, Abstract, or both chains at once using the Scan Wallet button.</p></div>`;
+    updateV2Stats();return;
+  }
+  let idx=0;
+  function appendBatch(){
+    if(renderJob!==v2RenderJob)return;
+    const frag=document.createDocumentFragment();
+    const end=Math.min(items.length,idx+batchSize);
+    for(;idx<end;idx++){
+      const nft=items[idx],i=idx;
+    const card=document.createElement('article');
+    card.className='v2-card';
+    if(reduceVisualFx)card.classList.add('fx-lite');
+    if(disableMotionFx)card.classList.add('fx-static');
+    if(massLiteFx)card.classList.add('fx-mass');
+    if(ultraLiteFx)card.classList.add('fx-ultra');
+    card.style.animationDelay=(i*0.04)+'s';
+    const imgSrc=nft.image||'';
+    card.innerHTML=`
+      <div class="v2-card-aura"></div>
+      <div class="v2-card-rb"></div>
+      <div class="v2-card-media">
+        ${nft.image?`<img src="${nft.image}" alt="${nft.name}">`:`<div class="v2-card-fallback">No Image</div>`}
+        <div class="v2-card-holo"></div>
+        <div class="v2-scan"></div>
+        <div class="v2-card-rgb"><div class="v2-card-r" style="background-image:url('${imgSrc}')"></div><div class="v2-card-b" style="background-image:url('${imgSrc}')"></div></div>
+        <div class="v2-card-glow"></div>
+        <canvas class="v2-card-pc"></canvas>
+      </div>
+      <div class="v2-card-content">
+        <div class="v2-card-head">
+          <div>
+            <div class="v2-card-title">${nft.name}</div>
+            <div class="v2-card-sub">${nft.chain==='abstract'?'Abstract Chain':'Ethereum Mainnet'}</div>
+          </div>
+          <div class="chain-badge ${nft.chain}">${nft.chain}</div>
+        </div>
+        <div class="v2-card-meta">
+          <div class="v2-card-id">#${nft.id}</div>
+          <div>${isAbstract(nft)?'Abstract':'Ethereum'}</div>
+        </div>
+        <button class="v2-card-action">Open details</button>
+      </div>`;
+    const img=card.querySelector('img');
+    if(img)wireImageFallback(img,nft);
+    const holo=card.querySelector('.v2-card-holo');
+    if(holo){
+      holo.style.setProperty('--vhue',String((i*37)%360));
+      holo.style.setProperty('--vang',`${118+(i%5)*9}deg`);
+      holo.style.setProperty('--vmx',`${42+(i%4)*6}%`);
+      holo.style.setProperty('--vmy',`${28+(i%5)*8}%`);
+    }
+    card.querySelector('.v2-card-action').onclick=(e)=>{e.stopPropagation();openV2Modal(nft);};
+    card.querySelector('.v2-card-media').onclick=()=>openV2Modal(nft);
+    const shouldAttach=!ultraLiteFx&&( !massLiteFx || i<36 || isCardInViewport(card,400));
+    if(shouldAttach)requestAnimationFrame(()=>{if(renderJob===v2RenderJob)attachCard(card,nft.image||'',i/Math.max(1,items.length),items.length);});
+    frag.appendChild(card);
+    }
+    grid.appendChild(frag);
+    if(idx<items.length)setTimeout(appendBatch,0);
+  }
+  appendBatch();
+  updateV2Stats();
+}
+function updateV2Stats(){
+  // Elements removed from compact panel - just update status text count
+  const ethCount=allNFTs.filter(n=>n.chain==='ethereum').length;
+  const absCount=allNFTs.filter(n=>n.chain==='abstract').length;
+  // update filter buttons label if they exist
+  const filterEl=$('v2StatFilter');if(filterEl)filterEl.textContent=activeChainFilter==='all'?'All':activeChainFilter==='ethereum'?'Ethereum':'Abstract';
+}
+function setChainFilter(btn,chain){
+  document.querySelectorAll('[data-chain]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  activeChainFilter=chain;
+  refreshCurrentView();
+}
+
+// ══ V2 WALLET SCAN ══
+function getAlchemyKey(){
+  const input=$('alchemyKey');
+  return ((input&&input.value)||localStorage.getItem(ALCHEMY_KEY_STORAGE)||'').trim();
+}
+async function scanWallet(){
+  const owner=$('walletAddress').value.trim();
+  const key=getAlchemyKey();
+  if(!validWallet(owner))return setV2Status('<strong>Invalid wallet.</strong> Enter a valid EVM address.','error');
+  setLoading(true);
+  setV2Status('<strong>Scanning Ethereum &amp; Abstract...</strong> Loading MoodyMights across both chains.','loading');
+  try{
+    const [ethItems,absItems]=await Promise.all([
+      fetchWalletByContract(owner,key,'eth-mainnet',ETH_CONTRACT,'ethereum'),
+      fetchWalletByContract(owner,key,'abstract-mainnet',ABSTRACT_CONTRACT,'abstract')
+    ]);
+    mergeNFTs([...ethItems,...absItems]);
+    refreshCurrentView();
+    setV2Status(`<strong>Gallery ready.</strong> Loaded ${allNFTs.length} NFTs across Ethereum and Abstract.`,allNFTs.length?'ok':'');
+  }catch(err){setV2Status(`<strong>Load failed.</strong> ${err.message}`,'error');}
+  setLoading(false);
+}
+async function loadChain(chain){
+  const owner=$('walletAddress').value.trim();
+  const key=getAlchemyKey();
+  if(!validWallet(owner))return setV2Status('<strong>Invalid wallet.</strong> Enter a valid EVM address.','error');
+  setV2Status(`<strong>Loading ${chain==='ethereum'?'Ethereum':'Abstract'} NFTs...</strong>`,'loading');
+  try{
+    const network=chain==='ethereum'?'eth-mainnet':'abstract-mainnet';
+    const contract=chain==='ethereum'?ETH_CONTRACT:ABSTRACT_CONTRACT;
+    const items=await fetchWalletByContract(owner,key,network,contract,chain);
+    mergeNFTs(items);
+    refreshCurrentView();
+    setV2Status(`<strong>Loaded ${items.length} ${chain==='ethereum'?'Ethereum':'Abstract'} NFTs.</strong>`,'ok');
+  }catch(err){setV2Status(`<strong>Load failed.</strong> ${err.message}`,'error');}
+}
+function clearChain(chain){
+  allNFTs=allNFTs.filter(n=>n.chain!==chain);
+  save();
+  refreshCurrentView();
+  setV2Status(`<strong>${chain==='ethereum'?'Ethereum':'Abstract'} NFTs cleared.</strong>`,'ok');
+}
+function clearAll(){
+  allNFTs=[];
+  save();
+  refreshCurrentView();
+  setV2Status('<strong>Collection cleared.</strong>','ok');
+}
+// Re-render whatever view is currently active
+function refreshCurrentView(){
+  if(curView==='my'){
+    renderV2Grid();
+  } else if(typeof curView==='number'){
+    renderV2Grid(curView);
+  } else if(curView==='auto'){
+    renderAll();
+  }
+  // carousel doesn't use allNFTs directly so no refresh needed
+}
+function saveKeys(){
+  const alchemyEl=$('alchemyKey');
+  if(alchemyEl)localStorage.setItem(ALCHEMY_KEY_STORAGE,alchemyEl.value.trim());
+  const km=$('keysModal');
+  if(km)km.classList.remove('open');
+  setV2Status('<strong>Settings saved.</strong> Ready to scan.','ok');
+  if(!streamNFTs.length)fetchStreamNFTs().catch(()=>{});
+}
+
+// ══ V2 MODAL ══
+function openV2Modal(nft){currentV2NFT=nft;
+  const imgSrc=nft.image||'';
+  $('v2ModalBody').innerHTML=`
+    <div class="v2-modal-media">
+      ${nft.image?`<img src="${nft.image}" alt="${nft.name}">`:`<div class="v2-card-fallback" style="height:100%">No Image</div>`}
+      <div class="v2m-holo" id="v2mHolo"></div>
+      <div class="v2m-rb"></div>
+      <div class="v2m-sw"><div class="v2m-sc"></div></div>
+      <div class="v2m-gl"><div class="v2m-gl-r" id="v2mGlR" style="background-image:url('${imgSrc}')"></div><div class="v2m-gl-b" id="v2mGlB" style="background-image:url('${imgSrc}')"></div></div>
+      <canvas class="v2m-spk" id="v2mSpk"></canvas>
+      <canvas class="v2m-pc" id="v2mPc"></canvas>
+      <div class="v2m-tv"></div>
+    </div>
+    <div class="v2-modal-copy">
+      <h3>${nft.name}</h3>
+      <p>${nft.description||'No description available for this NFT.'}</p>
+      <div class="v2-meta-pills">
+        <div class="v2-meta-pill">Chain: ${nft.chain}</div>
+        <div class="v2-meta-pill">Token ID: #${nft.id}</div>
+        <div class="v2-meta-pill">Contract: ${(nft.contractAddress||'').slice(0,8)}...${(nft.contractAddress||'').slice(-4)}</div>
+      </div>
+      <div class="v2-traits">
+        ${(nft.traits||[]).length
+          ?(nft.traits||[]).map(t=>`<div class="v2-trait"><label>${t.type}</label><strong>${t.value}</strong></div>`).join('')
+          :'<div class="v2-trait"><label>Status</label><strong>No trait data</strong></div>'}
+      </div>
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+        <a class="m-link" href="${isAbstract(nft)?`https://opensea.io/item/abstract/${ABSTRACT_CONTRACT}/${nft.id}`:`https://opensea.io/assets/ethereum/${ETH_CONTRACT}/${nft.id}`}" target="_blank">↗ View on OpenSea</a>
+        <button class="m-link" style="border-color:rgba(98,229,255,.3);color:#62e5ff;background:rgba(98,229,255,.06)" onclick="openGifStudio(currentV2NFT)">✂️ GIF Studio</button>
+      </div>
+    </div>`;
+  $('v2Modal').classList.add('open');
+  const wrap=$('v2ModalBody')?.querySelector('.v2-modal-media');
+  const holo=$('v2mHolo'),spkC=$('v2mSpk'),pcC=$('v2mPc');
+  if(!wrap)return;
+  wireImageFallback(wrap.querySelector('img'),nft);
+  let vmSparkles=[];
+  function initV2ModalCanvases(){
+    const W=wrap.offsetWidth||340,H=wrap.offsetHeight||340;
+    if(spkC){spkC.width=W;spkC.height=H;vmSparkles=Array.from({length:14},()=>({x:Math.random()*W,y:Math.random()*H,hue:Math.random()*360,spd:Math.random()*.06+.02,phase:Math.random()*Math.PI*2,maxSz:Math.random()*6+1.5}));}
+    if(pcC)pcC.width=W,pcC.height=H;
+  }
+  const modalImg=wrap.querySelector('img');
+  if(modalImg&&modalImg.tagName==='IMG'){modalImg.complete?initV2ModalCanvases():modalImg.onload=initV2ModalCanvases;}else initV2ModalCanvases();
+  let vmParts=pcC?Array.from({length:28},()=>mkP(pcC.width||340,pcC.height||340,true)):[];
+  let vmHue=0;
+  cancelAnimationFrame(modalAnimId);
+  function v2ModalTick(ts){
+    const t=ts*.001;vmHue=(vmHue+.15)%360;
+    if(holo){const ang=115+Math.sin(t*.5)*40;holo.style.setProperty('--vmang',ang+'deg');holo.style.setProperty('--vmhue',vmHue+'');const mx=.5+Math.sin(t*.6)*.3,my=.5+Math.cos(t*.45)*.3;holo.style.setProperty('--vmmx',(mx*100)+'%');holo.style.setProperty('--vmmy',(my*100)+'%');}
+    if(spkC&&spkC.width>0){const ctx=spkC.getContext('2d'),W=spkC.width,H=spkC.height;ctx.clearRect(0,0,W,H);for(const sp of vmSparkles){sp.phase+=sp.spd;const a=Math.abs(Math.sin(sp.phase))*.9,sz=1.2+Math.abs(Math.sin(sp.phase*.7))*sp.maxSz,h2=(sp.hue+vmHue)%360;ctx.beginPath();ctx.arc(sp.x,sp.y,sz*3.5,0,Math.PI*2);ctx.fillStyle=`hsla(${h2},100%,85%,${a*.13})`;ctx.fill();ctx.fillStyle=`hsla(${h2},100%,96%,${a})`;drawStar4(ctx,sp.x,sp.y,sz,sz*.22);}}
+    if(pcC&&pcC.width>0){const ctx=pcC.getContext('2d'),W=pcC.width,H=pcC.height;ctx.clearRect(0,0,W,H);for(const p of vmParts){p.x+=p.vx;p.y+=p.vy;p.life+=.007;if(p.life>p.max||p.y<-8)Object.assign(p,mkP(W,H,false));const a=Math.sin(p.life/p.max*Math.PI);ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.c+hex(a*.9);ctx.fill();ctx.beginPath();ctx.arc(p.x,p.y,p.r*4,0,Math.PI*2);ctx.fillStyle=p.c+hex(a*.14);ctx.fill();}}
+    modalAnimId=requestAnimationFrame(v2ModalTick);
+  }
+  modalAnimId=requestAnimationFrame(v2ModalTick);
+  wrap.addEventListener('mousemove',e=>{const r=wrap.getBoundingClientRect();const mx=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));const my=Math.max(0,Math.min(1,(e.clientY-r.top)/r.height));if(holo){holo.style.setProperty('--vmmx',(mx*100)+'%');holo.style.setProperty('--vmmy',(my*100)+'%');}});
+}
+function closeV2Modal(){cancelAnimationFrame(modalAnimId);$('v2Modal').classList.remove('open');}
+$('v2Modal').onclick=e=>{if(e.target===$('v2Modal'))closeV2Modal();};
+const _keysModal=$('keysModal');
+if(_keysModal)_keysModal.onclick=e=>{if(e.target===_keysModal)_keysModal.classList.remove('open');};
+
+// ══ MUSEUM CARD BUILDER ══
+function buildCard(nft,i=0,inCarousel=false,fromCollection=false,totalCount=1){
+  const outer=document.createElement('div');
+  outer.className='card-outer'+(inCarousel?' in-carousel':'');
+
+  const card=document.createElement('div');
+  card.className='card';
+
+  const aura=document.createElement('div');
+  aura.className='aura';
+
+  const imgWrap=document.createElement('div');
+  imgWrap.className='img-wrap';
+  if(nft.image){
+    const img=document.createElement('img');
+    img.className='nft-img';
+    img.alt=nft.name||`NFT #${nft.id}`;
+    img.loading='lazy';
+    img.src=nft.image;
+    wireImageFallback(img,nft);
+    imgWrap.appendChild(img);
+  }else{
+    const fallback=document.createElement('div');
+    fallback.className='nft-img';
+    fallback.style.display='flex';
+    fallback.style.alignItems='center';
+    fallback.style.justifyContent='center';
+    fallback.style.background='linear-gradient(135deg,#0d001f,#1a0040)';
+    fallback.style.color='rgba(255,255,255,.28)';
+    fallback.style.fontSize='10px';
+    fallback.textContent='NO IMAGE';
+    imgWrap.appendChild(fallback);
+  }
+
+  const holo=document.createElement('div');
+  holo.className='holo-layer';
+  const rb=document.createElement('div');
+  rb.className='rb';
+  const sw=document.createElement('div');
+  sw.className='sw';
+  sw.innerHTML='<div class="sc"></div>';
+  const gl=document.createElement('div');
+  gl.className='gl';
+  gl.innerHTML='<div class="gl-r"></div><div class="gl-b"></div>';
+  const spk=document.createElement('canvas');
+  spk.className='spk';
+  const pc=document.createElement('canvas');
+  pc.className='pc';
+  imgWrap.appendChild(holo);
+  imgWrap.appendChild(rb);
+  imgWrap.appendChild(sw);
+  imgWrap.appendChild(gl);
+  imgWrap.appendChild(spk);
+  imgWrap.appendChild(pc);
+
+  const info=document.createElement('div');
+  info.className='info';
+  const infoLine=document.createElement('div');
+  infoLine.className='info-line';
+  const name=document.createElement('div');
+  name.className='nft-name';
+  name.textContent=nft.name||`NFT #${nft.id}`;
+  const priceWrap=document.createElement('div');
+  if(nft.price){
+    priceWrap.className='price-tag';
+    priceWrap.innerHTML=`<span class="ptext">${nft.price}</span>`;
+  }else{
+    priceWrap.className='price-tag';
+    priceWrap.style.opacity='.72';
+    priceWrap.innerHTML=`<span class="ptext">#${nft.id}</span>`;
+  }
+  info.appendChild(infoLine);
+  info.appendChild(name);
+  info.appendChild(priceWrap);
+
+  card.appendChild(imgWrap);
+  card.appendChild(info);
+
+  if(fromCollection){
+    const rm=document.createElement('button');
+    rm.className='btn-rm';
+    rm.type='button';
+    rm.textContent='✕';
+    rm.onclick=(e)=>{e.stopPropagation();allNFTs=allNFTs.filter(x=>nftKey(x)!==nftKey(nft));save();refreshCurrentView();};
+    card.appendChild(rm);
+  }
+
+  const open=()=>{if(curView==='carousel')openMuseumModal(nft);else openV2Modal(nft);};
+  card.onclick=open;
+  outer.appendChild(aura);
+  outer.appendChild(card);
+  requestAnimationFrame(()=>attachCard(card,nft.image||'',i/Math.max(1,totalCount)));
+  return outer;
+}
+
+// ══ V6 CARD EFFECTS ══
+function attachCard(card,imgSrc,phase=0,totalCount=0){
+  if(cardStates.has(card))return;
+  const particleCount=totalCount>=120?0:totalCount>=72?8:totalCount>=36?18:55;
+  const st={tmx:.5,tmy:.5,mx:.5,my:.5,hue:Math.random()*360,phase,particleCount};
+  cardStates.set(card,st);
+  const glR=card.querySelector('.gl-r')||card.querySelector('.v2-card-r'),glB=card.querySelector('.gl-b')||card.querySelector('.v2-card-b');
+  if(imgSrc&&glR)glR.style.backgroundImage=`url(${imgSrc})`;
+  if(imgSrc&&glB)glB.style.backgroundImage=`url(${imgSrc})`;
+  const pc=card.querySelector('.pc')||card.querySelector('.v2-card-pc');
+  if(pc&&particleCount>0){const W=card.offsetWidth||200,H=card.offsetHeight||240;pc.width=W;pc.height=H;st._particles=Array.from({length:particleCount},()=>mkP(W,H,true));}
+  else if(pc){pc.width=0;pc.height=0;}
+  card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect();st.tmx=(e.clientX-r.left)/r.width;st.tmy=(e.clientY-r.top)/r.height;});
+  card.addEventListener('mouseleave',()=>{st.tmx=.5;st.tmy=.5});
+  card.addEventListener('mouseenter',()=>{if(pc&&st.particleCount>0)st._particles=Array.from({length:st.particleCount},()=>mkP(pc.width,pc.height,true));});
+}
+
+// ══ MUSEUM MODAL (v6 style) ══
+async function openMuseumModal(nft){
+  currentPreviewNFT=nft;
+  const body=$('modalBody');
+  const abstract=isAbstract(nft);
+  const collLabel=abstract?'ABSTRACTCHAIN':'MOODYMIGHTS';
+  const itemUrl=abstract?`https://opensea.io/item/abstract/${ABSTRACT_CONTRACT}/${nft.id}`:`https://opensea.io/assets/ethereum/${ETH_CONTRACT}/${nft.id}`;
+  const collUrl=abstract?ABSTRACT_COLLECTION_URL:MOODY_COLLECTION_URL;
+  const imgHTML=nft.image?`<img class="modal-img" src="${nft.image}" alt="${nft.name}"/>`:`<div class="modal-img" style="background:linear-gradient(135deg,#0d001f,#1a0040);display:flex;align-items:center;justify-content:center;color:#333;font-size:10px">NO IMAGE</div>`;
+  const flUSD=FLOOR_ETH&&ETH_USD?Math.round(FLOOR_ETH*ETH_USD):null;
+  const flHTML=!abstract&&FLOOR_ETH?`<div class="m-floor"><div class="m-floor-label">Floor Price</div><div class="m-floor-val">${parseFloat(FLOOR_ETH).toFixed(4)} ETH${flUSD?` · $${flUSD.toLocaleString()}`:''}</div></div>`:'';
+  const traitsHTML=nft.traits?.length?`<div class="traits-grid">${nft.traits.map(t=>`<div class="trait-card"><div class="tt">${t.type}</div><div class="tv">${t.value}</div>${t.rarity?`<div class="tr">${t.rarity} with trait</div>`:''}</div>`).join('')}</div>`:`<div class="no-data">No trait data</div>`;
+  body.innerHTML=`
+    <div>
+      <div class="modal-img-wrap" id="mWrap">
+        ${imgHTML}
+        <div class="mholo" id="mHolo"></div><div class="mrb"></div>
+        <div class="msw"><div class="msc"></div></div>
+        <div class="mgl"><div class="mgl-r" id="mGlR"></div><div class="mgl-b" id="mGlB"></div></div>
+        <canvas class="mspk" id="mSpk"></canvas>
+        <canvas class="mpc" id="mPc"></canvas>
+      </div>
+    </div>
+    <div class="modal-info">
+      <div class="m-header">
+        <div class="m-collection">✦ ${collLabel}</div>
+        <div class="m-name">${nft.name}</div>
+        <div class="m-price-row">${flHTML}</div>
+      </div>
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('traits')">Traits</button>
+        <button class="tab" onclick="switchTab('activity')">Activity</button>
+        <button class="tab" onclick="switchTab('offers')">Offers</button>
+      </div>
+      <div id="tc-traits" class="tab-content active">${traitsHTML}</div>
+      <div id="tc-activity" class="tab-content"><div id="actList"><div class="skel"></div><div class="skel" style="opacity:.7"></div></div></div>
+      <div id="tc-offers" class="tab-content"><div id="offList"><div class="skel"></div><div class="skel" style="opacity:.7"></div></div></div>
+      <div class="m-links">
+        <a class="m-link" href="${itemUrl}" target="_blank">↗ View on OpenSea</a>
+        <a class="m-link" href="${collUrl}" target="_blank">↗ Collection</a>
+      </div>
+    </div>`;
+  $('modalOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  const glR=$('mGlR'),glB=$('mGlB');
+  if(nft.image){if(glR)glR.style.backgroundImage=`url(${nft.image})`;if(glB)glB.style.backgroundImage=`url(${nft.image})`;}
+  cancelAnimationFrame(modalAnimId);
+  const holo=$('mHolo'),spkC=$('mSpk'),pcC=$('mPc'),wrap=$('mWrap');
+  if(!wrap)return;
+  wireImageFallback(wrap.querySelector('.modal-img'),nft);
+  let mSparkles=[];
+  function initModalCanvases(){const W=wrap.offsetWidth||400,H=wrap.offsetHeight||400;if(spkC){spkC.width=W;spkC.height=H;mSparkles=Array.from({length:16},()=>({x:Math.random()*W,y:Math.random()*H,hue:Math.random()*360,spd:Math.random()*.06+.02,phase:Math.random()*Math.PI*2,maxSz:Math.random()*6+1.5}));}if(pcC){pcC.width=W;pcC.height=H;}}
+  const mi=wrap.querySelector('.modal-img');
+  if(mi&&mi.tagName==='IMG'){mi.complete?initModalCanvases():mi.onload=initModalCanvases;}else initModalCanvases();
+  let mParts=pcC?Array.from({length:30},()=>mkP(pcC.width||400,pcC.height||400,true)):[];
+  let mHue=0;
+  function modalTick(ts){
+    const t=ts*.001;mHue=(mHue+.15)%360;
+    if(holo){const ang=115+Math.sin(t*.5)*40;holo.style.setProperty('--mang',ang+'deg');holo.style.setProperty('--mhue',mHue+'');const mx=.5+Math.sin(t*.6)*.3,my=.5+Math.cos(t*.45)*.3;holo.style.setProperty('--mx',(mx*100)+'%');holo.style.setProperty('--mmy',(my*100)+'%');}
+    if(spkC&&spkC.width>0){const ctx=spkC.getContext('2d'),W=spkC.width,H=spkC.height;ctx.clearRect(0,0,W,H);for(const sp of mSparkles){sp.phase+=sp.spd;const a=Math.abs(Math.sin(sp.phase))*.9,sz=1.2+Math.abs(Math.sin(sp.phase*.7))*sp.maxSz,h2=(sp.hue+mHue)%360;ctx.beginPath();ctx.arc(sp.x,sp.y,sz*3.5,0,Math.PI*2);ctx.fillStyle=`hsla(${h2},100%,85%,${a*.13})`;ctx.fill();ctx.fillStyle=`hsla(${h2},100%,96%,${a})`;drawStar4(ctx,sp.x,sp.y,sz,sz*.22);}}
+    if(pcC&&pcC.width>0){const ctx=pcC.getContext('2d'),W=pcC.width,H=pcC.height;ctx.clearRect(0,0,W,H);for(const p of mParts){p.x+=p.vx;p.y+=p.vy;p.life+=.008;if(p.life>p.max||p.y<-8)Object.assign(p,mkP(W,H,false));const a=Math.sin(p.life/p.max*Math.PI);ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.c+hex(a*.85);ctx.fill();ctx.beginPath();ctx.arc(p.x,p.y,p.r*3.5,0,Math.PI*2);ctx.fillStyle=p.c+hex(a*.12);ctx.fill();}}
+    modalAnimId=requestAnimationFrame(modalTick);
+  }
+  modalAnimId=requestAnimationFrame(modalTick);
+  wrap.addEventListener('mousemove',e=>{const r=wrap.getBoundingClientRect();const mx=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));const my=Math.max(0,Math.min(1,(e.clientY-r.top)/r.height));if(holo){holo.style.setProperty('--mx',(mx*100)+'%');holo.style.setProperty('--mmy',(my*100)+'%');}});
+  // async market data fallback
+  const fallback={activity:`<div class="no-data">Live Activity needs a server-side OpenSea key.<br/><a class="m-link" href="${itemUrl}" target="_blank">↗ Open NFT on OpenSea</a></div>`,offers:`<div class="no-data">Live Offers need a server-side OpenSea key.<br/><a class="m-link" href="${collUrl}" target="_blank">↗ Open Collection</a></div>`};
+  setTimeout(()=>{const a=$('actList');if(a&&a.querySelector('.skel'))a.innerHTML=fallback.activity;const o=$('offList');if(o&&o.querySelector('.skel'))o.innerHTML=fallback.offers;},400);
+}
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelector(`.tab[onclick="switchTab('${id}')"]`)?.classList.add('active');
+  $(`tc-${id}`)?.classList.add('active');
+}
+function closeMO(e){if(e.target===$('modalOverlay'))closeM();}
+function closeM(){cancelAnimationFrame(modalAnimId);$('modalOverlay').classList.remove('open');currentPreviewNFT=null;document.body.style.overflow='';}
+
+// ══ VIEW MANAGEMENT ══
+function syncMuseumState(){
+  document.body.classList.toggle('museum-home',curView==='carousel'&&!museumFullscreen);
+  document.body.classList.toggle('museum-fullscreen',museumFullscreen);
+}
+function setView(v){
+  if(v!=='carousel'&&museumFullscreen)exitMuseumFullscreen(true);
+  curView=v;
+  document.querySelectorAll('.vbtn').forEach(b=>b.classList.remove('active'));
+  if(v==='carousel')$('vbtn-carousel')?.classList.add('active');
+  else if(v==='auto')$('vbtn-auto')?.classList.add('active');
+  else if(typeof v==='number')$('vbtn-'+v)?.classList.add('active');
+  else if(v==='my')$('vbtn-my')?.classList.add('active');
+
+  const panel=$('collectionPanel');
+  const container=$('container');
+  const shell=panel.querySelector('.gallery-shell');
+
+  if(v==='carousel'){
+    panel.classList.remove('visible');
+    container.style.display='block';
+    renderAll();
+  } else if(v==='auto'){
+    panel.classList.add('visible');
+    if(shell)shell.style.display='none';
+    container.style.display='block';
+    renderAll();
+  } else if(v==='my'){
+    panel.classList.add('visible');
+    if(shell)shell.style.display='block';
+    container.style.display='none';
+    renderV2Grid();
+  } else if(typeof v==='number'){
+    // numeric views use the v2 grid with column override
+    panel.classList.add('visible');
+    if(shell)shell.style.display='block';
+    container.style.display='none';
+    renderV2Grid(v);
+  }
+
+  syncMuseumState();
+}
+function updateCarouselStats(){
+  // statsBar removed — nothing to update here
+}
+async function enterMuseumFullscreen(){
+  museumFullscreen=true;curView='carousel';syncMuseumState();setView('carousel');
+  expandFullscreenMuseumPool().catch(()=>{});
+  try{if(document.fullscreenElement==null&&document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();}catch{}
+}
+async function exitMuseumFullscreen(skipBrowserExit=false){
+  museumFullscreen=false;syncMuseumState();
+  if(!skipBrowserExit){try{if(document.fullscreenElement&&document.exitFullscreen)await document.exitFullscreen();}catch{}}
+  renderAll();
+}
+function toggleMuseumFullscreen(){museumFullscreen?exitMuseumFullscreen():enterMuseumFullscreen();}
+
+// ══ RENDER ALL (carousel / grid views) ══
+function renderAll(){
+  cardStates.clear();
+  const container=$('container');container.innerHTML='';
+  const v=curView;
+  if(v==='carousel'){
+    const items=getMuseumItems();
+    if(!items.length){container.innerHTML=`<div class="grid g4" style="margin-top:40px"><div class="empty"><div class="empty-icon">◆</div><div>Loading museum stream or scan a wallet to populate the Museum</div></div></div>`;return;}
+    const outer=document.createElement('div');outer.className='carousel-outer';
+    const track=document.createElement('div');track.className='carousel-track';
+    const copies=isMobileLite()?2:3;
+    for(let copy=0;copy<copies;copy++)items.forEach((nft,i)=>track.appendChild(buildCard(nft,i,true,false,items.length)));
+    outer.appendChild(track);container.appendChild(outer);
+    requestAnimationFrame(()=>{const cardW=isMobileLite()?Math.min(window.innerWidth*.72,270):356;const setW=(cardW+28)*items.length;track.style.setProperty('--sd',`-${setW}px`);track.style.animationDuration=(setW/(isMobileLite()?34:62))+'s';});
+  } else if(v==='auto'){
+    const filtered=getFilteredV2();
+    if(!filtered.length){container.innerHTML=`<div class="grid g4" style="margin-top:40px"><div class="empty"><div class="empty-icon">◆</div><div>No NFTs in My Collection yet</div></div></div>`;return;}
+    const outer=document.createElement('div');outer.className='carousel-outer';
+    const track=document.createElement('div');track.className='carousel-track';
+    const copies=isMobileLite()?2:3;
+    for(let copy=0;copy<copies;copy++)filtered.forEach((nft,i)=>track.appendChild(buildCard(nft,i,true,true,filtered.length)));
+    outer.appendChild(track);container.appendChild(outer);
+    requestAnimationFrame(()=>{const cardW=isMobileLite()?Math.min(window.innerWidth*.72,270):356;const setW=(cardW+28)*filtered.length;track.style.setProperty('--sd',`-${setW}px`);track.style.animationDuration=(setW/(isMobileLite()?34:62))+'s';});
+  } else if(typeof v==='number'){
+    const filtered=getFilteredV2();
+    if(!filtered.length){container.innerHTML=`<div class="grid g4" style="margin-top:40px"><div class="empty"><div class="empty-icon">◆</div><div>No NFTs in My Collection yet</div></div></div>`;return;}
+    const safeView=[4,6,10,12].includes(v)?v:4;
+    const g=document.createElement('div');g.className='grid g'+safeView;
+    g.style.width=safeView>=10?'fit-content':'100%';g.style.maxWidth='100%';g.style.margin='0 auto';g.style.justifyContent='center';
+    filtered.forEach((nft,i)=>g.appendChild(buildCard(nft,i,false,true,filtered.length)));
+    container.appendChild(g);
+  }
+}
+
+// ══ BG ANIMATION (v6) ══
+const bgC=$('bgCanvas'),bgX=bgC.getContext('2d');
+let bgW=0,bgH=0,stars=[],nebulae=[],comets=[],dustBands=[],goldDust=[];
+function initBg(){
+  bgW=bgC.width=window.innerWidth;bgH=bgC.height=window.innerHeight;
+  const lite=isMobileLite();
+  stars=Array.from({length:lite?28:92},()=>({x:Math.random()*bgW,y:Math.random()*bgH,r:Math.random()*.75+.16,spd:Math.random()*.55+.08,hue:40+Math.random()*35,phase:Math.random()*Math.PI*2,drift:Math.random()*.08-.04,pulse:Math.random()*1.2+.3}));
+  nebulae=Array.from({length:lite?3:8},()=>({x:Math.random()*bgW,y:Math.random()*bgH,r:bgW*(.15+Math.random()*.2),hue:Math.random()*360,phase:Math.random()*Math.PI*2,spd:Math.random()*.1+.03}));
+  comets=Array.from({length:lite?1:3},(_,i)=>({x:Math.random()*bgW,y:bgH*(.16+i*.22),len:140+Math.random()*80,speed:.35+Math.random()*.18,tilt:-.42-Math.random()*.18,phase:Math.random()*Math.PI*2}));
+  dustBands=Array.from({length:lite?1:3},(_,i)=>({y:bgH*(.24+i*.2),h:70+Math.random()*38,alpha:.018+Math.random()*.018,speed:.06+Math.random()*.03,phase:Math.random()*Math.PI*2}));
+  goldDust=Array.from({length:lite?10:34},()=>({x:Math.random()*bgW,y:Math.random()*bgH,r:Math.random()*1.7+.5,vx:(Math.random()-.5)*.12,vy:-(Math.random()*.14+.03),pulse:Math.random()*1.4+.4,phase:Math.random()*Math.PI*2}));
+}
+initBg();window.addEventListener('resize',initBg);
+function drawBg(t){
+  bgX.clearRect(0,0,bgW,bgH);
+  for(const n of nebulae){n.x+=Math.sin(t*n.spd+n.phase)*.4;n.y+=Math.cos(t*n.spd*0.7+n.phase)*.3;if(n.x<-n.r)n.x=bgW+n.r;if(n.x>bgW+n.r)n.x=-n.r;if(n.y<-n.r)n.y=bgH+n.r;if(n.y>bgH+n.r)n.y=-n.r;const hue=(n.hue+t*8)%360;const g=bgX.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r);g.addColorStop(0,`hsla(${hue},100%,30%,.035)`);g.addColorStop(.5,`hsla(${(hue+40)%360},100%,25%,.02)`);g.addColorStop(1,'transparent');bgX.fillStyle=g;bgX.fillRect(0,0,bgW,bgH);}
+  for(const s of stars){s.x+=s.drift;if(s.x<0)s.x+=bgW;if(s.x>bgW)s.x-=bgW;const tw=(Math.sin(t*s.pulse+s.phase)+1)/2;const a=.1+tw*.28,glow=s.r*(1.3+tw*1.3);const halo=bgX.createRadialGradient(s.x,s.y,0,s.x,s.y,glow*4);halo.addColorStop(0,`hsla(${s.hue},100%,96%,${a*.24})`);halo.addColorStop(.35,`hsla(${(s.hue+8)%360},100%,88%,${a*.08})`);halo.addColorStop(1,'transparent');bgX.fillStyle=halo;bgX.fillRect(s.x-glow*4,s.y-glow*4,glow*8,glow*8);bgX.beginPath();bgX.arc(s.x,s.y,s.r*.9,0,Math.PI*2);bgX.fillStyle=`rgba(255,255,255,${Math.min(1,a*.92)})`;bgX.fill();}
+  const aurora=bgX.createLinearGradient(0,bgH*.18,bgW,bgH*.72);aurora.addColorStop(0,'rgba(255,80,0,.03)');aurora.addColorStop(.35,'rgba(160,60,255,.045)');aurora.addColorStop(.65,'rgba(0,210,255,.03)');aurora.addColorStop(1,'rgba(255,190,80,.025)');bgX.save();bgX.globalCompositeOperation='screen';bgX.translate(bgW*.5,bgH*.45);bgX.rotate(Math.sin(t*.08)*.08);bgX.fillStyle=aurora;bgX.fillRect(-bgW*.65,-bgH*.1,bgW*1.3,bgH*.26);bgX.restore();
+  for(const band of dustBands){const shift=Math.sin(t*band.speed+band.phase)*bgW*.08;const grad=bgX.createLinearGradient(0,band.y,bgW,band.y+band.h);grad.addColorStop(0,'rgba(255,180,90,0)');grad.addColorStop(.3,`rgba(255,180,90,${band.alpha})`);grad.addColorStop(.7,`rgba(120,90,255,${band.alpha*.9})`);grad.addColorStop(1,'rgba(120,90,255,0)');bgX.save();bgX.globalCompositeOperation='screen';bgX.translate(shift,0);bgX.fillStyle=grad;bgX.fillRect(-bgW*.1,band.y,bgW*1.2,band.h);bgX.restore();}
+  for(const c of comets){const travel=(t*c.speed*140+c.phase*80)%(bgW+bgH*.4);const cx=travel-bgH*.18;const cy=c.y+Math.sin(t*.35+c.phase)*24;bgX.save();bgX.translate(cx,cy);bgX.rotate(c.tilt);const tail=bgX.createLinearGradient(0,0,c.len,0);tail.addColorStop(0,'rgba(255,255,255,.0)');tail.addColorStop(.2,'rgba(255,210,150,.03)');tail.addColorStop(1,'rgba(255,250,235,.42)');bgX.fillStyle=tail;bgX.fillRect(-c.len,-1.2,c.len,2.4);const head=bgX.createRadialGradient(0,0,0,0,0,12);head.addColorStop(0,'rgba(255,255,255,.92)');head.addColorStop(.35,'rgba(255,220,160,.5)');head.addColorStop(1,'rgba(255,220,160,0)');bgX.fillStyle=head;bgX.beginPath();bgX.arc(0,0,12,0,Math.PI*2);bgX.fill();bgX.restore();}
+  for(const d of goldDust){d.x+=d.vx;d.y+=d.vy;if(d.y<-12){d.y=bgH+12;d.x=Math.random()*bgW;}if(d.x<-12)d.x=bgW+12;if(d.x>bgW+12)d.x=-12;const tw=(Math.sin(t*d.pulse+d.phase)+1)/2;const halo=bgX.createRadialGradient(d.x,d.y,0,d.x,d.y,d.r*8);halo.addColorStop(0,`rgba(255,228,160,${.1+tw*.14})`);halo.addColorStop(.45,`rgba(255,195,110,${.04+tw*.05})`);halo.addColorStop(1,'transparent');bgX.fillStyle=halo;bgX.fillRect(d.x-d.r*8,d.y-d.r*8,d.r*16,d.r*16);bgX.fillStyle=`rgba(255,238,190,${.18+tw*.38})`;bgX.beginPath();bgX.arc(d.x,d.y,d.r,0,Math.PI*2);bgX.fill();}
+}
+
+// ══ MAIN LOOP ══
+function mainLoop(ts){
+  const t=ts*.001;
+  drawBg(t);
+  const mobileLite=isMobileLite();
+  for(const [card,st] of cardStates){
+    if(!document.body.contains(card)){cardStates.delete(card);continue}
+    const isV2Card=card.classList&&card.classList.contains('v2-card');
+    if(isV2Card&&card.classList.contains('fx-ultra'))continue;
+    const visible=isCardInViewport(card,isV2Card?280:420);
+    if(!visible){
+      if(isV2Card&&Math.abs(st.tmx-.5)>.001){st.tmx=.5;st.tmy=.5;}
+      continue;
+    }
+    st.mx+=(st.tmx-st.mx)*.1;st.my+=(st.tmy-st.my)*.1;st.hue=(st.hue+.18)%360;
+    const isHov=Math.abs(st.tmx-.5)>.01||Math.abs(st.tmy-.5)>.01;
+    const lightMotion=isV2Card&&card.classList.contains('fx-mass');
+    if(mobileLite&&!isV2Card){
+      card.style.transform='none';
+      continue;
+    }
+    const autoX=Math.sin(t*.65+st.phase)*3.5,autoY=Math.cos(t*.5+st.phase+1)*2.8;
+    const dx=st.mx-.5,dy=st.my-.5;
+    card.style.transform=lightMotion
+      ?`translateY(${isHov?-2:0}px)`
+      :`rotateX(${-dy*22+autoX}deg) rotateY(${dx*22+autoY}deg) scale(${isHov?1.05:1})`;
+    const hl=card.querySelector('.holo-layer');
+    if(hl){const ang=115+Math.sin(t*.4+st.phase)*35+dx*40+dy*20;hl.style.setProperty('--ang',ang+'deg');hl.style.setProperty('--hue',st.hue+'');const amx=.5+Math.sin(t*.6+st.phase)*.3,amy=.5+Math.cos(t*.45+st.phase+.8)*.3;hl.style.setProperty('--mx',(isHov?st.mx:amx)*100+'%');hl.style.setProperty('--my',(isHov?st.my:amy)*100+'%');}
+    const v2hl=card.querySelector('.v2-card-holo');
+    if(v2hl){const ang=115+Math.sin(t*.4+st.phase)*35+dx*40+dy*20;v2hl.style.setProperty('--vang',ang+'deg');v2hl.style.setProperty('--vhue',st.hue+'');const amx=.5+Math.sin(t*.6+st.phase)*.3,amy=.5+Math.cos(t*.45+st.phase+.8)*.3;v2hl.style.setProperty('--vmx',(isHov?st.mx:amx)*100+'%');v2hl.style.setProperty('--vmy',(isHov?st.my:amy)*100+'%');}
+    const pc=card.querySelector('.pc')||card.querySelector('.v2-card-pc');
+    if(pc&&pc.width>0&&st._particles){const ctx=pc.getContext('2d'),W=pc.width,H=pc.height;ctx.clearRect(0,0,W,H);for(const p of st._particles){p.x+=p.vx;p.y+=p.vy;p.life+=.008;if(p.life>p.max||p.y<-8)Object.assign(p,mkP(W,H,false));const a=Math.sin(p.life/p.max*Math.PI);ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.c+hex(a*.85);ctx.fill();ctx.beginPath();ctx.arc(p.x,p.y,p.r*3.5,0,Math.PI*2);ctx.fillStyle=p.c+hex(a*.12);ctx.fill();}}
+  }
+  requestAnimationFrame(mainLoop);
+}
+requestAnimationFrame(mainLoop);
+
+// ══ SCREENSHOT ══
+async function takeScreenshot(){
+  if(!allNFTs.length){alert('Add some NFTs to your collection first!');return}
+  const btn=$('shareBtn');btn.textContent='⏳ Generating...';btn.disabled=true;
+  const imgs=await Promise.all(allNFTs.map(nft=>new Promise(res=>{if(!nft.image){res(null);return}const i=new Image();i.crossOrigin='anonymous';i.onload=()=>res(i);i.onerror=()=>res(null);i.src=nft.image;})));
+  const COLS_COUNT=Math.min(allNFTs.length,4),ROWS=Math.ceil(allNFTs.length/COLS_COUNT);
+  const CARD_W=300,CARD_H=340,GAP=20,PAD=40,HEADER_H=140;
+  const CW=COLS_COUNT*(CARD_W+GAP)-GAP+PAD*2,CH=HEADER_H+ROWS*(CARD_H+GAP)-GAP+PAD*2+60;
+  const sc=$('shareCanvas');sc.width=CW;sc.height=CH;
+  const ctx=sc.getContext('2d');
+  const bg=ctx.createRadialGradient(CW/2,CH*.4,0,CW/2,CH*.5,Math.max(CW,CH)*.7);
+  bg.addColorStop(0,'#0d0025');bg.addColorStop(.5,'#04000f');bg.addColorStop(1,'#000');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,CW,CH);
+  const rng=(s)=>{let x=s;return()=>{x=((x*1664525)+1013904223)&0xffffffff;return(x>>>0)/0xffffffff}};
+  const rand=rng(42);
+  for(let i=0;i<120;i++){const x=rand()*CW,y=rand()*CH,r=rand()*.9+.22,a=.14+rand()*.45,h=42+rand()*26;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=`hsla(${h},80%,90%,${a})`;ctx.fill();}
+  ctx.font='bold 48px monospace';ctx.textAlign='center';ctx.fillStyle='#fff';ctx.fillText('MOODY',CW/2-80,76);ctx.fillStyle='#ff3c00';ctx.fillText('MIGHTS',CW/2+96,76);ctx.shadowColor='#ff3c00';ctx.shadowBlur=30;
+  const rl=ctx.createLinearGradient(CW/2-200,0,CW/2+200,0);rl.addColorStop(0,'transparent');rl.addColorStop(.2,'#ff3c00');rl.addColorStop(.5,'#ffc930');rl.addColorStop(.8,'#cc00ff');rl.addColorStop(1,'transparent');ctx.fillStyle=rl;ctx.fillRect(CW/2-200,84,400,2);
+  ctx.font='12px monospace';ctx.fillStyle='rgba(255,255,255,.3)';ctx.textAlign='center';ctx.fillText(`MY COLLECTION  ·  ${allNFTs.length} NFTs`,CW/2,110);
+  for(let i=0;i<allNFTs.length;i++){const col=i%COLS_COUNT,row=Math.floor(i/COLS_COUNT);const cx=PAD+col*(CARD_W+GAP);const cy=HEADER_H+row*(CARD_H+GAP);const cg=ctx.createLinearGradient(cx,cy,cx,cy+CARD_H);cg.addColorStop(0,'#0d001f');cg.addColorStop(1,'#04000c');ctx.fillStyle=cg;ctx.beginPath();ctx.roundRect(cx,cy,CARD_W,CARD_H,12);ctx.fill();ctx.shadowColor=`hsl(${i*45},100%,60%)`;ctx.shadowBlur=16;ctx.strokeStyle=`hsla(${i*45},100%,70%,.8)`;ctx.lineWidth=1.5;ctx.beginPath();ctx.roundRect(cx,cy,CARD_W,CARD_H,12);ctx.stroke();ctx.shadowBlur=0;const IMG_H=CARD_W;if(imgs[i]){ctx.save();ctx.beginPath();ctx.roundRect(cx,cy,CARD_W,IMG_H,12);ctx.clip();ctx.drawImage(imgs[i],cx,cy,CARD_W,IMG_H);ctx.restore();}else{ctx.fillStyle='#1a0040';ctx.beginPath();ctx.roundRect(cx,cy,CARD_W,IMG_H,12);ctx.fill();}const INFO_Y=cy+IMG_H;const ig=ctx.createLinearGradient(cx,INFO_Y,cx,INFO_Y+(CARD_H-IMG_H));ig.addColorStop(0,'#0c001c');ig.addColorStop(1,'#04000c');ctx.fillStyle=ig;ctx.beginPath();ctx.roundRect(cx,INFO_Y,CARD_W,CARD_H-IMG_H,{upperLeft:0,upperRight:0,lowerLeft:12,lowerRight:12});ctx.fill();ctx.font='bold 13px monospace';ctx.fillStyle='#fff';ctx.textAlign='left';ctx.fillText(allNFTs[i].name,cx+14,INFO_Y+22);}
+  ctx.font='11px monospace';ctx.fillStyle='rgba(255,60,0,.4)';ctx.textAlign='center';ctx.fillText('MOODYMIGHTS.COM',CW/2,CH-18);
+  $('shareOverlay').classList.add('open');
+  $('dlBtn').onclick=()=>{const a=document.createElement('a');a.href=sc.toDataURL('image/png');a.download='moody-mights-collection.png';a.click();};
+  btn.textContent='📸 Share';btn.disabled=false;
+}
+$('shareOverlay').addEventListener('click',e=>{if(e.target===$('shareOverlay'))$('shareOverlay').classList.remove('open');});
+
+// ══ KEYBOARD ══
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    closeM();closeV2Modal();
+    $('keysModal')?.classList.remove('open');
+    $('shareOverlay').classList.remove('open');
+    if(museumFullscreen)exitMuseumFullscreen(true);
+  }
+});
+document.addEventListener('fullscreenchange',()=>{
+  if(!document.fullscreenElement&&museumFullscreen){museumFullscreen=false;syncMuseumState();renderAll();}
+});
+window.openGifMachine=function(){
+  const modal=$('gifMachineModal');
+  if(!modal)return;
+  modal.classList.add('open');
+  const input=$('gifMachineToken');
+  if(input){input.value='';setTimeout(()=>input.focus(),30);}
+};
+window.closeGifMachine=function(){
+  $('gifMachineModal')?.classList.remove('open');
+};
+window.submitGifMachine=async function(){
+  const input=$('gifMachineToken');
+  const tokenId=String(input?.value||'').trim();
+  if(!/^\d+$/.test(tokenId)){alert('Enter a valid MoodyMights number.');input?.focus();return;}
+  let nft=findMoodyByTokenId(tokenId);
+  if(!nft){
+    try{nft=await fetchAlchemyNFT(tokenId);}catch{}
+  }
+  if(!nft||!nft.image){alert('Could not load that MoodyMights NFT.');return;}
+  mergeNFTs([nft]);
+  closeGifMachine();
+  openGifStudio(nft);
+};
+$('gifMachineModal')?.addEventListener('click',e=>{if(e.target===$('gifMachineModal'))closeGifMachine();});
+$('gifMachineToken')?.addEventListener('keydown',e=>{if(e.key==='Enter')submitGifMachine();});
+
+// ══ INIT ══
+renderAll();
+refreshCurrentView();
+syncMuseumState();
+
+// ══ GIF STUDIO ══
+(function(){
+let nft=null,origImg=null,bgMode='transparent';
+let zoom=1,cropPct={x:10,y:5,w:80,h:80};
+let tool='add',brushSz=16,undoStack=[],isPainting=false,lastPt=null;
+let curTab='crop';
+// Off-screen canvas that holds the result pixels persistently (never auto-resized)
+let resultOffscreen=null;  // current state (edited by brush) — display resolution
+let origOffscreen=null;    // pristine remove.bg result — display resolution
+let hiresOffscreen=null;   // pristine remove.bg result at 631x676 — for download
+let displayRect={x:0,y:0,w:0,h:0};
+let brushCtx=null,brushSyncQueued=false;
+ let gifStudioImgSrc='';
+ let gifStudioBgHint=null;
+
+const $g=id=>document.getElementById(id);
+const setStatus=(msg,cls='')=>{const e=$g('gsStatus');if(e){e.textContent=msg;e.className='gs-st'+(cls?' '+cls:'');}};
+function colorDist(r1,g1,b1,r2,g2,b2){const dr=r1-r2,dg=g1-g2,db=b1-b2;return Math.sqrt(dr*dr+dg*dg+db*db);}
+function luminance(r,g,b){return .2126*r+.7152*g+.0722*b;}
+function canReadImagePixels(img){
+  try{
+    const test=document.createElement('canvas');
+    test.width=1;test.height=1;
+    const tx=test.getContext('2d',{willReadFrequently:true});
+    tx.drawImage(img,0,0,1,1);
+    tx.getImageData(0,0,1,1);
+    return true;
+  }catch{
+    return false;
+  }
+}
+function loadImageForCanvas(src,timeoutMs=12000){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    let settled=false;
+    const done=(fn)=>{if(settled)return;settled=true;clearTimeout(timer);fn();};
+    const timer=setTimeout(()=>done(()=>reject(new Error('Image load timed out.'))),timeoutMs);
+    img.crossOrigin='anonymous';
+    img.onload=()=>done(()=>{
+      if(!canReadImagePixels(img)){reject(new Error('Canvas access blocked for this image source.'));return;}
+      resolve(img);
+    });
+    img.onerror=()=>done(()=>reject(new Error('Image failed to load.')));
+    img.src=src;
+  });
+}
+// Build a CORS-proxy URL. Two public proxies tried in order.
+function corsProxyUrl(src,proxyIdx){
+  const encoded=encodeURIComponent(src);
+  if(proxyIdx===0)return`https://images.weserv.nl/?url=${encoded}&output=png&n=-1`;
+  if(proxyIdx===1)return`https://corsproxy.io/?url=${encoded}`;
+  return null;
+}
+function estimateGlobalBgHint(img){
+  const iw=img.naturalWidth||img.width||1,ih=img.naturalHeight||img.height||1;
+  const maxSide=96;
+  const scale=Math.min(1,maxSide/Math.max(iw,ih));
+  const w=Math.max(8,Math.round(iw*scale)),h=Math.max(8,Math.round(ih*scale));
+  const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+  const cx=cv.getContext('2d',{willReadFrequently:true});
+  cx.drawImage(img,0,0,w,h);
+  const data=cx.getImageData(0,0,w,h).data;
+  const samples=[];
+  function push(x,y){
+    x=Math.max(0,Math.min(w-1,x));
+    y=Math.max(0,Math.min(h-1,y));
+    samples.push((y*w+x)*4);
+  }
+  const bandX=Math.max(1,Math.floor(w*.16));
+  const bandY=Math.max(1,Math.floor(h*.16));
+  for(let x=0;x<w;x+=2){push(x,0);push(x,h-1);if(x<bandX){push(x,bandY);push(x,h-1-bandY);}if(x>w-1-bandX){push(x,bandY);push(x,h-1-bandY);}}
+  for(let y=0;y<h;y+=2){push(0,y);push(w-1,y);if(y<bandY){push(bandX,y);push(w-1-bandX,y);}if(y>h-1-bandY){push(bandX,y);push(w-1-bandX,y);}}
+  let sr=0,sg=0,sb=0,sl=0;
+  for(const p of samples){sr+=data[p];sg+=data[p+1];sb+=data[p+2];sl+=luminance(data[p],data[p+1],data[p+2]);}
+  const count=Math.max(1,samples.length);
+  const br=Math.round(sr/count),bg=Math.round(sg/count),bb=Math.round(sb/count),bl=sl/count;
+  let variance=0,lumaVariance=0;
+  for(const p of samples){variance+=colorDist(data[p],data[p+1],data[p+2],br,bg,bb);lumaVariance+=Math.abs(luminance(data[p],data[p+1],data[p+2])-bl);}
+  return{r:br,g:bg,b:bb,l:bl,avgVariance:variance/count,avgLumaVariance:lumaVariance/count};
+}
+async function resolveGifStudioImage(n){
+  // Always rebuild the own CDN URL from the token id — this works even for NFTs
+  // loaded from cache/localStorage that have stale imageCandidates ordering.
+  const ownCDN=(n.id&&String(n.contractAddress||'').toLowerCase()===ETH_CONTRACT.toLowerCase())
+    ?`${MOODY_IMAGE_CDN}/${n.id}.png`:'';
+
+  const rawSources=[
+    ownCDN,                          // 1st: our own CDN — always CORS-safe
+    ...(n.imageCandidates||[]),       // 2nd: whatever Alchemy returned
+    n.image                           // 3rd: primary image field
+  ].filter(Boolean);
+
+  const deduped=[];
+  for(const src of rawSources){
+    const normalized=String(src||'').trim();
+    if(normalized&&!deduped.includes(normalized))deduped.push(normalized);
+  }
+
+  let lastErr=null;
+
+  // --- Pass 1: try every source directly (own CDN will be first) ---
+  for(const src of deduped){
+    const attempts=[src,src+(src.includes('?')?'&':'?')+'_t='+Date.now()];
+    for(const attempt of attempts){
+      try{
+        const img=await loadImageForCanvas(attempt);
+        return{img,src:attempt};
+      }catch(err){lastErr=err;}
+    }
+  }
+
+  // --- Pass 1b: alternative IPFS gateways for any IPFS source that failed ---
+  for(const src of deduped){
+    if(!src.includes('/ipfs/'))continue;
+    const hash=src.split('/ipfs/').slice(1).join('/ipfs/');
+    if(!hash)continue;
+    const altGateways=[
+      `https://cloudflare-ipfs.com/ipfs/${hash}`,
+      `https://ipfs.io/ipfs/${hash}`,
+      `https://gateway.pinata.cloud/ipfs/${hash}`,
+      `https://nftstorage.link/ipfs/${hash}`
+    ];
+    for(const alt of altGateways){
+      if(deduped.includes(alt))continue;
+      try{
+        const img=await loadImageForCanvas(alt);
+        return{img,src:alt};
+      }catch(err){lastErr=err;}
+    }
+  }
+
+  // --- Pass 2: CORS proxy as last resort ---
+  setStatus('Direct load blocked — trying CORS proxy fallback…');
+  // Only proxy unique base URLs (skip cache-busted dupes)
+  const proxyTargets=[...new Set(deduped.map(s=>s.split('?')[0]))];
+  const NUM_PROXIES=2;
+  for(let pi=0;pi<NUM_PROXIES;pi++){
+    for(const src of proxyTargets){
+      const proxied=corsProxyUrl(src,pi);
+      if(!proxied)continue;
+      try{
+        const img=await loadImageForCanvas(proxied,15000);
+        return{img,src:proxied};
+      }catch(err){lastErr=err;}
+    }
+  }
+
+  throw lastErr||new Error('Could not load a canvas-safe NFT image.');
+}
+function buildEdgeMask(canvas,bgHint=null){
+  const w=canvas.width,h=canvas.height;
+  const cx=canvas.getContext('2d',{willReadFrequently:true});
+  const img=cx.getImageData(0,0,w,h);
+  const data=img.data;
+  const visited=new Uint8Array(w*h);
+  const queue=new Uint32Array(w*h);
+  let qh=0,qt=0;
+  const samples=[];
+  function pushSample(x,y){
+    if(x<0||y<0||x>=w||y>=h)return;
+    samples.push(y*w+x);
+  }
+  
+  // IMPROVED: Sample more points for complex backgrounds
+  const cornerInsetX=Math.max(1,Math.floor(w*.06));
+  const cornerInsetY=Math.max(1,Math.floor(h*.06));
+  const cornerSpanX=Math.max(2,Math.floor(w*.18));
+  const cornerSpanY=Math.max(2,Math.floor(h*.18));
+  function pushCornerBlock(sx,sy,ex,ey,step=2){
+    for(let y=sy;y<=ey;y+=step){
+      for(let x=sx;x<=ex;x+=step)pushSample(x,y);
+    }
+  }
+  pushCornerBlock(cornerInsetX,cornerInsetY,Math.min(w-1,cornerInsetX+cornerSpanX),Math.min(h-1,cornerInsetY+cornerSpanY),1);
+  pushCornerBlock(Math.max(0,w-1-cornerInsetX-cornerSpanX),cornerInsetY,Math.max(0,w-1-cornerInsetX),Math.min(h-1,cornerInsetY+cornerSpanY),1);
+  pushCornerBlock(cornerInsetX,Math.max(0,h-1-cornerInsetY-cornerSpanY),Math.min(w-1,cornerInsetX+cornerSpanX),Math.max(0,h-1-cornerInsetY),1);
+  pushCornerBlock(Math.max(0,w-1-cornerInsetX-cornerSpanX),Math.max(0,h-1-cornerInsetY-cornerSpanY),Math.max(0,w-1-cornerInsetX),Math.max(0,h-1-cornerInsetY),1);
+  for(let x=0;x<w;x++){pushSample(x,0);pushSample(x,h-1);}
+  for(let y=1;y<h-1;y++){pushSample(0,y);pushSample(w-1,y);}
+  
+  // IMPROVED: Add inner edge samples for complex backgrounds
+  const innerBorder=Math.max(1,Math.floor(Math.min(w,h)*.08));
+  for(let x=innerBorder;x<w-innerBorder;x+=2){
+    pushSample(x,innerBorder);
+    pushSample(x,h-1-innerBorder);
+  }
+  for(let y=innerBorder;y<h-innerBorder;y+=2){
+    pushSample(innerBorder,y);
+    pushSample(w-1-innerBorder,y);
+  }
+  
+  let sr=0,sg=0,sb=0,sl=0,count=0;
+  const limit=Math.max(1,Math.min(samples.length,Math.floor((w+h)/3)));
+  for(let i=0;i<limit;i++){
+    const idx=samples[Math.floor(i*samples.length/limit)]||samples[i]||0;
+    const p=idx*4;
+    sr+=data[p];sg+=data[p+1];sb+=data[p+2];
+    sl+=luminance(data[p],data[p+1],data[p+2]);
+    count++;
+  }
+  const edgeBr=Math.round(sr/Math.max(1,count)),edgeBg=Math.round(sg/Math.max(1,count)),edgeBb=Math.round(sb/Math.max(1,count));
+  const edgeBl=sl/Math.max(1,count);
+  let variance=0,lumaVariance=0;
+  for(let i=0;i<limit;i++){
+    const idx=samples[Math.floor(i*samples.length/limit)]||samples[i]||0;
+    const p=idx*4;
+    variance+=colorDist(data[p],data[p+1],data[p+2],edgeBr,edgeBg,edgeBb);
+    lumaVariance+=Math.abs(luminance(data[p],data[p+1],data[p+2])-edgeBl);
+  }
+  let br=edgeBr,bg=edgeBg,bb=edgeBb,bl=edgeBl;
+  let avgVariance=variance/Math.max(1,limit);
+  let avgLumaVariance=lumaVariance/Math.max(1,limit);
+  if(bgHint){
+    const hintDist=colorDist(edgeBr,edgeBg,edgeBb,bgHint.r,bgHint.g,bgHint.b);
+    const hintLumaDist=Math.abs(edgeBl-bgHint.l);
+    if(hintDist<48||hintLumaDist<24||avgVariance>22){
+      br=Math.round((edgeBr+bgHint.r*2)/3);
+      bg=Math.round((edgeBg+bgHint.g*2)/3);
+      bb=Math.round((edgeBb+bgHint.b*2)/3);
+      bl=(edgeBl+bgHint.l*2)/3;
+      avgVariance=(avgVariance+(bgHint.avgVariance||avgVariance))/2;
+      avgLumaVariance=(avgLumaVariance+(bgHint.avgLumaVariance||avgLumaVariance))/2;
+    }
+  }
+  
+  // IMPROVED: Higher tolerances for complex/detailed backgrounds
+  const isComplexBg=avgVariance>25||avgLumaVariance>12;
+  const baseHardTol=isComplexBg?48:38;
+  const hardTol=Math.max(baseHardTol,Math.min(95,avgVariance<10?72:avgVariance<18?62:avgVariance<28?55:48));
+  const softTol=Math.min(135,hardTol+28);
+  const hardLumaTol=Math.max(isComplexBg?22:16,Math.min(65,avgLumaVariance<6?38:avgLumaVariance<12?32:26));
+  const softLumaTol=Math.min(85,hardLumaTol+22);
+  const strongTol=Math.min(155,softTol+22);
+  const strongLumaTol=Math.min(100,softLumaTol+18);
+  
+  function isBgLike(p,tol,lumaTol){
+    const r=data[p],g=data[p+1],b=data[p+2],a=data[p+3];
+    if(a<12)return true;
+    if(colorDist(r,g,b,br,bg,bb)>tol)return false;
+    if(Math.abs(luminance(r,g,b)-bl)>lumaTol)return false;
+    return true;
+  }
+  function trySeed(x,y,tol=hardTol,lumaTol=hardLumaTol,force=false){
+    if(x<0||y<0||x>=w||y>=h)return;
+    const idx=y*w+x;
+    if(visited[idx])return;
+    const p=idx*4;
+    if(!force&&!isBgLike(p,tol,lumaTol))return;
+    visited[idx]=1;
+    queue[qt++]=idx;
+  }
+  function runFloodFill(tol=hardTol,lumaTol=hardLumaTol){
+    while(qh<qt){
+      const idx=queue[qh++];
+      const x=idx%w,y=(idx/w)|0;
+      if(x>0)trySeed(x-1,y,tol,lumaTol);
+      if(x<w-1)trySeed(x+1,y,tol,lumaTol);
+      if(y>0)trySeed(x,y-1,tol,lumaTol);
+      if(y<h-1)trySeed(x,y+1,tol,lumaTol);
+      if(x>0&&y>0)trySeed(x-1,y-1,tol,lumaTol);
+      if(x<w-1&&y>0)trySeed(x+1,y-1,tol,lumaTol);
+      if(x>0&&y<h-1)trySeed(x-1,y+1,tol,lumaTol);
+      if(x<w-1&&y<h-1)trySeed(x+1,y+1,tol,lumaTol);
+    }
+  }
+  
+  // First pass: normal edge flood fill
+  for(let x=0;x<w;x++){trySeed(x,0);trySeed(x,h-1);}
+  for(let y=1;y<h-1;y++){trySeed(0,y);trySeed(w-1,y);}
+  runFloodFill();
+  
+  // IMPROVED: More aggressive residue detection for complex backgrounds
+  function getBorderBgResidueRatio(){
+    let total=0,residue=0;
+    const borderBand=Math.max(1,Math.floor(Math.min(w,h)*.08));
+    for(let y=0;y<h;y++){
+      for(let x=0;x<w;x++){
+        if(x>=borderBand&&x<w-borderBand&&y>=borderBand&&y<h-borderBand)continue;
+        total++;
+        const idx=y*w+x;
+        const p=idx*4;
+        if(data[p+3]>30&&!visited[idx]&&isBgLike(p,strongTol,strongLumaTol))residue++;
+      }
+    }
+    return residue/Math.max(1,total);
+  }
+  
+  // IMPROVED: Multiple residue cleanup passes for complex backgrounds
+  let residueRatio=getBorderBgResidueRatio();
+  if(residueRatio>.08){
+    const borderBand=Math.max(1,Math.floor(Math.min(w,h)*.1));
+    for(let y=0;y<h;y++){
+      for(let x=0;x<w;x++){
+        if(x>=borderBand&&x<w-borderBand&&y>=borderBand&&y<h-borderBand)continue;
+        const idx=y*w+x;
+        const p=idx*4;
+        if(!visited[idx]&&isBgLike(p,strongTol,strongLumaTol))trySeed(x,y,strongTol,strongLumaTol);
+      }
+    }
+    runFloodFill(strongTol,strongLumaTol);
+  }
+  
+  // IMPROVED: Second residue check for very complex backgrounds
+  if(isComplexBg||residueRatio>.15){
+    residueRatio=getBorderBgResidueRatio();
+    if(residueRatio>.05){
+      const veryStrongTol=Math.min(180,strongTol+25);
+      const veryStrongLumaTol=Math.min(120,strongLumaTol+25);
+      const innerBand=Math.max(1,Math.floor(Math.min(w,h)*.15));
+      for(let y=0;y<h;y++){
+        for(let x=0;x<w;x++){
+          if(x>=innerBand&&x<w-innerBand&&y>=innerBand&&y<h-innerBand)continue;
+          const idx=y*w+x;
+          const p=idx*4;
+          if(!visited[idx]&&isBgLike(p,veryStrongTol,veryStrongLumaTol))trySeed(x,y,veryStrongTol,veryStrongLumaTol);
+        }
+      }
+      runFloodFill(veryStrongTol,veryStrongLumaTol);
+    }
+  }
+  
+  // Apply transparency to visited pixels
+  for(let i=0;i<visited.length;i++){
+    if(visited[i])data[i*4+3]=0;
+  }
+  
+  // IMPROVED: Better edge feathering for complex backgrounds
+  const featherRadius=isComplexBg?3:2;
+  for(let y=featherRadius;y<h-featherRadius;y++){
+    for(let x=featherRadius;x<w-featherRadius;x++){
+      const idx=y*w+x;
+      if(visited[idx])continue;
+      const p=idx*4;
+      if(!isBgLike(p,softTol,softLumaTol))continue;
+      
+      // Count background neighbors in larger radius for complex bgs
+      let nearBg=0;
+      for(let oy=-featherRadius;oy<=featherRadius;oy++){
+        for(let ox=-featherRadius;ox<=featherRadius;ox++){
+          if(!ox&&!oy)continue;
+          if(visited[(y+oy)*w+(x+ox)])nearBg++;
+        }
+      }
+      const threshold=isComplexBg?3:2;
+      if(nearBg<threshold)continue;
+      
+      const dist=colorDist(data[p],data[p+1],data[p+2],br,bg,bb);
+      const lumDiff=Math.abs(luminance(data[p],data[p+1],data[p+2])-bl);
+      const softness=Math.max(dist/Math.max(1,softTol),lumDiff/Math.max(1,softLumaTol));
+      const alphaMul=Math.max(0,Math.min(1,(softness-.12)/.88));
+      data[p+3]=Math.round(data[p+3]*alphaMul*.7);
+    }
+  }
+  
+  cx.putImageData(img,0,0);
+}
+function setBrushDisplayRect(rect,interactive=false){
+  const brush=$g('gsBrush');
+  if(!brush)return;
+  if(!rect||!rect.w||!rect.h){
+    brush.style.display='none';
+    brush.style.pointerEvents='none';
+    return;
+  }
+  brush.style.left=Math.round(rect.x)+'px';
+  brush.style.top=Math.round(rect.y)+'px';
+  brush.style.width=Math.round(rect.w)+'px';
+  brush.style.height=Math.round(rect.h)+'px';
+  brush.style.display=curTab==='paint'?'block':'none';
+  brush.style.pointerEvents=interactive?'auto':'none';
+}
+
+// ─── OPEN / CLOSE ───────────────────────────────────────────
+window.openGifStudio=function(n){
+  if(!n||!n.image){alert('No image available.');return;}
+  nft=n;origImg=null;resultOffscreen=null;origOffscreen=null;hiresOffscreen=null;bgMode='transparent';
+  gifStudioImgSrc='';
+  gifStudioBgHint=null;
+  zoom=1;undoStack=[];tool='erase';cropPct={x:10,y:5,w:80,h:80};
+  $g('gsBtnRm').disabled=false;$g('gsBtnDl').disabled=true;
+  const bestSrc=(n.imageCandidates&&n.imageCandidates[0])||n.image;
+  $g('gsThumb').innerHTML='<img src="'+bestSrc+'" style="width:100%;height:100%;object-fit:cover;border-radius:10px">';
+  $g('gsZoom').value=100;$g('gsZoomVal').textContent='100%';
+  setStatus('Loading image...');
+  // reset tabs without calling gsDraw (no image yet)
+  curTab='crop';
+  ['crop','paint'].forEach(id=>{
+    $g('gst-'+id).className='gs-tab'+(id==='crop'?' act':'');
+    $g('gsp-'+id).style.display=id==='crop'?'flex':'none';
+  });
+  $g('gsCropBox').style.display='block';
+  $g('gsBrush').style.display='none';
+  gsTool('erase');
+  setStatus('Loading a canvas-safe image...');
+  resolveGifStudioImage(n).then(({img,src})=>{
+    origImg=img;gifStudioImgSrc=src;gifStudioBgHint=estimateGlobalBgHint(img);
+    closeV2Modal();
+    $g('gifStudio').classList.add('open');
+    setTimeout(()=>{gsDrawBase();setStatus('Adjust the blue crop box and press Remove Background.');},100);
+  }).catch((err)=>{
+    alert(err?.message||'Could not load the NFT image.');
+    setStatus('Could not load a usable image for background removal.','err');
+  });
+};
+window.gsClose=function(){$g('gifStudio').classList.remove('open');};
+
+// ─── TABS ────────────────────────────────────────────────────
+window.gsTab=function(t){
+  if(t==='paint'&&!resultOffscreen){
+    setStatus('Remove the background first.','err');return;
+  }
+  curTab=t;
+  ['crop','paint'].forEach(id=>{
+    $g('gst-'+id).className='gs-tab'+(id===t?' act':'');
+    $g('gsp-'+id).style.display=id===t?'flex':'none';
+  });
+  $g('gsCropBox').style.display=t==='crop'?'block':'none';
+  setBrushDisplayRect(displayRect,t==='paint');
+  // redraw display without resizing brush canvas
+  if(t==='crop') gsDrawBase();
+  else gsCompose();
+};
+
+// ─── DRAWING ─────────────────────────────────────────────────
+function calcDraw(W,H){
+  if(!origImg)return{ox:0,oy:0,dw:W,dh:H,iw:1,ih:1,fit:1};
+  const iw=origImg.naturalWidth,ih=origImg.naturalHeight;
+  const fit=Math.min(W/iw,H/ih)*zoom;
+  const dw=iw*fit,dh=ih*fit,ox=(W-dw)/2,oy=(H-dh)/2;
+  return{ox,oy,dw,dh,fit,iw,ih};
+}
+
+function constrainCropToDisplay(W,H){
+  if(!displayRect||!displayRect.w||!displayRect.h){
+    cropPct.x=Math.max(0,Math.min(100-cropPct.w,cropPct.x));
+    cropPct.y=Math.max(0,Math.min(100-cropPct.h,cropPct.y));
+    return;
+  }
+  const rx=displayRect.x/Math.max(1,W)*100;
+  const ry=displayRect.y/Math.max(1,H)*100;
+  const rw=displayRect.w/Math.max(1,W)*100;
+  const rh=displayRect.h/Math.max(1,H)*100;
+  const MIN=8;
+  const maxW=Math.max(MIN,rw);
+  const maxH=Math.max(MIN,rh);
+  cropPct.w=Math.min(cropPct.w,maxW);
+  cropPct.h=Math.min(cropPct.h,maxH);
+  cropPct.x=Math.max(rx,Math.min(rx+rw-cropPct.w,cropPct.x));
+  cropPct.y=Math.max(ry,Math.min(ry+rh-cropPct.h,cropPct.y));
+}
+
+// Draw original image on base canvas (crop tab)
+function gsDrawBase(){
+  const wrap=$g('gsCvWrap');
+  const W=wrap.offsetWidth||500,H=wrap.offsetHeight||500;
+  const base=$g('gsBase');base.width=W;base.height=H;
+  const bx=base.getContext('2d');bx.clearRect(0,0,W,H);
+  if(origImg){
+    const dp=calcDraw(W,H);
+    displayRect={x:dp.ox,y:dp.oy,w:dp.dw,h:dp.dh};
+    bx.imageSmoothingEnabled=true;
+    bx.imageSmoothingQuality='high';
+    bx.drawImage(origImg,dp.ox,dp.oy,dp.dw,dp.dh);
+  }else displayRect={x:0,y:0,w:0,h:0};
+  setBrushDisplayRect(displayRect,false);
+  constrainCropToDisplay(W,H);
+  updateCropBox(W,H);
+}
+
+// Compose result from offscreen onto base canvas (result/paint tabs)
+// Does NOT resize gsBrush — that would wipe the pixels
+function gsCompose(){
+  const wrap=$g('gsCvWrap');
+  const W=wrap.offsetWidth||500,H=wrap.offsetHeight||500;
+  const base=$g('gsBase');base.width=W;base.height=H;
+  const bx=base.getContext('2d');bx.clearRect(0,0,W,H);
+  if(bgMode==='black'){bx.fillStyle='#000';bx.fillRect(0,0,W,H);}
+  else if(bgMode==='white'){bx.fillStyle='#fff';bx.fillRect(0,0,W,H);}
+  if(resultOffscreen){
+    // Fit image inside canvas keeping aspect ratio, then apply zoom
+    const rw=resultOffscreen.width,rh=resultOffscreen.height;
+    const baseFit=Math.min(W/rw,H/rh);
+    const scaledW=rw*baseFit*zoom,scaledH=rh*baseFit*zoom;
+    const ox=(W-scaledW)/2,oy=(H-scaledH)/2;
+    displayRect={x:ox,y:oy,w:scaledW,h:scaledH};
+    bx.imageSmoothingEnabled=true;
+    bx.imageSmoothingQuality='high';
+    bx.drawImage(resultOffscreen,ox,oy,scaledW,scaledH);
+  }else displayRect={x:0,y:0,w:0,h:0};
+  setBrushDisplayRect(displayRect,curTab==='paint');
+  // if paint tab, also show brush canvas (transparent overlay already done via offscreen)
+}
+
+function updateCropBox(W,H){
+  const box=$g('gsCropBox');
+  constrainCropToDisplay(W,H);
+  box.style.left  =Math.round(cropPct.x/100*W)+'px';
+  box.style.top   =Math.round(cropPct.y/100*H)+'px';
+  box.style.width =Math.round(cropPct.w/100*W)+'px';
+  box.style.height=Math.round(cropPct.h/100*H)+'px';
+}
+
+window.gsZoomChange=function(){
+  zoom=parseFloat($g('gsZoom').value)/100;
+  $g('gsZoomVal').textContent=Math.round(zoom*100)+'%';
+  if(curTab==='crop')gsDrawBase();
+  else gsCompose();
+};
+window.gsPreset=function(type){
+  if(type==='head')cropPct={x:15,y:2,w:70,h:55};
+  else if(type==='bust')cropPct={x:8,y:2,w:84,h:72};
+  else cropPct={x:2,y:2,w:96,h:96};
+  const wrap=$g('gsCvWrap');
+  updateCropBox(wrap.offsetWidth||500,wrap.offsetHeight||500);
+};
+
+// ─── AUTO BACKGROUND REMOVAL ─────────────────────────────────
+window.gsRemoveBg=async function(){
+  if(!origImg){setStatus('No image loaded.','err');return;}
+  const btn=$g('gsBtnRm');btn.disabled=true;
+  setStatus('Cropping and removing background locally...','load');
+  try{
+    const wrap=$g('gsCvWrap');
+    const W=wrap.offsetWidth||500,H=wrap.offsetHeight||500;
+    const dp=calcDraw(W,H);
+    if(!dp.dw||!dp.dh)throw new Error('Image is not ready yet.');
+    const cx=cropPct.x/100*W,cy=cropPct.y/100*H;
+    const cw=cropPct.w/100*W,ch=cropPct.h/100*H;
+    // map canvas crop → original image pixels
+    const scaleX=dp.iw/dp.dw,scaleY=dp.ih/dp.dh;
+    const rawX=Math.max(0,(cx-dp.ox)*scaleX);
+    const rawY=Math.max(0,(cy-dp.oy)*scaleY);
+    const rawW=Math.min(dp.iw-rawX,cw*scaleX);
+    const rawH=Math.min(dp.ih-rawY,ch*scaleY);
+    const smallCropFactor=Math.max(0,1-Math.min(rawW/rawH,rawH/rawW));
+    const cropAreaRatio=(rawW*rawH)/Math.max(1,dp.iw*dp.ih);
+    const needsExtraContext=cropAreaRatio<.2;
+    const padScale=needsExtraContext?Math.max(.22,.34-smallCropFactor*.08):.08;
+    const padX=Math.max(needsExtraContext?28:12,Math.round(rawW*padScale));
+    const padY=Math.max(needsExtraContext?28:12,Math.round(rawH*padScale));
+    const paddedX=Math.max(0,Math.floor(rawX-padX));
+    const paddedY=Math.max(0,Math.floor(rawY-padY));
+    const paddedW=Math.min(dp.iw-paddedX,Math.round(rawW+padX*2));
+    const paddedH=Math.min(dp.ih-paddedY,Math.round(rawH+padY*2));
+    const srcX=Math.max(0,paddedX);
+    const srcY=Math.max(0,paddedY);
+    const srcW=Math.max(1,Math.min(dp.iw-srcX,paddedW));
+    const srcH=Math.max(1,Math.min(dp.ih-srcY,paddedH));
+    if(srcW<4||srcH<4)throw new Error('Crop area is too small. Expand the crop box and try again.');
+    const os=document.createElement('canvas');
+    os.width=srcW;os.height=srcH;
+    const osx=os.getContext('2d',{willReadFrequently:true});
+    osx.imageSmoothingEnabled=false;
+    osx.drawImage(origImg,srcX,srcY,srcW,srcH,0,0,os.width,os.height);
+    try{
+      buildEdgeMask(os,gifStudioBgHint);
+    }catch(err){
+      throw new Error(gifStudioImgSrc?'This NFT image blocks pixel access for background removal. Try another NFT image/source.':'This NFT image is not usable for background removal.');
+    }
+    const trimX=Math.max(0,Math.floor(rawX-srcX));
+    const trimY=Math.max(0,Math.floor(rawY-srcY));
+    const trimW=Math.max(1,Math.min(os.width-trimX,Math.round(rawW)));
+    const trimH=Math.max(1,Math.min(os.height-trimY,Math.round(rawH)));
+    const trimmed=document.createElement('canvas');
+    trimmed.width=trimW;trimmed.height=trimH;
+    const tx=trimmed.getContext('2d',{willReadFrequently:true});
+    tx.imageSmoothingEnabled=false;
+    tx.drawImage(os,trimX,trimY,trimW,trimH,0,0,trimW,trimH);
+    // Store result in persistent offscreen canvas at display size
+    await loadCanvasToOffscreen(trimmed);
+    // Initialize brush canvas with same content — only here, once
+    syncBrushFromOffscreen();
+    $g('gsBtnDl').disabled=false;
+    setStatus('✓ Done! Refine if needed, then download.','ok');
+    gsTab('paint');
+  }catch(e){setStatus((e&&e.message)||'Background removal failed.','err');btn.disabled=false;}
+  btn.disabled=false;
+};
+
+function loadResultToOffscreen(dataURL,W,H,cx,cy,cw,ch){
+  return new Promise((resolve)=>{
+    const pi=new Image();
+    pi.onload=()=>{
+      loadCanvasToOffscreen(pi);
+      resolve();
+    };
+    pi.src=dataURL;
+  });
+}
+
+function loadCanvasToOffscreen(source){
+  const imgW=source.naturalWidth||source.width||1;
+  const imgH=source.naturalHeight||source.height||1;
+
+  resultOffscreen=document.createElement('canvas');
+  resultOffscreen.width=imgW;resultOffscreen.height=imgH;
+  const rx=resultOffscreen.getContext('2d');
+  rx.imageSmoothingEnabled=false;
+  rx.drawImage(source,0,0,imgW,imgH);
+
+  origOffscreen=document.createElement('canvas');
+  origOffscreen.width=imgW;origOffscreen.height=imgH;
+  const ox=origOffscreen.getContext('2d');
+  ox.imageSmoothingEnabled=false;
+  ox.drawImage(source,0,0,imgW,imgH);
+
+  hiresOffscreen=document.createElement('canvas');
+  hiresOffscreen.width=imgW;hiresOffscreen.height=imgH;
+  const hx=hiresOffscreen.getContext('2d');
+  hx.imageSmoothingEnabled=false;
+  hx.drawImage(source,0,0,imgW,imgH);
+}
+
+// Copy offscreen to brush canvas (brush canvas must already be right size)
+function syncBrushFromOffscreen(){
+  if(!resultOffscreen)return;
+  const brush=$g('gsBrush');
+  brush.width=resultOffscreen.width;
+  brush.height=resultOffscreen.height;
+  const bx=brush.getContext('2d');
+  brushCtx=bx;
+  bx.imageSmoothingEnabled=false;
+  bx.clearRect(0,0,brush.width,brush.height);
+  bx.drawImage(resultOffscreen,0,0);
+  undoStack=[bx.getImageData(0,0,brush.width,brush.height)];
+  setBrushDisplayRect(displayRect,curTab==='paint');
+}
+
+// Sync brush edits back to offscreen so gsCompose uses latest
+function syncOffscreenFromBrush(){
+  if(!resultOffscreen)return;
+  const brush=$g('gsBrush');
+  const rx=resultOffscreen.getContext('2d');
+  rx.imageSmoothingEnabled=false;
+  rx.clearRect(0,0,resultOffscreen.width,resultOffscreen.height);
+  rx.drawImage(brush,0,0);
+  if(hiresOffscreen&&hiresOffscreen.width===resultOffscreen.width&&hiresOffscreen.height===resultOffscreen.height){
+    const hx=hiresOffscreen.getContext('2d');
+    hx.imageSmoothingEnabled=false;
+    hx.clearRect(0,0,hiresOffscreen.width,hiresOffscreen.height);
+    hx.drawImage(brush,0,0);
+  }
+}
+
+function queueBrushSync(){
+  if(brushSyncQueued)return;
+  brushSyncQueued=true;
+  requestAnimationFrame(()=>{
+    brushSyncQueued=false;
+    if(!resultOffscreen)return;
+    syncOffscreenFromBrush();
+    gsCompose();
+  });
+}
+
+function flushBrushSync(){
+  brushSyncQueued=false;
+  if(!resultOffscreen)return;
+  syncOffscreenFromBrush();
+  gsCompose();
+}
+
+window.gsBg=function(mode){
+  bgMode=mode;
+  [['T','transparent'],['B','black'],['W','white']].forEach(([k,v])=>{
+    const el=$g('gsSw'+k);if(!el)return;
+    el.className='gs-sw'+(k==='T'?' transp':k==='B'?' black':' white')+(bgMode===v?' act':'');
+  });
+  if(resultOffscreen)gsCompose();
+};
+
+window.gsReset=function(){
+  resultOffscreen=null;undoStack=[];
+  $g('gsBtnDl').disabled=true;$g('gsBtnRm').disabled=false;
+  const brush=$g('gsBrush');
+  const bx=brush.getContext('2d');brushCtx=bx;bx.clearRect(0,0,brush.width,brush.height);
+  displayRect={x:0,y:0,w:0,h:0};
+  setBrushDisplayRect(displayRect,false);
+  gsTab('crop');
+  gsTool('erase');
+  setStatus('Adjust the crop box and press Remove Background.');
+};
+
+// ─── PAINT TOOLS ────────────────────────────────────────────
+window.gsTool=function(t){
+  tool=t;
+  $g('gsPErase').className='gs-btn'+(t==='erase'?' er':'');
+  $g('gsPAdd').className='gs-btn'+(t==='add'?' on':'');
+  const cur=$g('gsCursor');if(cur)cur.style.borderColor=t==='add'?'rgba(0,255,136,.9)':'rgba(255,60,0,.9)';
+};
+window.gsPSzChange=function(){brushSz=parseInt($g('gsPSz').value);$g('gsPSzVal').textContent=brushSz+'px';};
+window.gsPUndo=function(){
+  if(undoStack.length<2){
+    // nothing to undo — go back to original
+    window.gsPClear();return;
+  }
+  undoStack.pop();
+  const brush=$g('gsBrush');
+  brush.getContext('2d').putImageData(undoStack[undoStack.length-1],0,0);
+  flushBrushSync();
+  setStatus('Undo applied.');
+};
+window.gsPClear=function(){
+  // Restore brush AND resultOffscreen from pristine original
+  if(!origOffscreen)return;
+  const brush=$g('gsBrush');
+  brush.width=origOffscreen.width;brush.height=origOffscreen.height;
+  const bx=brush.getContext('2d');brushCtx=bx;bx.clearRect(0,0,brush.width,brush.height);
+  bx.drawImage(origOffscreen,0,0);
+  // reset resultOffscreen to original too
+  const rx=resultOffscreen.getContext('2d');
+  rx.clearRect(0,0,resultOffscreen.width,resultOffscreen.height);
+  rx.drawImage(origOffscreen,0,0);
+  undoStack=[bx.getImageData(0,0,brush.width,brush.height)];
+  gsCompose();
+  setStatus('Cleared. Restored the original result.');
+};
+
+function paintAt(p){
+  const brush=$g('gsBrush');
+  // Always ensure we have a valid context - this fixes the erasing bug
+  if(!brushCtx || brushCtx.canvas !== brush){
+    brushCtx=brush.getContext('2d');
+  }
+  const bx=brushCtx;
+  const r=brushSz/2;
+  if(tool==='erase'){
+    bx.globalCompositeOperation='destination-out';
+    bx.beginPath();bx.arc(p.x,p.y,r,0,Math.PI*2);bx.fill();
+    bx.globalCompositeOperation='source-over';
+  }else{
+    // restore pixels from ORIGINAL (pristine) result — not from edited state
+    if(origOffscreen){
+      bx.globalCompositeOperation='source-over';
+      bx.save();bx.beginPath();bx.arc(p.x,p.y,r,0,Math.PI*2);bx.clip();
+      bx.drawImage(origOffscreen,0,0);bx.restore();
+    }
+  }
+  queueBrushSync();
+}
+
+function initBrushEvents(){
+  const brush=$g('gsBrush');if(!brush)return;
+  function getInteractiveRect(){
+    const rect=brush.getBoundingClientRect();
+    const wrapRect=$g('gsCvWrap').getBoundingClientRect();
+    const w=rect.width||displayRect.w||1;
+    const h=rect.height||displayRect.h||1;
+    return{rect,wrapRect,w,h};
+  }
+  function pt(e){
+    const {rect,w,h}=getInteractiveRect();
+    const src=e.touches?e.touches[0]:e;
+    const px=Math.max(0,Math.min(w,src.clientX-rect.left));
+    const py=Math.max(0,Math.min(h,src.clientY-rect.top));
+    return{x:px*(brush.width/w),y:py*(brush.height/h)};
+  }
+  function showCursor(e){
+    const cur=$g('gsCursor');if(!cur)return;
+    const {rect,wrapRect,w}=getInteractiveRect();
+    const src=e.touches?e.touches[0]:e;
+    const localX=Math.max(0,Math.min(w,src.clientX-rect.left));
+    const localY=Math.max(0,Math.min(rect.height||displayRect.h||1,src.clientY-rect.top));
+    const ratio=(rect.width||1)/Math.max(1,brush.width);
+    const cursorSize=Math.max(6,brushSz*ratio);
+    cur.style.display='block';
+    cur.style.left=(rect.left-wrapRect.left+localX)+'px';cur.style.top=(rect.top-wrapRect.top+localY)+'px';
+    cur.style.width=cursorSize+'px';cur.style.height=cursorSize+'px';
+  }
+  function down(e){
+    if(curTab!=='paint'||!resultOffscreen)return;
+    e.preventDefault();isPainting=true;
+    // IMPROVED: Capture pointer to continue receiving events outside canvas
+    brush.setPointerCapture(e.pointerId);
+    const bx=brush.getContext('2d');
+    brushCtx=bx;
+    if(undoStack.length>=20)undoStack.shift();
+    undoStack.push(bx.getImageData(0,0,brush.width,brush.height));
+    const p=pt(e);lastPt=p;paintAt(p);
+  }
+  function move(e){
+    showCursor(e);
+    if(!isPainting)return;e.preventDefault();
+    // IMPROVED: Handle coalesced events for smooth fast strokes
+    const events=e.getCoalescedEvents?e.getCoalescedEvents():[e];
+    for(const ev of events){
+      const p=pt(ev);
+      if(lastPt){
+        const dx=p.x-lastPt.x,dy=p.y-lastPt.y,d=Math.sqrt(dx*dx+dy*dy);
+        const spacing=Math.max(1,brushSz*0.12);
+        const steps=Math.max(1,Math.ceil(d/spacing));
+        for(let i=1;i<=steps;i++){
+          const t=i/steps;
+          paintAt({x:lastPt.x+dx*t,y:lastPt.y+dy*t});
+        }
+      }else paintAt(p);
+      lastPt=p;
+    }
+    if(!brushSyncQueued)queueBrushSync();
+  }
+  function up(e){
+    if(isPainting){
+      try{brush.releasePointerCapture(e.pointerId);}catch{}
+      flushBrushSync();
+    }
+    isPainting=false;lastPt=null;
+  }
+  // IMPROVED: Use Pointer Events for better fast movement capture
+  brush.addEventListener('pointerdown',down);
+  brush.addEventListener('pointermove',move);
+  brush.addEventListener('pointerup',up);
+  brush.addEventListener('pointerleave',(e)=>{if(isPainting)up(e);const c=$g('gsCursor');if(c)c.style.display='none';});
+  brush.addEventListener('pointercancel',up);
+  // Disable touch actions to prevent scrolling while drawing
+  brush.style.touchAction='none';
+}
+
+function initCropEvents(){
+  const box=$g('gsCropBox');if(!box)return;
+  let mode='',sx=0,sy=0,sc={};
+  function relPct(e){
+    const r=$g('gsCvWrap').getBoundingClientRect();
+    const src=e.touches?e.touches[0]:e;
+    return{x:(src.clientX-r.left)/r.width*100,y:(src.clientY-r.top)/r.height*100};
+  }
+  function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+  function down(e){
+    e.preventDefault();e.stopPropagation();
+    const h=e.target.dataset&&e.target.dataset.h;
+    mode=h?'r-'+h:'move';
+    const p=relPct(e);sx=p.x;sy=p.y;sc={...cropPct};
+    document.addEventListener('mousemove',move,{passive:false});
+    document.addEventListener('mouseup',up);
+    document.addEventListener('touchmove',move,{passive:false});
+    document.addEventListener('touchend',up);
+  }
+  function move(e){
+    e.preventDefault();
+    const p=relPct(e);const dx=p.x-sx,dy=p.y-sy;const MIN=8;
+    if(mode==='move'){
+      cropPct.x=clamp(sc.x+dx,0,100-sc.w);
+      cropPct.y=clamp(sc.y+dy,0,100-sc.h);
+    }else{
+      let{x,y,w,h}=sc;
+      if(mode==='r-br'){w=clamp(sc.w+dx,MIN,100-x);h=clamp(sc.h+dy,MIN,100-y);}
+      else if(mode==='r-bl'){const nx=clamp(sc.x+dx,0,sc.x+sc.w-MIN);w=sc.w-(nx-sc.x);x=nx;h=clamp(sc.h+dy,MIN,100-y);}
+      else if(mode==='r-tr'){w=clamp(sc.w+dx,MIN,100-x);const ny=clamp(sc.y+dy,0,sc.y+sc.h-MIN);h=sc.h-(ny-sc.y);y=ny;}
+      else if(mode==='r-tl'){const nx=clamp(sc.x+dx,0,sc.x+sc.w-MIN);const ny=clamp(sc.y+dy,0,sc.y+sc.h-MIN);w=sc.w-(nx-sc.x);h=sc.h-(ny-sc.y);x=nx;y=ny;}
+      cropPct={x,y,w,h};
+    }
+    const wrap=$g('gsCvWrap');constrainCropToDisplay(wrap.offsetWidth||500,wrap.offsetHeight||500);updateCropBox(wrap.offsetWidth||500,wrap.offsetHeight||500);
+  }
+  function up(){
+    mode='';
+    document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up);
+    document.removeEventListener('touchmove',move);document.removeEventListener('touchend',up);
+  }
+  box.addEventListener('mousedown',down);box.addEventListener('touchstart',down,{passive:false});
+  box.querySelectorAll('.gs-ch').forEach(h=>{
+    h.addEventListener('mousedown',down);h.addEventListener('touchstart',down,{passive:false});
+  });
+}
+
+// ─── DOWNLOAD ────────────────────────────────────────────────
+window.gsDl=async function(){
+  if(!hiresOffscreen)return;
+  const btn=$g('gsBtnDl');
+  if(btn)btn.disabled=true;
+  setStatus('Preparing download...','load');
+  
+  const HR_W=hiresOffscreen.width,HR_H=hiresOffscreen.height;
+  const out=document.createElement('canvas');out.width=HR_W;out.height=HR_H;
+  const ox=out.getContext('2d');
+  ox.imageSmoothingEnabled=false;
+  ox.clearRect(0,0,HR_W,HR_H);
+  ox.drawImage(resultOffscreen,0,0,HR_W,HR_H);
+
+  // Use toDataURL for faster conversion, fallback to toBlob
+  try{
+    const dataURL=out.toDataURL('image/png');
+    const a=document.createElement('a');
+    a.href=dataURL;
+    a.download=((nft&&nft.name||'nft').replace(/\s+/g,'-'))+'-'+HR_W+'x'+HR_H+'-nobg.png';
+    a.click();
+    setStatus('✓ Downloaded '+HR_W+'×'+HR_H+'px','ok');
+  }catch(err){
+    // Fallback to blob method
+    const blob=await new Promise(res=>out.toBlob(res,'image/png'));
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;
+    a.download=((nft&&nft.name||'nft').replace(/\s+/g,'-'))+'-'+HR_W+'x'+HR_H+'-nobg.png';
+    a.click();setTimeout(()=>URL.revokeObjectURL(url),3000);
+    setStatus('✓ Downloaded '+HR_W+'×'+HR_H+'px','ok');
+  }
+  if(btn)btn.disabled=false;
+};
+
+window.addEventListener('resize',()=>{
+  if(!$g('gifStudio').classList.contains('open'))return;
+  if(curTab==='crop')gsDrawBase();
+  else gsCompose();
+  // Note: we do NOT resize brush/offscreen on resize — that would wipe content
+});
+
+setTimeout(()=>{
+  initBrushEvents();
+  initCropEvents();
+  const ov=$g('gifStudio');
+},400);
+
+})(); // end IIFE
+
+</script>
+
+<!-- GIF STUDIO -->
+<div id="gifStudio">
+ <div class="gs-wrap">
+  <div class="gs-left">
+   <div class="gs-head">
+    <h2>✂️ GIF Studio</h2>
+    <button class="gs-x" onclick="gsClose()">✕</button>
+   </div>
+   <div class="gs-tabs">
+    <button class="gs-tab act" id="gst-crop"   onclick="gsTab('crop')">1 · Crop</button>
+    <button class="gs-tab"     id="gst-paint"  onclick="gsTab('paint')">2 · Refine</button>
+   </div>
+   <div class="gs-cv-wrap" id="gsCvWrap">
+    <canvas id="gsBase"></canvas>
+    <canvas id="gsBrush"></canvas>
+    <div id="gsCropBox" class="active">
+     <div class="gs-ch tl" data-h="tl"></div>
+     <div class="gs-ch tr" data-h="tr"></div>
+     <div class="gs-ch bl" data-h="bl"></div>
+     <div class="gs-ch br" data-h="br"></div>
+    </div>
+    <div id="gsCursor"></div>
+   </div>
+   <div class="gs-zoom">
+    <span style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono',monospace">Zoom</span>
+    <input type="range" id="gsZoom" min="40" max="300" value="100" oninput="gsZoomChange()">
+    <span id="gsZoomVal">100%</span>
+   </div>
+  </div>
+  <div class="gs-right">
+   <div class="gs-thumb" id="gsThumb"></div>
+   <!-- panel crop -->
+   <div id="gsp-crop" class="gs-sec">
+    <div class="gs-lbl">Step 1 — Remove Background</div>
+    <div style="font-size:10px;color:var(--muted);font-family:'Inter',sans-serif;line-height:1.5">Adjust the blue crop box around the area you want, then press the button to remove the background locally with no credits required.</div>
+    <button class="gs-btn cta big" id="gsBtnRm" onclick="gsRemoveBg()">🪄 Auto Remove Background</button>
+   </div>
+   <!-- panel paint -->
+   <div id="gsp-paint" class="gs-sec" style="display:none">
+    <div class="gs-lbl">Step 2 — Refine</div>
+    <div style="font-size:12px;color:var(--muted);font-family:'Inter',sans-serif;line-height:1.6">Use <strong>Erase</strong> to clean extra background and <strong>Restore</strong> if you remove too much.</div>
+    <div class="gs-row">
+     <button class="gs-btn er"     id="gsPErase" onclick="gsTool('erase')">✕ Erase</button>
+     <button class="gs-btn"        id="gsPAdd"   onclick="gsTool('add')">✚ Restore</button>
+    </div>
+    <div class="gs-lbl" style="margin-top:2px">Brush Size</div>
+    <div class="gs-brush-sz">
+     <input type="range" id="gsPSz" min="4" max="180" value="24" oninput="gsPSzChange()">
+     <span id="gsPSzVal">24px</span>
+    </div>
+    <div class="gs-row">
+     <button class="gs-btn dng" onclick="gsPUndo()">↩ Undo</button>
+     <button class="gs-btn"     onclick="gsPClear()">🗑 Clear All</button>
+    </div>
+    <div class="gs-div"></div>
+    <button class="gs-btn dng" onclick="gsReset()">↺ New Crop</button>
+   </div>
+   <div class="gs-st" id="gsStatus">Adjust the crop box and press Remove Background.</div>
+   <div class="gs-div"></div>
+   <div class="gs-row">
+    <button class="gs-btn cta big" id="gsBtnDl" onclick="gsDl()" disabled>⬇ Download PNG</button>
+   </div>
+   <a class="gs-btn sec" href="https://app.3look.io/creator-studio?filters=sortBy:new,type:gif" target="_blank" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;margin-top:2px">↗ Open 3look.io</a>
+   <div class="gs-guide">
+    <div class="gs-guide-title">3Look Quick Guide</div>
+    <div class="gs-guide-copy">Remove the background from your image, erase any extra edges until only the head remains, then download the PNG. Open 3Look, pick the GIF you like most, upload your saved image, and enjoy your exclusive MoodyMights GIF.</div>
+   </div>
+  </div>
+ </div>
+</div>
+
 </body>
 </html>
