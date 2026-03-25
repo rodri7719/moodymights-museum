@@ -1713,16 +1713,20 @@ function estimateGlobalBgHint(img){
   for(const p of samples){variance+=colorDist(data[p],data[p+1],data[p+2],br,bg,bb);lumaVariance+=Math.abs(luminance(data[p],data[p+1],data[p+2])-bl);}
   return{r:br,g:bg,b:bb,l:bl,avgVariance:variance/count,avgLumaVariance:lumaVariance/count};
 }
+// Domains that are known to block CORS from this origin — skip direct load, go straight to proxy.
+const CORS_BLOCKED_HOSTS=['fra1.digitaloceanspaces.com','digitaloceanspaces.com'];
+function isKnownCorsBlocked(src){
+  try{return CORS_BLOCKED_HOSTS.some(h=>new URL(src).hostname.endsWith(h));}catch{return false;}
+}
 async function resolveGifStudioImage(n){
-  // Always rebuild the own CDN URL from the token id — this works even for NFTs
-  // loaded from cache/localStorage that have stale imageCandidates ordering.
+  // Always rebuild the own CDN URL from the token id.
   const ownCDN=(n.id&&String(n.contractAddress||'').toLowerCase()===ETH_CONTRACT.toLowerCase())
     ?`${MOODY_IMAGE_CDN}/${n.id}.png`:'';
 
   const rawSources=[
-    ownCDN,                          // 1st: our own CDN — always CORS-safe
-    ...(n.imageCandidates||[]),       // 2nd: whatever Alchemy returned
-    n.image                           // 3rd: primary image field
+    ownCDN,
+    ...(n.imageCandidates||[]),
+    n.image
   ].filter(Boolean);
 
   const deduped=[];
@@ -1733,8 +1737,9 @@ async function resolveGifStudioImage(n){
 
   let lastErr=null;
 
-  // --- Pass 1: try every source directly (own CDN will be first) ---
-  for(const src of deduped){
+  // --- Pass 1: try sources that are NOT known CORS-blocked directly ---
+  const directSources=deduped.filter(s=>!isKnownCorsBlocked(s));
+  for(const src of directSources){
     const attempts=[src,src+(src.includes('?')?'&':'?')+'_t='+Date.now()];
     for(const attempt of attempts){
       try{
@@ -1745,7 +1750,7 @@ async function resolveGifStudioImage(n){
   }
 
   // --- Pass 1b: alternative IPFS gateways for any IPFS source that failed ---
-  for(const src of deduped){
+  for(const src of directSources){
     if(!src.includes('/ipfs/'))continue;
     const hash=src.split('/ipfs/').slice(1).join('/ipfs/');
     if(!hash)continue;
@@ -1764,9 +1769,8 @@ async function resolveGifStudioImage(n){
     }
   }
 
-  // --- Pass 2: CORS proxy as last resort ---
-  setStatus('Direct load blocked — trying CORS proxy fallback…');
-  // Only proxy unique base URLs (skip cache-busted dupes)
+  // --- Pass 2: CORS proxy — covers known-blocked CDN sources AND any that failed above ---
+  setStatus('Loading via proxy…');
   const proxyTargets=[...new Set(deduped.map(s=>s.split('?')[0]))];
   const NUM_PROXIES=2;
   for(let pi=0;pi<NUM_PROXIES;pi++){
