@@ -946,7 +946,7 @@ async function fetchWalletByContract(owner,key,network,contract,chain){
   return out;
 }
 async function fetchAlchemyNFT(id){
-  const key=localStorage.getItem(ALCHEMY_KEY_STORAGE)||'';
+  const key=getAlchemyKey();
   return normalizeNFT(await fetchAlchemyJson({action:'metadata',contractAddress:ETH_CONTRACT,tokenId:id,network:'eth-mainnet'},key),'ethereum');
 }
 
