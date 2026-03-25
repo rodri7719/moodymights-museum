@@ -1,0 +1,12 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/moody_album_v6.html"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/"
+  to = "/moody_album_v6.html"
+  status = 200
