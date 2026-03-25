@@ -1688,45 +1688,55 @@ function corsProxyUrl(src,proxyIdx){
 }
 function estimateGlobalBgHint(img){
   const iw=img.naturalWidth||img.width||1,ih=img.naturalHeight||img.height||1;
-  const maxSide=96;
+  const maxSide=128;
   const scale=Math.min(1,maxSide/Math.max(iw,ih));
   const w=Math.max(8,Math.round(iw*scale)),h=Math.max(8,Math.round(ih*scale));
   const cv=document.createElement('canvas');cv.width=w;cv.height=h;
   const cx=cv.getContext('2d',{willReadFrequently:true});
   cx.drawImage(img,0,0,w,h);
   const data=cx.getImageData(0,0,w,h).data;
-  const samples=[];
-  function push(x,y){
-    x=Math.max(0,Math.min(w-1,x));
-    y=Math.max(0,Math.min(h-1,y));
-    samples.push((y*w+x)*4);
+  // IMPROVED: Sample ONLY the outermost 1-2px ring of the full image — the true border.
+  // This is much more reliable than sampling inner bands when the crop is tight.
+  const edgeSamples=[];
+  // Top and bottom rows
+  for(let x=0;x<w;x++){edgeSamples.push((0*w+x)*4);edgeSamples.push(((h-1)*w+x)*4);}
+  // Left and right columns (skip corners already added)
+  for(let y=1;y<h-1;y++){edgeSamples.push((y*w+0)*4);edgeSamples.push((y*w+(w-1))*4);}
+  // Also sample second-row ring for robustness
+  if(w>4&&h>4){
+    for(let x=1;x<w-1;x++){edgeSamples.push((1*w+x)*4);edgeSamples.push(((h-2)*w+x)*4);}
+    for(let y=2;y<h-2;y++){edgeSamples.push((y*w+1)*4);edgeSamples.push((y*w+(w-2))*4);}
   }
-  const bandX=Math.max(1,Math.floor(w*.16));
-  const bandY=Math.max(1,Math.floor(h*.16));
-  for(let x=0;x<w;x+=2){push(x,0);push(x,h-1);if(x<bandX){push(x,bandY);push(x,h-1-bandY);}if(x>w-1-bandX){push(x,bandY);push(x,h-1-bandY);}}
-  for(let y=0;y<h;y+=2){push(0,y);push(w-1,y);if(y<bandY){push(bandX,y);push(w-1-bandX,y);}if(y>h-1-bandY){push(bandX,y);push(w-1-bandX,y);}}
+  // Quick initial estimate from all edge samples
   let sr=0,sg=0,sb=0,sl=0;
-  for(const p of samples){sr+=data[p];sg+=data[p+1];sb+=data[p+2];sl+=luminance(data[p],data[p+1],data[p+2]);}
-  const count=Math.max(1,samples.length);
-  const br=Math.round(sr/count),bg=Math.round(sg/count),bb=Math.round(sb/count),bl=sl/count;
+  for(const p of edgeSamples){sr+=data[p];sg+=data[p+1];sb+=data[p+2];sl+=luminance(data[p],data[p+1],data[p+2]);}
+  const n0=Math.max(1,edgeSamples.length);
+  const r0=Math.round(sr/n0),g0=Math.round(sg/n0),b0=Math.round(sb/n0),l0=sl/n0;
+  // IMPROVED: Filter to only keep samples close to the median estimate (removes stray character pixels on the border)
+  const filtered=edgeSamples.filter(p=>{
+    const d=colorDist(data[p],data[p+1],data[p+2],r0,g0,b0);
+    const ld=Math.abs(luminance(data[p],data[p+1],data[p+2])-l0);
+    return d<55&&ld<30;
+  });
+  const useSamples=filtered.length>8?filtered:edgeSamples;
+  let sr2=0,sg2=0,sb2=0,sl2=0;
+  for(const p of useSamples){sr2+=data[p];sg2+=data[p+1];sb2+=data[p+2];sl2+=luminance(data[p],data[p+1],data[p+2]);}
+  const count=Math.max(1,useSamples.length);
+  const br=Math.round(sr2/count),bg=Math.round(sg2/count),bb=Math.round(sb2/count),bl=sl2/count;
   let variance=0,lumaVariance=0;
-  for(const p of samples){variance+=colorDist(data[p],data[p+1],data[p+2],br,bg,bb);lumaVariance+=Math.abs(luminance(data[p],data[p+1],data[p+2])-bl);}
+  for(const p of useSamples){variance+=colorDist(data[p],data[p+1],data[p+2],br,bg,bb);lumaVariance+=Math.abs(luminance(data[p],data[p+1],data[p+2])-bl);}
   return{r:br,g:bg,b:bb,l:bl,avgVariance:variance/count,avgLumaVariance:lumaVariance/count};
 }
-// Domains that are known to block CORS from this origin — skip direct load, go straight to proxy.
-const CORS_BLOCKED_HOSTS=['fra1.digitaloceanspaces.com','digitaloceanspaces.com'];
-function isKnownCorsBlocked(src){
-  try{return CORS_BLOCKED_HOSTS.some(h=>new URL(src).hostname.endsWith(h));}catch{return false;}
-}
 async function resolveGifStudioImage(n){
-  // Always rebuild the own CDN URL from the token id.
+  // Always rebuild the own CDN URL from the token id — this works even for NFTs
+  // loaded from cache/localStorage that have stale imageCandidates ordering.
   const ownCDN=(n.id&&String(n.contractAddress||'').toLowerCase()===ETH_CONTRACT.toLowerCase())
     ?`${MOODY_IMAGE_CDN}/${n.id}.png`:'';
 
   const rawSources=[
-    ownCDN,
-    ...(n.imageCandidates||[]),
-    n.image
+    ownCDN,                          // 1st: our own CDN — always CORS-safe
+    ...(n.imageCandidates||[]),       // 2nd: whatever Alchemy returned
+    n.image                           // 3rd: primary image field
   ].filter(Boolean);
 
   const deduped=[];
@@ -1737,9 +1747,8 @@ async function resolveGifStudioImage(n){
 
   let lastErr=null;
 
-  // --- Pass 1: try sources that are NOT known CORS-blocked directly ---
-  const directSources=deduped.filter(s=>!isKnownCorsBlocked(s));
-  for(const src of directSources){
+  // --- Pass 1: try every source directly (own CDN will be first) ---
+  for(const src of deduped){
     const attempts=[src,src+(src.includes('?')?'&':'?')+'_t='+Date.now()];
     for(const attempt of attempts){
       try{
@@ -1750,7 +1759,7 @@ async function resolveGifStudioImage(n){
   }
 
   // --- Pass 1b: alternative IPFS gateways for any IPFS source that failed ---
-  for(const src of directSources){
+  for(const src of deduped){
     if(!src.includes('/ipfs/'))continue;
     const hash=src.split('/ipfs/').slice(1).join('/ipfs/');
     if(!hash)continue;
@@ -1769,8 +1778,9 @@ async function resolveGifStudioImage(n){
     }
   }
 
-  // --- Pass 2: CORS proxy — covers known-blocked CDN sources AND any that failed above ---
-  setStatus('Loading via proxy…');
+  // --- Pass 2: CORS proxy as last resort ---
+  setStatus('Direct load blocked — trying CORS proxy fallback…');
+  // Only proxy unique base URLs (skip cache-busted dupes)
   const proxyTargets=[...new Set(deduped.map(s=>s.split('?')[0]))];
   const NUM_PROXIES=2;
   for(let pi=0;pi<NUM_PROXIES;pi++){
@@ -1786,7 +1796,7 @@ async function resolveGifStudioImage(n){
 
   throw lastErr||new Error('Could not load a canvas-safe NFT image.');
 }
-function buildEdgeMask(canvas,bgHint=null){
+function buildEdgeMask(canvas,bgHint=null,protectMode=false){
   const w=canvas.width,h=canvas.height;
   const cx=canvas.getContext('2d',{willReadFrequently:true});
   const img=cx.getImageData(0,0,w,h);
@@ -1852,25 +1862,47 @@ function buildEdgeMask(canvas,bgHint=null){
   if(bgHint){
     const hintDist=colorDist(edgeBr,edgeBg,edgeBb,bgHint.r,bgHint.g,bgHint.b);
     const hintLumaDist=Math.abs(edgeBl-bgHint.l);
-    if(hintDist<48||hintLumaDist<24||avgVariance>22){
-      br=Math.round((edgeBr+bgHint.r*2)/3);
-      bg=Math.round((edgeBg+bgHint.g*2)/3);
-      bb=Math.round((edgeBb+bgHint.b*2)/3);
-      bl=(edgeBl+bgHint.l*2)/3;
+    // IMPROVED: When crop is tight (crop edges contain character pixels, not background),
+    // high avgVariance signals mixed content — trust the global bgHint much more heavily.
+    const isTightCrop=avgVariance>30||hintDist<60;
+    if(isTightCrop||hintDist<48||hintLumaDist<24||avgVariance>22){
+      const hintWeight=isTightCrop?Math.min(0.92,0.6+(avgVariance-30)/120):0.67;
+      const edgeWeight=1-hintWeight;
+      br=Math.round(edgeBr*edgeWeight+bgHint.r*hintWeight);
+      bg=Math.round(edgeBg*edgeWeight+bgHint.g*hintWeight);
+      bb=Math.round(edgeBb*edgeWeight+bgHint.b*hintWeight);
+      bl=edgeBl*edgeWeight+bgHint.l*hintWeight;
       avgVariance=(avgVariance+(bgHint.avgVariance||avgVariance))/2;
       avgLumaVariance=(avgLumaVariance+(bgHint.avgLumaVariance||avgLumaVariance))/2;
+      if(isTightCrop){
+        avgVariance=Math.min(avgVariance,bgHint.avgVariance||avgVariance);
+        avgLumaVariance=Math.min(avgLumaVariance,bgHint.avgLumaVariance||avgLumaVariance);
+      }
     }
   }
   
   // IMPROVED: Higher tolerances for complex/detailed backgrounds
   const isComplexBg=avgVariance>25||avgLumaVariance>12;
-  const baseHardTol=isComplexBg?48:38;
-  const hardTol=Math.max(baseHardTol,Math.min(95,avgVariance<10?72:avgVariance<18?62:avgVariance<28?55:48));
-  const softTol=Math.min(135,hardTol+28);
-  const hardLumaTol=Math.max(isComplexBg?22:16,Math.min(65,avgLumaVariance<6?38:avgLumaVariance<12?32:26));
-  const softLumaTol=Math.min(85,hardLumaTol+22);
-  const strongTol=Math.min(155,softTol+22);
-  const strongLumaTol=Math.min(100,softLumaTol+18);
+  let baseHardTol, hardTol, softTol, hardLumaTol, softLumaTol, strongTol, strongLumaTol;
+  if(protectMode){
+    // PROTECT MODE: very tight tolerances — only remove pixels very close to the detected background color
+    // This prevents erasing dark character parts that are similar in luminance to the background
+    baseHardTol=18;
+    hardTol=Math.max(18,Math.min(34,avgVariance<8?28:22));
+    softTol=Math.min(42,hardTol+10);
+    hardLumaTol=Math.max(8,Math.min(18,avgLumaVariance<4?14:10));
+    softLumaTol=Math.min(26,hardLumaTol+8);
+    strongTol=Math.min(50,softTol+8);
+    strongLumaTol=Math.min(32,softLumaTol+6);
+  }else{
+    baseHardTol=isComplexBg?48:38;
+    hardTol=Math.max(baseHardTol,Math.min(95,avgVariance<10?72:avgVariance<18?62:avgVariance<28?55:48));
+    softTol=Math.min(135,hardTol+28);
+    hardLumaTol=Math.max(isComplexBg?22:16,Math.min(65,avgLumaVariance<6?38:avgLumaVariance<12?32:26));
+    softLumaTol=Math.min(85,hardLumaTol+22);
+    strongTol=Math.min(155,softTol+22);
+    strongLumaTol=Math.min(100,softLumaTol+18);
+  }
   
   function isBgLike(p,tol,lumaTol){
     const r=data[p],g=data[p+1],b=data[p+2],a=data[p+3];
@@ -1926,7 +1958,7 @@ function buildEdgeMask(canvas,bgHint=null){
   
   // IMPROVED: Multiple residue cleanup passes for complex backgrounds
   let residueRatio=getBorderBgResidueRatio();
-  if(residueRatio>.08){
+  if(!protectMode && residueRatio>.08){
     const borderBand=Math.max(1,Math.floor(Math.min(w,h)*.1));
     for(let y=0;y<h;y++){
       for(let x=0;x<w;x++){
@@ -1940,7 +1972,7 @@ function buildEdgeMask(canvas,bgHint=null){
   }
   
   // IMPROVED: Second residue check for very complex backgrounds
-  if(isComplexBg||residueRatio>.15){
+  if(!protectMode && (isComplexBg||residueRatio>.15)){
     residueRatio=getBorderBgResidueRatio();
     if(residueRatio>.05){
       const veryStrongTol=Math.min(180,strongTol+25);
@@ -2192,7 +2224,8 @@ window.gsRemoveBg=async function(){
     osx.imageSmoothingEnabled=false;
     osx.drawImage(origImg,srcX,srcY,srcW,srcH,0,0,os.width,os.height);
     try{
-      buildEdgeMask(os,gifStudioBgHint);
+      const protectMode=($g('gsProtectChk')&&$g('gsProtectChk').checked)||false;
+      buildEdgeMask(os,gifStudioBgHint,protectMode);
     }catch(err){
       throw new Error(gifStudioImgSrc?'This NFT image blocks pixel access for background removal. Try another NFT image/source.':'This NFT image is not usable for background removal.');
     }
@@ -2586,6 +2619,12 @@ setTimeout(()=>{
    <div id="gsp-crop" class="gs-sec">
     <div class="gs-lbl">Step 1 — Remove Background</div>
     <div style="font-size:10px;color:var(--muted);font-family:'Inter',sans-serif;line-height:1.5">Adjust the blue crop box around the area you want, then press the button to remove the background locally with no credits required.</div>
+    <!-- PROTECT CHARACTER TOGGLE -->
+    <label id="gsProtectLabel" style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:6px;padding:8px 10px;border-radius:10px;border:1px solid rgba(0,255,136,.25);background:rgba(0,255,136,.06)">
+      <input type="checkbox" id="gsProtectChk" style="width:16px;height:16px;accent-color:#00ff88;cursor:pointer" checked>
+      <span style="font-family:'Inter',sans-serif;font-size:11px;color:#00ff88;font-weight:600;letter-spacing:.4px">🛡 Protect Character</span>
+      <span style="font-family:'Inter',sans-serif;font-size:9px;color:var(--muted);margin-left:2px">Uses tighter color matching — keeps more of the character and removes only pixels that closely match the background color</span>
+    </label>
     <button class="gs-btn cta big" id="gsBtnRm" onclick="gsRemoveBg()">🪄 Auto Remove Background</button>
    </div>
    <!-- panel paint -->
