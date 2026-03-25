@@ -910,30 +910,23 @@ function setLoading(on){
 
 // ══ FETCH ══
 async function fetchAlchemyJson(params,key=''){
-  const qs=new URLSearchParams(params).toString();
-  if(key){
-    const network=params.network||'eth-mainnet';
-    if(params.action==='wallet'){
-      const suffix=params.pageKey?`&pageKey=${encodeURIComponent(params.pageKey)}`:'';
-      const url=`https://${network}.g.alchemy.com/nft/v3/${key}/getNFTsForOwner?owner=${encodeURIComponent(params.owner)}&contractAddresses[]=${encodeURIComponent(params.contractAddress)}&withMetadata=true&pageSize=${encodeURIComponent(params.pageSize||50)}${suffix}`;
-      const r=await fetch(url);
-      if(!r.ok)throw new Error(`Could not load NFTs (${r.status})`);
-      return await r.json();
-    }
-    if(params.action==='metadata'){
-      const url=`https://${network}.g.alchemy.com/nft/v3/${key}/getNFTMetadata?contractAddress=${encodeURIComponent(params.contractAddress)}&tokenId=${encodeURIComponent(params.tokenId)}&refreshCache=false`;
-      const r=await fetch(url);
-      if(!r.ok)throw new Error(`Alchemy error ${r.status}`);
-      return await r.json();
-    }
+  // Use provided key, or get from storage/input, or use hardcoded
+  const apiKey=key||getAlchemyKey();
+  const network=params.network||'eth-mainnet';
+  if(params.action==='wallet'){
+    const suffix=params.pageKey?`&pageKey=${encodeURIComponent(params.pageKey)}`:'';
+    const url=`https://${network}.g.alchemy.com/nft/v3/${apiKey}/getNFTsForOwner?owner=${encodeURIComponent(params.owner)}&contractAddresses[]=${encodeURIComponent(params.contractAddress)}&withMetadata=true&pageSize=${encodeURIComponent(params.pageSize||50)}${suffix}`;
+    const r=await fetch(url);
+    if(!r.ok)throw new Error(`Could not load NFTs (${r.status})`);
+    return await r.json();
   }
-  const proxyUrl=`${ALCHEMY_PROXY}?${qs}`;
-  const r=await fetch(proxyUrl,{headers:{accept:'application/json'}});
-  const text=await r.text();
-  let data={};
-  try{data=text?JSON.parse(text):{};}catch{data={error:text||'Invalid server response'};}
-  if(!r.ok)throw new Error(data.error||`Alchemy proxy error ${r.status}`);
-  return data;
+  if(params.action==='metadata'){
+    const url=`https://${network}.g.alchemy.com/nft/v3/${apiKey}/getNFTMetadata?contractAddress=${encodeURIComponent(params.contractAddress)}&tokenId=${encodeURIComponent(params.tokenId)}&refreshCache=false`;
+    const r=await fetch(url);
+    if(!r.ok)throw new Error(`Alchemy error ${r.status}`);
+    return await r.json();
+  }
+  throw new Error('Unknown action');
 }
 
 async function fetchWalletByContract(owner,key,network,contract,chain){
