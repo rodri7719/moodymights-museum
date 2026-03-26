@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   const { action, contractAddress, tokenId, network = 'eth-mainnet', owner, pageKey, pageSize = 50 } = req.query;
 
   // Use env var if available, fallback to hardcoded key
-  const apiKey = process.env.ALCHEMY_API_KEY || '2KVtnElWVnXZLK1_nAgoS';
+  const apiKey = process.env.ALCHEMY_API_KEY || '';
 
   if (!action) {
     return res.status(400).json({ error: 'Missing action param' });
