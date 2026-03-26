@@ -25,7 +25,7 @@ body.museum-home{overflow:hidden}
   radial-gradient(circle at 18% 24%,rgba(255,170,70,.08),transparent 26%),
   radial-gradient(circle at 78% 18%,rgba(170,80,255,.08),transparent 24%),
   radial-gradient(circle at 52% 72%,rgba(60,180,255,.06),transparent 28%);
-  filter:blur(26px);opacity:.9;animation:bgPulse 16s ease-in-out infinite alternate}
+  filter:blur(26px);opacity:.9}
 #bgCanvas{position:fixed;inset:0;z-index:1;pointer-events:none}
 .chain-corner{position:fixed;bottom:20px;z-index:3;display:flex;align-items:center;gap:10px;opacity:.88;pointer-events:none;filter:drop-shadow(0 0 24px rgba(255,255,255,.14))}
 .chain-corner img{height:42px;width:auto;object-fit:contain}
@@ -56,7 +56,6 @@ body.museum-fullscreen .app{max-width:none;padding:10px 20px 16px;display:flex;f
 body.museum-fullscreen .toolbar{margin-bottom:0}
 body.museum-fullscreen .carousel-outer{margin:10px auto 0;width:min(1600px,98vw)}
 body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
-@keyframes uiFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 .header,.stats,.toolbar,.add-section{position:relative;transform-style:preserve-3d;will-change:transform}
 .stats::before,.toolbar::before,.add-section::before{content:'';position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:none;transform:none;animation:none}
 .logo{font-family:'Cinzel',serif;font-size:clamp(38px,4.6vw,62px);font-weight:900;letter-spacing:10px;
@@ -68,7 +67,6 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 .logo-line{height:2px;background:linear-gradient(90deg,transparent,var(--gold-dark),var(--gold-bright),var(--gold),transparent);
   margin:8px auto 0;max-width:420px;width:min(420px,72vw);animation:lineGlow 3s ease-in-out infinite}
 @keyframes lineGlow{0%,100%{opacity:.5}50%{opacity:1;box-shadow:0 0 16px var(--gold)}}
-@keyframes bgPulse{0%{transform:translate3d(0,0,0) scale(1);opacity:.62}100%{transform:translate3d(0,-8px,0) scale(1.04);opacity:.96}}
 
 /* ══ TOOLBAR ══ */
 .stats{display:flex;gap:14px;margin-bottom:20px;flex-wrap:wrap}
@@ -141,9 +139,8 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 .carousel-outer::before{left:0;background:linear-gradient(90deg,rgba(5,4,2,.18),transparent)}
 .carousel-outer::after{right:0;background:linear-gradient(-90deg,rgba(5,4,2,.18),transparent)}
 .carousel-outer:hover .carousel-track{animation-play-state:paused}
-.carousel-track{display:flex;gap:28px;animation:scrollLeft 48s linear infinite,trackFloat 7.5s ease-in-out infinite;will-change:transform;align-items:flex-end}
+.carousel-track{display:flex;gap:28px;animation:scrollLeft 48s linear infinite;will-change:transform;align-items:flex-end}
 @keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(var(--sd,-50%))}}
-@keyframes trackFloat{0%,100%{margin-top:0}50%{margin-top:-6px}}
 .grid{display:grid;gap:20px;justify-items:center}
 .g2{grid-template-columns:repeat(2,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
 .g6{grid-template-columns:repeat(6,1fr)}.g10{grid-template-columns:repeat(10,1fr)}.g12{grid-template-columns:repeat(12,1fr)}
@@ -652,7 +649,7 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 .social-links{
   display:flex;flex-direction:column;gap:8px;
   align-items:flex-start;
-  margin-left:-70px;
+  margin-left:-90px;
   margin-top:-63px;
 }
 .social-title{
