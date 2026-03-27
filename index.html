@@ -77,7 +77,7 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
   border-radius:14px!important;
   min-width:160px;
 }
-
+.vbtn-raffle{
   background:linear-gradient(160deg,rgba(42,14,8,.92),rgba(22,6,2,.96))!important;
   border-color:rgba(255,100,40,.35)!important;
   color:rgba(255,180,100,.72)!important;
@@ -1052,7 +1052,7 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 .rf-cols{display:grid;grid-template-columns:400px 1fr;flex:1;overflow:hidden;min-height:0;border-radius:0 0 28px 28px}
 @media(max-width:680px){.rf-cols{grid-template-columns:1fr;overflow-y:auto}}
 .rf-lcol{display:flex;flex-direction:column;gap:0;border-right:1px solid rgba(255,255,255,.08);overflow-y:auto;padding:24px 22px}
-.rf-lbl{font-family:'Cinzel',serif;font-size:13px;letter-spacing:2.5px;color:rgba(255,223,150,.85);text-transform:uppercase;margin-bottom:10px;font-weight:700}
+.rf-lbl{font-family:'Cinzel',serif;font-size:13px;letter-spacing:2.5px;color:#ffe066;text-transform:uppercase;margin-bottom:10px;font-weight:700;text-shadow:0 0 12px rgba(255,210,0,.55),0 0 24px rgba(255,180,0,.25)}
 .rf-row{display:flex;gap:9px;margin-bottom:12px}
 .rf-inp{flex:1;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:10px;padding:14px 16px;font-family:'Share Tech Mono',monospace;font-size:17px;outline:none;transition:border-color .2s}
 .rf-inp:focus{border-color:rgba(201,168,76,.6)}
@@ -1158,7 +1158,7 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 /* History col */
 .rf-history-col{width:280px;flex-shrink:0;border-left:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;padding:20px 18px;gap:12px;overflow:hidden;background:rgba(0,0,0,.15)}
 .rf-history-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;border-bottom:1px solid rgba(201,168,76,.22);padding-bottom:10px}
-.rf-history-title{font-family:'Cinzel',serif;font-size:15px;font-weight:700;letter-spacing:3px;color:rgba(201,168,76,.9);text-transform:uppercase}
+.rf-history-title{font-family:'Cinzel',serif;font-size:15px;font-weight:700;letter-spacing:3px;color:#ffe066;text-transform:uppercase;text-shadow:0 0 12px rgba(255,210,0,.55),0 0 24px rgba(255,180,0,.25)}
 .rf-copy-all-btn{
   font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:1.5px;
   padding:4px 10px;border-radius:6px;
@@ -1173,6 +1173,7 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 .rf-history-empty{font-family:'Share Tech Mono',monospace;font-size:13px;color:rgba(245,234,208,.3);text-align:center;padding:18px 0}
 .rf-history-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.08);transition:background .15s;flex-shrink:0}
 .rf-history-item:hover{background:rgba(0,0,0,.4)}
+.rf-history-num{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,rgba(255,200,60,.25),rgba(180,120,0,.35));border:1px solid rgba(255,210,60,.5);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:12px;font-weight:900;color:#ffe066;flex-shrink:0;text-shadow:0 0 8px rgba(255,200,0,.6);box-shadow:0 0 8px rgba(255,180,0,.2)}
 .rf-history-latest{background:rgba(201,168,76,.1)!important;border-color:rgba(201,168,76,.3)!important}
 .rf-history-img{width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0;border:1px solid rgba(201,168,76,.35)}
 .rf-history-info{flex:1;min-width:0}
@@ -1354,6 +1355,8 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 const ETH_CONTRACT='0x1d4c28d4d484f494f58869192bc8de56c384c0f0';
 const ABSTRACT_CONTRACT='0x35ffe9d966e35bd1b0e79f0d91e438701ea1c644';
 const MOODY_IMAGE_CDN='https://cryptomazeapp.fra1.digitaloceanspaces.com/moodymights/png';
+// Always proxy CDN images — the bucket has no CORS headers
+function moodyImgUrl(id){return'https://images.weserv.nl/?url='+encodeURIComponent(MOODY_IMAGE_CDN+'/'+id+'.png')+'&output=png&n=-1';}
 const SLUG='moody-mights';
 // Direct Alchemy API calls (no proxy needed for static hosting)
 const MOODY_COLLECTION_URL='https://opensea.io/es/collection/moody-mights';
@@ -1416,7 +1419,7 @@ function drawStar4(ctx,cx,cy,o,i){ctx.beginPath();for(let p=0;p<8;p++){const a=p
 // ══ IMAGE CANDIDATES ══
 function imageCandidates(raw,contractAddress=ETH_CONTRACT){
   const tid=String(raw.tokenId||raw.id?.tokenId||raw.token_id||raw.identifier||'');
-  const moodyFB=tid&&String(contractAddress).toLowerCase()===ETH_CONTRACT.toLowerCase()?`${MOODY_IMAGE_CDN}/${tid}.png`:'';
+  const moodyFB=tid&&String(contractAddress).toLowerCase()===ETH_CONTRACT.toLowerCase()?moodyImgUrl(tid):'';
   return [
     moodyFB,  // own CDN first — always CORS-safe, avoids broken external sources
     raw.image?.pngUrl,raw.image?.originalUrl,raw.image?.cachedUrl,raw.image?.thumbnailUrl,
@@ -1556,7 +1559,6 @@ function getMuseumItems(){
 fetchStreamNFTs().catch(()=>{});
 
 // ══ ACTIVITY TICKER — REAL SALES & LISTINGS ══
-const CDN=MOODY_IMAGE_CDN;
 function timeAgo(ts){
   const ms=typeof ts==='string'?new Date(ts).getTime():Number(ts)*1000;
   const d=Date.now()-ms;
@@ -1572,7 +1574,7 @@ let _tickerSeenIds=new Set();// avoid duplicate toasts across refreshes
 
 function buildTickerItem(ev){
   const nftUrl=`https://opensea.io/assets/ethereum/${ETH_CONTRACT}/${ev.id}`;
-  const imgSrc=`${CDN}/${ev.id}.png`;
+  const imgSrc=moodyImgUrl(ev.id);
   const priceHTML=ev.price?`<span class="t-price">${ev.price}</span>`:'';
   return `<a class="ticker-item" href="${nftUrl}" target="_blank" rel="noopener" style="text-decoration:none">
     <img class="t-thumb" src="${imgSrc}" onerror="this.style.display='none'" loading="lazy">
@@ -1752,7 +1754,7 @@ function showSoldPopup(ev){
   const popup=$('soldPopup');
   const nftUrl=`https://opensea.io/assets/ethereum/${ETH_CONTRACT}/${ev.id}`;
 
-  $('soldPopupImg').src=`${CDN}/${ev.id}.png`;
+  $('soldPopupImg').src=moodyImgUrl(ev.id);
   $('soldPopupImg').onerror=function(){this.style.opacity='.3';};
   $('soldPopupName').textContent=`Moody Might #${ev.id}`;
   $('soldPopupPrice').textContent=ev.price;
@@ -1813,13 +1815,12 @@ function applyTraitFilters(items){return items;}
 
 // ══ RAFFLE ENGINE — CARD SCROLL PICKER ══
 (function(){
-  const CDN_RF=MOODY_IMAGE_CDN;
 
   // NFT pool
   const _used=new Set();
   function getPool(){
     const base=streamNFTs.filter(n=>n.id&&n.image&&parseInt(n.id)>100);
-    return base.length>=6?base:FEATURED_STREAM_IDS.map(id=>({id,image:`${CDN_RF}/${id}.png`}));
+    return base.length>=6?base:FEATURED_STREAM_IDS.map(id=>({id,image:moodyImgUrl(id)}));
   }
   function pickNFT(){
     const pool=getPool();
@@ -1859,18 +1860,18 @@ function applyTraitFilters(items){return items;}
       <button class="rf-x-btn" onclick="closeRaffle()" title="Close raffle">✕</button>
       <div class="rf-cols">
         <div class="rf-lcol">
-          <div class="rf-lbl" style="font-size:18px;letter-spacing:2px;margin-bottom:12px">Add participant</div>
+          <div class="rf-lbl" style="font-size:18px;letter-spacing:2px;margin-bottom:12px;color:#ffe040;text-shadow:0 0 14px rgba(255,210,0,.7)">Add participant</div>
           <div class="rf-row">
             <input class="rf-inp" id="rfInp" placeholder="Name + Enter" maxlength="28" autocomplete="off">
             <button class="rf-addbtn" onclick="rfAdd()">+</button>
           </div>
-          <div class="rf-lbl" style="font-size:18px;letter-spacing:2px;margin-bottom:12px;margin-top:10px">Or paste a list</div>
+          <div class="rf-lbl" style="font-size:18px;letter-spacing:2px;margin-bottom:12px;margin-top:10px;color:#ffe040;text-shadow:0 0 14px rgba(255,210,0,.7)">Or paste a list</div>
           <textarea class="rf-bulk" id="rfBulk" rows="3" placeholder="Alice, Bob, Charlie&#10;or one per line"></textarea>
           <button class="v2-btn ghost" style="font-size:16px;padding:12px 20px;margin-bottom:10px;letter-spacing:1px" onclick="rfBulkAdd()">Import list</button>
           <div class="rf-divider"></div>
-          <div class="rf-lbl" style="margin-top:8px;font-size:18px;letter-spacing:2px">
+          <div class="rf-lbl" style="margin-top:8px;font-size:18px;letter-spacing:2px;color:#ffe040;text-shadow:0 0 14px rgba(255,210,0,.7)">
             Participants
-            <span id="rfCount" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,200,80,.45);margin-left:6px">${_parts.length}</span>
+            <span id="rfCount" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#ffe066;margin-left:6px;text-shadow:0 0 8px rgba(255,210,0,.5)">${_parts.length}</span>
           </div>
           <div class="rf-chips" id="rfChips">${_renderChips()}</div>
           <div class="rf-lfooter">
@@ -1914,7 +1915,8 @@ function applyTraitFilters(items){return items;}
     if(!_winners.length)return `<div class="rf-history-empty">No winners yet</div>`;
     return _winners.map((w,i)=>`
       <div class="rf-history-item ${i===0?'rf-history-latest':''}">
-        <img class="rf-history-img" src="${CDN_RF}/${w.nft.id}.png" onerror="this.style.opacity='.2'">
+        <div class="rf-history-num">${_winners.length - i}</div>
+        <img class="rf-history-img" src="${moodyImgUrl(w.nft.id)}" onerror="this.style.opacity='.2'">
         <div class="rf-history-info">
           <div class="rf-history-name">${w.name}</div>
           <div class="rf-history-id">#${w.nft.id}</div>
@@ -1939,7 +1941,7 @@ function applyTraitFilters(items){return items;}
     const w=_parts[_winIdx];if(!w)return '';
     return `<div class="rf-winner-reveal">
       <div class="rf-win-label">WINNER</div>
-      <img class="rf-winner-img" src="${CDN_RF}/${w.nft.id}.png" onerror="this.style.opacity='.3'">
+      <img class="rf-winner-img" src="${moodyImgUrl(w.nft.id)}" onerror="this.style.opacity='.3'">
       <div class="rf-winner-name-row">
         <div class="rf-winner-name">${w.name}</div>
         <button class="rf-copy-btn" onclick="navigator.clipboard.writeText('${w.name.replace(/'/g,"\\'")}').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)})" title="Copy name">Copy</button>
@@ -1958,7 +1960,7 @@ function applyTraitFilters(items){return items;}
     if(!_parts.length)return `<div class="rf-empty-chips">No participants yet</div>`;
     return _parts.map((p,i)=>`
       <div class="rf-chip">
-        <img src="${CDN_RF}/${p.nft.id}.png" onerror="this.style.opacity='.2'" loading="lazy">
+        <img src="${moodyImgUrl(p.nft.id)}" onerror="this.style.opacity='.2'" loading="lazy">
         <span class="rf-chip-name">${p.name}</span>
         <span class="rf-chip-id">#${p.nft.id}</span>
         ${_phase==='setup'?`<button class="rf-chip-del" onclick="rfDel(${i})">✕</button>`:''}
@@ -1997,17 +1999,58 @@ function applyTraitFilters(items){return items;}
   const CARD_GAP=16; // must match CSS .rf-scroll-card margin-bottom
   const CARD_FULL=CARD_H+CARD_GAP;
 
+  // Fisher-Yates shuffle — proper uniform distribution
+  // Standard Fisher-Yates shuffle
+  function _shuffle(arr){
+    const a=[...arr];
+    for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+    return a;
+  }
+
+  // Build the scroll strip using a DECK system:
+  // All participants are shuffled into a "deck". The strip scrolls through complete
+  // decks one by one — no one repeats until EVERYONE else has appeared first.
+  // At the boundary between decks, if the last card of deck N equals the first of deck N+1,
+  // we swap the first card to avoid a back-to-back repeat.
+  // The winner card is appended at the very end.
   function _buildStrip(winnerIdx){
-    // Extra scrolls before landing on winner (enough for ~5 full rounds through all participants)
     const rounds=6;
     const items=[];
+
     for(let r=0;r<rounds;r++){
-      // Shuffle participants each round for variety
-      const shuffled=[..._parts].sort(()=>Math.random()-.5);
-      items.push(...shuffled);
+      let deck=_shuffle(_parts);
+
+      // Fix boundary: last card of previous deck must differ from first card of this deck
+      if(items.length>0){
+        const prevLast=items[items.length-1];
+        if(deck[0].name===prevLast.name&&deck.length>1){
+          // Find first position in deck (after index 0) with a different name
+          const swap=deck.findIndex((p,i)=>i>0&&p.name!==prevLast.name);
+          if(swap!==-1)[deck[0],deck[swap]]=[deck[swap],deck[0]];
+        }
+      }
+
+      // Also fix any internal back-to-back duplicates within this deck
+      // (rare with Fisher-Yates but possible with small participant counts)
+      for(let k=1;k<deck.length;k++){
+        if(deck[k].name===deck[k-1].name){
+          // Find any element after position k with a different name to swap with
+          const swap=deck.findIndex((p,i)=>i>k&&p.name!==deck[k-1].name);
+          if(swap!==-1)[deck[k],deck[swap]]=[deck[swap],deck[k]];
+        }
+      }
+
+      items.push(...deck);
     }
-    // Add winner at end
-    items.push(_parts[winnerIdx]);
+
+    // Append the winner card at the very end
+    // Make sure it doesn't repeat the card just before it
+    const winner=_parts[winnerIdx];
+    if(items.length>0&&winner.name===items[items.length-1].name&&_parts.length>1){
+      const buffer=_parts.find(p=>p.name!==winner.name);
+      if(buffer)items.push(buffer);
+    }
+    items.push(winner);
     return items;
   }
 
@@ -2015,7 +2058,7 @@ function applyTraitFilters(items){return items;}
     const div=document.createElement('div');
     div.className='rf-scroll-card';
     div.innerHTML=`
-      <img class="rf-scroll-card-img" src="${CDN_RF}/${p.nft.id}.png" onerror="this.style.opacity='.2'" loading="lazy">
+      <img class="rf-scroll-card-img" src="${moodyImgUrl(p.nft.id)}" onerror="this.style.opacity='.2'" loading="lazy">
       <div class="rf-scroll-card-name">${p.name}</div>`;
     return div;
   }
@@ -2037,12 +2080,13 @@ function applyTraitFilters(items){return items;}
     // We need: card center - offset = vpH/2
     // => offset = CARD_TRACK_PAD + i*CARD_FULL + CARD_H/2 - vpH/2
     const CARD_TRACK_PAD=120; // must match CSS padding:120px 0 on .rf-scroll-track
-    const vpH=vp.clientHeight||380;
+    // Read vpH after a layout frame so it's accurate (avoids jerk if 0 at init)
+    const vpH=Math.max(200, vp.clientHeight||380);
     const winnerI=items.length-1;
     const finalOffset=CARD_TRACK_PAD+winnerI*CARD_FULL+CARD_H/2-vpH/2;
 
     const TOTAL_MS=4200+Math.random()*600;
-    const start=performance.now();
+    let start=-1; // set on first tick to avoid jerk from pre-rAF time gap
     let lastActiveIdx=-1;
 
     const msgs=['CHOOSING...','SEARCHING...','ALMOST...','SO CLOSE...'];
@@ -2058,6 +2102,7 @@ function applyTraitFilters(items){return items;}
     function easeOutQuint(t){return 1-Math.pow(1-t,5);}
 
     function tick(now){
+      if(start<0)start=now; // latch on first real frame — no gap jerk
       const elapsed=now-start;
       const t=Math.min(elapsed/TOTAL_MS,1);
       const eased=easeOutQuint(t);
@@ -2098,25 +2143,38 @@ function applyTraitFilters(items){return items;}
         if(fadeTop)fadeTop.style.opacity='0';
         if(fadeBot)fadeBot.style.opacity='0';
 
-        // Fade out all losers completely
-        const cards=track.querySelectorAll('.rf-scroll-card');
-        cards.forEach((c,i)=>{
-          const isWin=i===winnerI;
-          c.style.transition='transform .55s cubic-bezier(.34,1.56,.64,1),opacity .55s,filter .55s';
-          c.style.transform=isWin?'scale(1.22)':'scale(0.8)';
-          c.style.opacity=isWin?'1':'0';
-          c.style.filter=isWin?'none':'blur(6px)';
-        });
+        // Remove ALL non-winner cards from the DOM immediately.
+        // This prevents the scale-collapse animation on surrounding cards from
+        // creating the visual illusion that a previous participant "reappeared".
+        const cards=Array.from(track.querySelectorAll('.rf-scroll-card'));
+        const winCard=cards[winnerI];
+        cards.forEach((c,i)=>{if(i!==winnerI)c.remove();});
 
-        // Winner card: big gold glow explosion
-        if(cards[winnerI]){
-          const wc=cards[winnerI];
+        // Re-center the track so the lone winner card is perfectly centered
+        track.style.transition='none';
+        track.style.transform='translateY(0)';
+        if(winCard){
+          winCard.style.transition='none';
+          winCard.style.transform='scale(1)';
+          winCard.style.opacity='1';
+          winCard.style.filter='none';
+          // Position track so winner is centered in viewport
+          track.style.paddingTop=Math.max(0,(vpH/2 - CARD_H/2))+'px';
+        }
+
+        // Winner card: big gold glow explosion (after a tiny frame to let layout settle)
+        requestAnimationFrame(()=>{
+        if(winCard){
+          const wc=winCard;
+          wc.style.transition='transform .55s cubic-bezier(.34,1.56,.64,1),box-shadow .55s';
+          wc.style.transform='scale(1.22)';
           wc.style.boxShadow='0 0 60px rgba(255,200,80,.9),0 0 120px rgba(255,150,0,.5),0 0 200px rgba(255,100,0,.2)';
           const wImg=wc.querySelector('.rf-scroll-card-img');
           if(wImg){wImg.style.border='4px solid var(--gold-bright)';wImg.style.boxShadow='0 0 50px rgba(255,200,80,1),0 0 100px rgba(255,180,0,.6)';}
           const wName=wc.querySelector('.rf-scroll-card-name');
           if(wName){wName.style.color='var(--gold-bright)';wName.style.textShadow='0 0 30px rgba(255,200,80,1),0 0 60px rgba(255,180,0,.7)';wName.style.fontSize='28px';}
         }
+        });
 
         // Status: AND THE WINNER IS... then fast reveal (800ms)
         const statusEl=$('rfScrollStatus');
@@ -2737,7 +2795,7 @@ function renderAll(){
     const outer=document.createElement('div');outer.className='carousel-outer';
     const track=document.createElement('div');track.className='carousel-track';
     const copies=isMobileLite()?2:3;
-    for(let copy=0;copy<copies;copy++)filtered.forEach((nft,i)=>track.appendChild(buildCard(nft,i,true,true,filtered.length)));
+    for(let copy=0;copy<copies;copy++)filtered.forEach((nft,i)=>{const co=buildCard(nft,i,true,true,filtered.length);const c=co.querySelector('.card');if(c)c.dataset.view='auto';track.appendChild(co);});
     outer.appendChild(track);container.appendChild(outer);
     requestAnimationFrame(()=>{const cardW=isMobileLite()?Math.min(window.innerWidth*.72,270):356;const setW=(cardW+28)*filtered.length;track.style.setProperty('--sd',`-${setW}px`);track.style.animationDuration=(setW/(isMobileLite()?34:62))+'s';});
   } else if(typeof v==='number'){
@@ -2889,6 +2947,7 @@ function drawBg(t){
 }
 
 // ══ MAIN LOOP ══
+// ══ MAIN LOOP ══
 function mainLoop(ts){
   const t=ts*.001;
   drawBg(t);
@@ -2905,21 +2964,23 @@ function mainLoop(ts){
     st.mx+=(st.tmx-st.mx)*.1;st.my+=(st.tmy-st.my)*.1;st.hue=(st.hue+.18)%360;
     const isHov=Math.abs(st.tmx-.5)>.01||Math.abs(st.tmy-.5)>.01;
     const lightMotion=isV2Card&&card.classList.contains('fx-mass');
-    if(mobileLite&&!isV2Card){
-      card.style.transform='none';
-      continue;
-    }
+    if(mobileLite&&!isV2Card){card.style.transform='none';continue;}
     const autoX=Math.sin(t*.65+st.phase)*3.5,autoY=Math.cos(t*.5+st.phase+1)*2.8;
     const dx=st.mx-.5,dy=st.my-.5;
     card.style.transform=lightMotion
       ?`translateY(${isHov?-2:0}px)`
       :`rotateX(${-dy*22+autoX}deg) rotateY(${dx*22+autoY}deg) scale(${isHov?1.05:1})`;
-    const hl=card.querySelector('.holo-layer');
-    if(hl){const ang=115+Math.sin(t*.4+st.phase)*35+dx*40+dy*20;hl.style.setProperty('--ang',ang+'deg');hl.style.setProperty('--hue',st.hue+'');const amx=.5+Math.sin(t*.6+st.phase)*.3,amy=.5+Math.cos(t*.45+st.phase+.8)*.3;hl.style.setProperty('--mx',(isHov?st.mx:amx)*100+'%');hl.style.setProperty('--my',(isHov?st.my:amy)*100+'%');}
-    const v2hl=card.querySelector('.v2-card-holo');
-    if(v2hl){const ang=115+Math.sin(t*.4+st.phase)*35+dx*40+dy*20;v2hl.style.setProperty('--vang',ang+'deg');v2hl.style.setProperty('--vhue',st.hue+'');const amx=.5+Math.sin(t*.6+st.phase)*.3,amy=.5+Math.cos(t*.45+st.phase+.8)*.3;v2hl.style.setProperty('--vmx',(isHov?st.mx:amx)*100+'%');v2hl.style.setProperty('--vmy',(isHov?st.my:amy)*100+'%');}
+    // Museum cards always get full effects; auto-view + v2 cards only on hover
+    const isAutoView=!isV2Card&&card.dataset&&card.dataset.view==='auto';
+    const skipEffects=(isV2Card||isAutoView)&&!isHov;
+    if(!skipEffects){
+      const hl=card.querySelector('.holo-layer');
+      if(hl){const ang=115+Math.sin(t*.4+st.phase)*35+dx*40+dy*20;hl.style.setProperty('--ang',ang+'deg');hl.style.setProperty('--hue',st.hue+'');const amx=.5+Math.sin(t*.6+st.phase)*.3,amy=.5+Math.cos(t*.45+st.phase+.8)*.3;hl.style.setProperty('--mx',(isHov?st.mx:amx)*100+'%');hl.style.setProperty('--my',(isHov?st.my:amy)*100+'%');}
+      const v2hl=card.querySelector('.v2-card-holo');
+      if(v2hl){const ang=115+Math.sin(t*.4+st.phase)*35+dx*40+dy*20;v2hl.style.setProperty('--vang',ang+'deg');v2hl.style.setProperty('--vhue',st.hue+'');const amx=.5+Math.sin(t*.6+st.phase)*.3,amy=.5+Math.cos(t*.45+st.phase+.8)*.3;v2hl.style.setProperty('--vmx',(isHov?st.mx:amx)*100+'%');v2hl.style.setProperty('--vmy',(isHov?st.my:amy)*100+'%');}
+    }
     const pc=card.querySelector('.pc')||card.querySelector('.v2-card-pc');
-    if(pc&&pc.width>0&&st._particles){const ctx=pc.getContext('2d'),W=pc.width,H=pc.height;ctx.clearRect(0,0,W,H);for(const p of st._particles){p.x+=p.vx;p.y+=p.vy;p.life+=.008;if(p.life>p.max||p.y<-8)Object.assign(p,mkP(W,H,false));const a=Math.sin(p.life/p.max*Math.PI);ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.c+hex(a*.85);ctx.fill();ctx.beginPath();ctx.arc(p.x,p.y,p.r*3.5,0,Math.PI*2);ctx.fillStyle=p.c+hex(a*.12);ctx.fill();}}
+    if(pc&&pc.width>0&&st._particles&&(!isAutoView&&!isV2Card||isHov)){const ctx=pc.getContext('2d'),W=pc.width,H=pc.height;ctx.clearRect(0,0,W,H);for(const p of st._particles){p.x+=p.vx;p.y+=p.vy;p.life+=.008;if(p.life>p.max||p.y<-8)Object.assign(p,mkP(W,H,false));const a=Math.sin(p.life/p.max*Math.PI);ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.c+hex(a*.85);ctx.fill();ctx.beginPath();ctx.arc(p.x,p.y,p.r*3.5,0,Math.PI*2);ctx.fillStyle=p.c+hex(a*.12);ctx.fill();}}
   }
   requestAnimationFrame(mainLoop);
 }
@@ -3042,7 +3103,9 @@ function loadImageForCanvas(src,timeoutMs=12000){
       resolve(img);
     });
     img.onerror=()=>done(()=>reject(new Error('Image failed to load.')));
-    img.src=src;
+    // Cache-bust to force a fresh CORS request (avoids tainted canvas from cached non-CORS response)
+    const sep=src.includes('?')? '&':'?';
+    img.src=src+sep+'_cb='+Date.now();
   });
 }
 // Build a CORS-proxy URL. Two public proxies tried in order.
@@ -3094,15 +3157,20 @@ function estimateGlobalBgHint(img){
   return{r:br,g:bg,b:bb,l:bl,avgVariance:variance/count,avgLumaVariance:lumaVariance/count};
 }
 async function resolveGifStudioImage(n){
-  // Always rebuild the own CDN URL from the token id — this works even for NFTs
-  // loaded from cache/localStorage that have stale imageCandidates ordering.
+  // Detect already-proxied URLs to avoid double-wrapping
+  function isAlreadyProxied(url){try{const h=new URL(url).hostname;return h==='images.weserv.nl'||h==='corsproxy.io';}catch(e){return false;}}
+  // Hosts that block CORS — skip direct load
+  const NO_CORS=['digitaloceanspaces.com','cdn.nft.coinbase.com','lh3.googleusercontent.com','arweave.net'];
+  function isNoCors(url){try{const h=new URL(url).hostname;return NO_CORS.some(d=>h===d||h.endsWith('.'+d));}catch(e){return false;}}
+
+  // Use proxy URL for own CDN — bucket has no CORS headers
   const ownCDN=(n.id&&String(n.contractAddress||'').toLowerCase()===ETH_CONTRACT.toLowerCase())
-    ?`${MOODY_IMAGE_CDN}/${n.id}.png`:'';
+    ?moodyImgUrl(n.id):'';
 
   const rawSources=[
-    ownCDN,                          // 1st: our own CDN — always CORS-safe
-    ...(n.imageCandidates||[]),       // 2nd: whatever Alchemy returned
-    n.image                           // 3rd: primary image field
+    ownCDN,
+    ...(n.imageCandidates||[]),
+    n.image
   ].filter(Boolean);
 
   const deduped=[];
@@ -3113,7 +3181,7 @@ async function resolveGifStudioImage(n){
 
   let lastErr=null;
 
-  // --- Pass 0: try own CDN first (no CORS issues, fast) ---
+  // --- Pass 0: try own CDN proxy first ---
   if(ownCDN){
     try{
       const img=await loadImageForCanvas(ownCDN,8000);
@@ -3121,14 +3189,19 @@ async function resolveGifStudioImage(n){
     }catch(err){lastErr=err;}
   }
 
-  // --- Pass 1: race direct load vs weserv proxy with 3s direct timeout ---
-  // This eliminates the long wait when CORS blocks the direct load
+  // --- Pass 1: try each source, skipping double-proxying ---
   const proxyTargets=[...new Set(deduped.map(s=>s.split('?')[0]))];
   for(const src of proxyTargets){
-    if(src===ownCDN)continue; // already tried
-    const proxyUrl=corsProxyUrl(src,0); // weserv.nl
+    if(src===ownCDN)continue;
+    // Already a proxy URL — use directly, don't wrap again
+    if(isAlreadyProxied(src)){
+      try{const img=await loadImageForCanvas(src,10000);return{img,src};}
+      catch(err){lastErr=err;continue;}
+    }
+    const skipDirect=isNoCors(src);
+    const proxyUrl=corsProxyUrl(src,0);
     const raceResult=await Promise.any([
-      loadImageForCanvas(src,3000).then(img=>({img,src})),
+      skipDirect?Promise.reject('skip'):loadImageForCanvas(src,3000).then(img=>({img,src})),
       proxyUrl?loadImageForCanvas(proxyUrl,10000).then(img=>({img,src:proxyUrl})):Promise.reject('no proxy')
     ]).catch(err=>{lastErr=err instanceof AggregateError?err.errors[err.errors.length-1]:err;return null;});
     if(raceResult)return raceResult;
@@ -3615,6 +3688,12 @@ window.gsRemoveBg=async function(){
     syncBrushFromOffscreen();
     $g('gsBtnDl').disabled=false;
     setStatus('✓ Done! Refine if needed, then download.','ok');
+    // If protect mode was on, show the tip so users know to try unchecking it if needed
+    const tipEl=$g('gsProtectTip');
+    if(tipEl){
+      const isProtected=$g('gsProtectChk')&&$g('gsProtectChk').checked;
+      tipEl.style.display=isProtected?'block':'none';
+    }
     gsTab('paint');
   }catch(e){setStatus((e&&e.message)||'Background removal failed.','err');btn.disabled=false;}
   btn.disabled=false;
@@ -3993,11 +4072,18 @@ setTimeout(()=>{
     <div class="gs-lbl">Step 1 — Remove Background</div>
     <div style="font-size:10px;color:var(--muted);font-family:'Inter',sans-serif;line-height:1.5">Adjust the blue crop box around the area you want, then press the button to remove the background locally with no credits required.</div>
     <!-- PROTECT CHARACTER TOGGLE -->
-    <label id="gsProtectLabel" style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:6px;padding:8px 10px;border-radius:10px;border:1px solid rgba(0,255,136,.25);background:rgba(0,255,136,.06)">
-      <input type="checkbox" id="gsProtectChk" style="width:16px;height:16px;accent-color:#00ff88;cursor:pointer" checked>
-      <span style="font-family:'Inter',sans-serif;font-size:11px;color:#00ff88;font-weight:600;letter-spacing:.4px">🛡 Protect Character</span>
-      <span style="font-family:'Inter',sans-serif;font-size:9px;color:var(--muted);margin-left:2px">Uses tighter color matching — keeps more of the character and removes only pixels that closely match the background color</span>
+    <label id="gsProtectLabel" style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:6px;padding:10px 12px;border-radius:10px;border:1px solid rgba(0,255,136,.35);background:rgba(0,255,136,.08)">
+      <input type="checkbox" id="gsProtectChk" style="width:17px;height:17px;accent-color:#00ff88;cursor:pointer;flex-shrink:0" checked>
+      <div>
+        <div style="font-family:'Inter',sans-serif;font-size:12px;color:#00ff88;font-weight:700;letter-spacing:.3px;margin-bottom:2px">🛡 Protect Character <span style="font-weight:400;font-size:10px;opacity:.7">(checked by default)</span></div>
+        <div style="font-family:'Inter',sans-serif;font-size:10px;color:rgba(243,245,251,.55);line-height:1.45">Uses tighter color matching to preserve character details. <strong style="color:rgba(255,220,100,.8)">If the background isn't fully removed, try unchecking this.</strong></div>
+      </div>
     </label>
+    <!-- Tip shown when background removal likely failed (toggled by JS) -->
+    <div id="gsProtectTip" style="display:none;margin-top:6px;padding:9px 12px;border-radius:9px;border:1px solid rgba(255,200,60,.35);background:rgba(255,180,40,.07)">
+      <div style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,210,100,.9);font-weight:600;margin-bottom:3px">💡 Background still showing?</div>
+      <div style="font-family:'Inter',sans-serif;font-size:10px;color:rgba(243,245,251,.6);line-height:1.5">Uncheck <strong style="color:#00ff88">Protect Character</strong> above and try again — this works better for NFTs with light or uniform backgrounds.</div>
+    </div>
     <button class="gs-btn cta big" id="gsBtnRm" onclick="gsRemoveBg()">🪄 Auto Remove Background</button>
    </div>
    <!-- panel paint -->
