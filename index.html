@@ -68,7 +68,63 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
   margin:8px auto 0;max-width:420px;width:min(420px,72vw);animation:lineGlow 3s ease-in-out infinite}
 @keyframes lineGlow{0%,100%{opacity:.5}50%{opacity:1;box-shadow:0 0 16px var(--gold)}}
 
-/* ══ TOOLBAR ══ */
+/* ══ MAIN NAV BUTTONS (bigger) ══ */
+.controls-main{gap:12px;padding:8px 0}
+.vbtn-main{
+  padding:14px 28px!important;
+  font-size:14px!important;
+  letter-spacing:2px!important;
+  border-radius:14px!important;
+  min-width:160px;
+}
+
+  background:linear-gradient(160deg,rgba(42,14,8,.92),rgba(22,6,2,.96))!important;
+  border-color:rgba(255,100,40,.35)!important;
+  color:rgba(255,180,100,.72)!important;
+}
+.vbtn-raffle:hover{
+  background:linear-gradient(160deg,rgba(70,22,8,.96),rgba(35,8,2,.99))!important;
+  border-color:rgba(255,120,40,.6)!important;
+  color:rgba(255,210,130,.95)!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.36),0 0 22px rgba(255,80,20,.18)!important;
+}
+.vbtn-raffle.active{
+  background:linear-gradient(160deg,rgba(90,24,8,.98),rgba(45,8,2,1))!important;
+  border-color:rgba(255,120,40,.65)!important;
+  color:#ffd0a0!important;
+}
+/* ══ COLLECTION VIEW CHIPS ══ */
+.col-view-divider{width:1px;height:22px;background:rgba(255,255,255,.12);margin:0 4px;align-self:center}
+.v2-chip-view{
+  font-family:'Cinzel',serif!important;
+  font-size:11px!important;
+  font-weight:700!important;
+  letter-spacing:1px!important;
+  padding:8px 14px!important;
+  border-radius:10px!important;
+  background:linear-gradient(160deg,rgba(28,14,42,.88),rgba(12,6,22,.92))!important;
+  border:1px solid rgba(120,60,200,.22)!important;
+  color:rgba(210,180,255,.62)!important;
+  transition:all .2s ease!important;
+}
+.v2-chip-view:hover{
+  background:linear-gradient(160deg,rgba(50,22,80,.94),rgba(20,10,40,.97))!important;
+  border-color:rgba(180,100,255,.42)!important;
+  color:rgba(235,205,255,.92)!important;
+}
+.v2-chip-view.active{
+  background:linear-gradient(160deg,rgba(60,20,100,.98),rgba(25,8,55,1))!important;
+  border-color:rgba(180,80,255,.62)!important;
+  color:#e8c8ff!important;
+  box-shadow:0 0 16px rgba(160,60,255,.18)!important;
+}
+.btn-share-col{
+  padding:8px 16px!important;
+  font-size:11px!important;
+  margin-left:4px;
+}
+
+
 .stats{display:flex;gap:14px;margin-bottom:20px;flex-wrap:wrap}
 .stat{background:rgba(20,15,6,.24);border:1px solid rgba(201,168,76,.15);border-radius:8px;padding:7px 12px;backdrop-filter:blur(8px);min-width:94px}
 .sl{font:10px Cinzel,serif;letter-spacing:2px;color:rgba(255,223,150,.66);text-transform:uppercase}
@@ -963,67 +1019,78 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
   color:var(--gold-bright)!important;
 }
 /* ══ RAFFLE ══ */
-#raffleModal{position:fixed;inset:0;z-index:900;background:rgba(2,1,0,.88);backdrop-filter:blur(18px);display:flex;align-items:center;justify-content:center;padding:36px 12px 12px;opacity:0;pointer-events:none;transition:opacity .3s}
+#raffleModal{position:fixed;inset:0;z-index:900;background:rgba(2,1,0,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:36px 12px 12px;opacity:0;pointer-events:none;transition:opacity .3s}
+#raffleModal::before{content:'';position:absolute;inset:0;background:url('rafflemoody.png') center center/cover no-repeat;opacity:1;pointer-events:none;z-index:0}
+#raffleModal::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 110% 50% at 50% 50%, transparent 35%, rgba(2,1,0,.52) 80%),
+    linear-gradient(to bottom, rgba(2,1,0,.35) 0%, transparent 12%, transparent 88%, rgba(2,1,0,.35) 100%),
+    linear-gradient(to right, rgba(2,1,0,.3) 0%, transparent 10%, transparent 90%, rgba(2,1,0,.3) 100%);
+}
 #raffleModal.open{opacity:1;pointer-events:auto}
-.rf-wrap{width:min(1400px,100%);max-height:96vh;display:flex;flex-direction:column;border-radius:28px;background:linear-gradient(160deg,rgba(18,10,2,.99),rgba(8,4,1,1));border:1px solid rgba(201,168,76,.3);box-shadow:0 0 100px rgba(201,168,76,.18),0 32px 90px rgba(0,0,0,.8);overflow:visible;position:relative}
+#raffleModal>*{position:relative;z-index:1}
+.rf-wrap{width:min(1400px,100%);max-height:96vh;display:flex;flex-direction:column;border-radius:28px;background:linear-gradient(160deg,rgba(18,10,2,.08),rgba(8,4,1,.12));border:1px solid rgba(201,168,76,.4);box-shadow:0 0 100px rgba(201,168,76,.22),0 32px 90px rgba(0,0,0,.3);overflow:visible;position:relative;backdrop-filter:blur(2px)}
+/* BG image behind raffle card */
+.rf-wrap::before{display:none}
 /* X button floats on the top-right corner of the card, half outside */
 .rf-x-btn{
-  position:absolute;top:-18px;right:-18px;z-index:10;
-  width:44px;height:44px;border-radius:50%;
+  position:absolute;top:-18px;right:-18px;z-index:12;
+  width:52px;height:52px;border-radius:50%;
   border:2px solid rgba(201,168,76,.5);
   background:linear-gradient(135deg,rgba(30,10,2,.98),rgba(12,4,1,1));
-  color:rgba(255,255,255,.8);font-size:18px;font-weight:700;
+  color:rgba(255,255,255,.8);font-size:22px;font-weight:700;
   cursor:pointer;display:flex;align-items:center;justify-content:center;
   transition:all .2s;
   box-shadow:0 4px 18px rgba(0,0,0,.6),0 0 12px rgba(201,168,76,.2);
   line-height:1;
 }
 .rf-x-btn:hover{background:rgba(220,40,0,.9);border-color:rgba(255,80,40,.8);color:#fff;transform:scale(1.12);box-shadow:0 6px 22px rgba(0,0,0,.7),0 0 18px rgba(255,60,0,.3)}
-.rf-hdr{padding:20px 26px 16px;background:linear-gradient(180deg,rgba(255,200,80,.05),transparent);border-bottom:1px solid rgba(201,168,76,.12);display:flex;align-items:center;flex-shrink:0;border-radius:28px 28px 0 0;overflow:hidden}
-.rf-ttl{font-family:'Cinzel',serif;font-size:30px;font-weight:900;color:var(--gold-bright);letter-spacing:.12em;text-shadow:0 0 28px rgba(255,200,80,.35)}
-.rf-sbtl{font-family:'Cormorant Garamond',serif;font-size:13px;color:rgba(245,234,208,.45);margin-top:2px}
-.rf-cols{display:grid;grid-template-columns:340px 1fr;flex:1;overflow:hidden;min-height:0;border-radius:0 0 28px 28px}
+.rf-hdr{padding:26px 32px 20px;background:linear-gradient(180deg,rgba(255,200,80,.07),transparent);border-bottom:1px solid rgba(201,168,76,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:28px 28px 0 0;overflow:hidden;text-align:center}
+.rf-ttl{font-family:'Cinzel',serif;font-size:42px;font-weight:900;color:var(--gold-bright);letter-spacing:.12em;text-shadow:0 0 28px rgba(255,200,80,.45);text-align:center}
+.rf-sbtl{font-family:'Cormorant Garamond',serif;font-size:17px;color:rgba(245,234,208,.6);margin-top:4px;text-align:center}
+.rf-cols{display:grid;grid-template-columns:400px 1fr;flex:1;overflow:hidden;min-height:0;border-radius:0 0 28px 28px}
 @media(max-width:680px){.rf-cols{grid-template-columns:1fr;overflow-y:auto}}
-.rf-lcol{display:flex;flex-direction:column;gap:0;border-right:1px solid rgba(255,255,255,.06);overflow-y:auto;padding:20px 18px}
-.rf-lbl{font-family:'Cinzel',serif;font-size:11px;letter-spacing:2.5px;color:rgba(255,223,150,.65);text-transform:uppercase;margin-bottom:8px;font-weight:700}
-.rf-row{display:flex;gap:7px;margin-bottom:10px}
-.rf-inp{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--cream);border-radius:9px;padding:12px 14px;font-family:'Share Tech Mono',monospace;font-size:15px;outline:none;transition:border-color .2s}
-.rf-inp:focus{border-color:rgba(201,168,76,.4)}
-.rf-addbtn{padding:12px 18px;border-radius:9px;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);color:var(--gold-bright);font-family:'Cinzel',serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .18s;white-space:nowrap}
-.rf-addbtn:hover{background:rgba(201,168,76,.26);transform:translateY(-1px)}
-.rf-bulk{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--cream);border-radius:9px;padding:12px 14px;font-family:'Share Tech Mono',monospace;font-size:14px;resize:none;outline:none;margin-bottom:6px;line-height:1.6}
-.rf-bulk:focus{border-color:rgba(201,168,76,.3)}
-.rf-divider{height:1px;background:rgba(255,255,255,.06);margin:10px 0}
-.rf-chips{display:flex;flex-direction:column;gap:5px;flex:1;overflow-y:auto;min-height:60px;max-height:240px;padding-right:2px}
-.rf-chips::-webkit-scrollbar{width:3px}.rf-chips::-webkit-scrollbar-thumb{background:rgba(201,168,76,.25);border-radius:2px}
-.rf-chip{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);animation:fadeUp .18s ease-out both;transition:background .15s}
-.rf-chip:hover{background:rgba(255,255,255,.07)}
-.rf-chip img{width:34px;height:34px;border-radius:7px;object-fit:cover;flex-shrink:0;border:1px solid rgba(201,168,76,.2)}
-.rf-chip-name{font-family:'Cinzel',serif;font-size:13px;color:#fff;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rf-chip-id{font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(245,234,208,.35);flex-shrink:0}
-.rf-chip-del{background:none;border:none;color:rgba(255,255,255,.25);cursor:pointer;font-size:13px;padding:0 2px;transition:color .15s;flex-shrink:0}
+.rf-lcol{display:flex;flex-direction:column;gap:0;border-right:1px solid rgba(255,255,255,.08);overflow-y:auto;padding:24px 22px}
+.rf-lbl{font-family:'Cinzel',serif;font-size:13px;letter-spacing:2.5px;color:rgba(255,223,150,.85);text-transform:uppercase;margin-bottom:10px;font-weight:700}
+.rf-row{display:flex;gap:9px;margin-bottom:12px}
+.rf-inp{flex:1;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:10px;padding:14px 16px;font-family:'Share Tech Mono',monospace;font-size:17px;outline:none;transition:border-color .2s}
+.rf-inp:focus{border-color:rgba(201,168,76,.6)}
+.rf-addbtn{padding:14px 22px;border-radius:10px;background:rgba(201,168,76,.25);border:1px solid rgba(201,168,76,.5);color:var(--gold-bright);font-family:'Cinzel',serif;font-size:17px;font-weight:700;cursor:pointer;transition:all .18s;white-space:nowrap}
+.rf-addbtn:hover{background:rgba(201,168,76,.38);transform:translateY(-1px)}
+.rf-bulk{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:10px;padding:14px 16px;font-family:'Share Tech Mono',monospace;font-size:15px;resize:none;outline:none;margin-bottom:8px;line-height:1.7}
+.rf-bulk:focus{border-color:rgba(201,168,76,.45)}
+.rf-divider{height:1px;background:rgba(255,255,255,.1);margin:12px 0}
+.rf-chips{display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto;min-height:60px;max-height:260px;padding-right:2px}
+.rf-chips::-webkit-scrollbar{width:3px}.rf-chips::-webkit-scrollbar-thumb{background:rgba(201,168,76,.35);border-radius:2px}
+.rf-chip{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.12);animation:fadeUp .18s ease-out both;transition:background .15s}
+.rf-chip:hover{background:rgba(0,0,0,.45)}
+.rf-chip img{width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0;border:1px solid rgba(201,168,76,.3)}
+.rf-chip-name{font-family:'Cinzel',serif;font-size:20px;color:#fff;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 4px rgba(0,0,0,.8)}
+.rf-chip-id{font-family:'Share Tech Mono',monospace;font-size:12px;color:rgba(245,234,208,.5);flex-shrink:0}
+.rf-chip-del{background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:15px;padding:0 2px;transition:color .15s;flex-shrink:0}
 .rf-chip-del:hover{color:#ff6644}
-.rf-empty-chips{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(245,234,208,.2);padding:12px 4px}
-.rf-lfooter{margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;flex-shrink:0}
-.rf-count{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(245,234,208,.35)}
+.rf-empty-chips{font-family:'Share Tech Mono',monospace;font-size:12px;color:rgba(245,234,208,.35);padding:14px 4px}
+.rf-lfooter{margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;flex-shrink:0}
+.rf-count{font-family:'Share Tech Mono',monospace;font-size:13px;color:rgba(245,234,208,.55)}
 .rf-rcol{display:flex;flex-direction:column;align-items:stretch;justify-content:stretch;padding:0;gap:0;overflow:hidden;position:relative;min-height:420px}
 .rf-arena{width:100%;flex:1;position:relative;display:flex;align-items:center;justify-content:center;min-height:240px}
-#rfCardGrid{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;width:100%;padding:4px}
-.rf-pcard{display:flex;flex-direction:column;align-items:center;gap:5px;width:86px;flex-shrink:0;animation:rfCardIn .3s cubic-bezier(.34,1.56,.64,1) both;position:relative}
+#rfCardGrid{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-items:center;width:100%;padding:6px}
+.rf-pcard{display:flex;flex-direction:column;align-items:center;gap:6px;width:100px;flex-shrink:0;animation:rfCardIn .3s cubic-bezier(.34,1.56,.64,1) both;position:relative}
 @keyframes rfCardIn{from{opacity:0;transform:scale(.5) translateY(18px)}to{opacity:1;transform:none}}
 .rf-pcard.spotlit .rf-pcard-img{border-color:var(--gold-bright)!important;box-shadow:0 0 22px rgba(255,200,80,.65),0 4px 16px rgba(0,0,0,.4)!important;transform:scale(1.1)}
 .rf-pcard.winner-final .rf-pcard-img{border-color:var(--gold-bright)!important;box-shadow:0 0 50px rgba(255,200,80,.9),0 0 100px rgba(255,200,80,.4)!important;animation:rfWinPulse 1s ease-in-out infinite}
 @keyframes rfWinPulse{0%,100%{box-shadow:0 0 50px rgba(255,200,80,.9),0 0 100px rgba(255,200,80,.4)}50%{box-shadow:0 0 70px rgba(255,200,80,1),0 0 140px rgba(255,200,80,.6)}}
-.rf-pcard-img{width:78px;height:78px;border-radius:13px;object-fit:cover;border:2px solid rgba(255,255,255,.1);box-shadow:0 4px 16px rgba(0,0,0,.4);transition:all .2s;display:block}
-.rf-pcard-name{font-family:'Cinzel',serif;font-size:9px;color:rgba(255,255,255,.72);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:84px;letter-spacing:.03em}
+.rf-pcard-img{width:90px;height:90px;border-radius:14px;object-fit:cover;border:2px solid rgba(255,255,255,.15);box-shadow:0 4px 16px rgba(0,0,0,.5);transition:all .2s;display:block}
+.rf-pcard-name{font-family:'Cinzel',serif;font-size:11px;color:#fff;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:98px;letter-spacing:.03em;text-shadow:0 1px 4px rgba(0,0,0,.9)}
 #rfExpCanvas{position:absolute;inset:0;pointer-events:none;z-index:10}
 .rf-winner-reveal{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;animation:fadeUp .5s cubic-bezier(.34,1.56,.64,1) both;padding:10px}
 .rf-winner-crown{font-size:38px;animation:rfBounce .5s cubic-bezier(.34,1.56,.64,1) both}
 @keyframes rfBounce{0%{transform:scale(0) rotate(-15deg)}100%{transform:scale(1) rotate(0)}}
-.rf-winner-img{width:110px;height:110px;border-radius:18px;object-fit:cover;border:3px solid var(--gold);box-shadow:0 0 40px rgba(201,168,76,.6);animation:rfBounce .5s cubic-bezier(.34,1.56,.64,1) both;animation-delay:.1s}
-.rf-winner-name{font-family:'Cinzel',serif;font-size:26px;font-weight:900;color:var(--gold-bright);text-shadow:0 0 28px rgba(255,200,80,.5)}
-.rf-winner-sub{font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(245,234,208,.45)}
-.rf-fireworks{font-size:22px;letter-spacing:8px;animation:rfBounce .6s ease both;animation-delay:.3s}
+.rf-winner-img{width:140px;height:140px;border-radius:22px;object-fit:cover;border:3px solid var(--gold);box-shadow:0 0 50px rgba(201,168,76,.7);animation:rfBounce .5s cubic-bezier(.34,1.56,.64,1) both;animation-delay:.1s}
+.rf-winner-name{font-family:'Cinzel',serif;font-size:36px;font-weight:900;color:var(--gold-bright);text-shadow:0 0 28px rgba(255,200,80,.5)}
+.rf-winner-sub{font-family:'Share Tech Mono',monospace;font-size:14px;color:rgba(245,234,208,.65)}
+.rf-fireworks{font-size:28px;letter-spacing:10px;animation:rfBounce .6s ease both;animation-delay:.3s}
 
 /* ── Raffle Card Scroll ── */
 @keyframes rfFadeUp{from{opacity:0;transform:translateY(20px) scale(.95)}to{opacity:1;transform:none}}
@@ -1032,92 +1099,89 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 @keyframes rfPulse{0%,100%{opacity:.55}50%{opacity:1}}
 .rf-rcol{position:relative;overflow:hidden;display:flex;align-items:stretch;justify-content:stretch;min-height:600px}
 /* Scroll animation layout */
-.rf-scroll-layout{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px;position:relative}
-.rf-scroll-status{font-family:'Cinzel',serif;font-size:18px;font-weight:700;letter-spacing:5px;color:var(--gold-bright);text-align:center;min-height:26px;animation:rfPulse 1s ease-in-out infinite;transition:opacity .2s}
-/* Viewport window */
+.rf-scroll-layout{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px;position:relative}
+.rf-scroll-status{font-family:'Cinzel',serif;font-size:24px;font-weight:700;letter-spacing:5px;color:var(--gold-bright);text-align:center;min-height:32px;animation:rfPulse 1s ease-in-out infinite;transition:opacity .2s;text-shadow:0 0 20px rgba(255,200,80,.5)}
+/* Viewport window — bigger, brighter, stream-friendly */
 .rf-scroll-viewport{
-  position:relative;width:320px;height:480px;overflow:hidden;
-  border-radius:18px;
-  border:2px solid rgba(201,168,76,.45);
-  box-shadow:0 0 0 1px rgba(255,200,0,.08),0 0 40px rgba(201,168,76,.2),inset 0 0 30px rgba(0,0,0,.6);
-  background:#050300;
+  position:relative;width:440px;height:580px;overflow:hidden;
+  border-radius:22px;
+  border:3px solid rgba(201,168,76,.6);
+  box-shadow:0 0 0 1px rgba(255,200,0,.1),0 0 60px rgba(201,168,76,.35),inset 0 0 20px rgba(0,0,0,.1);
+  background:rgba(20,12,4,.3);
 }
-.rf-scroll-fade-top{position:absolute;top:0;left:0;right:0;height:100px;z-index:3;pointer-events:none;background:linear-gradient(180deg,rgba(5,3,0,.95) 0%,transparent 100%)}
-.rf-scroll-fade-bot{position:absolute;bottom:0;left:0;right:0;height:100px;z-index:3;pointer-events:none;background:linear-gradient(0deg,rgba(5,3,0,.95) 0%,transparent 100%)}
+.rf-scroll-fade-top{position:absolute;top:0;left:0;right:0;height:120px;z-index:3;pointer-events:none;background:linear-gradient(180deg,rgba(8,5,2,.75) 0%,transparent 100%);transition:opacity .4s}
+.rf-scroll-fade-bot{position:absolute;bottom:0;left:0;right:0;height:120px;z-index:3;pointer-events:none;background:linear-gradient(0deg,rgba(8,5,2,.75) 0%,transparent 100%);transition:opacity .4s}
 /* Center selector highlight */
 .rf-scroll-selector{
-  position:absolute;top:50%;left:0;right:0;height:192px;transform:translateY(-50%);z-index:4;pointer-events:none;
-  border-top:2px solid rgba(201,168,76,.7);border-bottom:2px solid rgba(201,168,76,.7);
-  box-shadow:0 0 20px rgba(201,168,76,.25),inset 0 0 20px rgba(201,168,76,.04);
+  position:absolute;top:50%;left:0;right:0;height:240px;transform:translateY(-50%);z-index:4;pointer-events:none;
+  border-top:3px solid rgba(201,168,76,.9);border-bottom:3px solid rgba(201,168,76,.9);
+  box-shadow:0 0 30px rgba(201,168,76,.4),inset 0 0 30px rgba(201,168,76,.08);
+  background:rgba(255,200,80,.03);
+  transition:opacity .5s ease;
 }
 /* Scrolling track */
-.rf-scroll-track{position:absolute;top:0;left:0;right:0;padding:100px 0;will-change:transform}
-/* Each participant card in the scroll */
+.rf-scroll-track{position:absolute;top:0;left:0;right:0;padding:120px 0;will-change:transform}
+/* Each participant card in the scroll — BIGGER for streams */
 .rf-scroll-card{
-  display:flex;flex-direction:column;align-items:center;gap:8px;
-  width:100%;height:200px;margin-bottom:12px;
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+  width:100%;height:250px;margin-bottom:16px;
   transition:transform .12s ease,opacity .12s ease,filter .12s ease;
 }
-.rf-scroll-card-img{width:140px;height:140px;object-fit:cover;border-radius:16px;display:block;border:2px solid rgba(255,255,255,.15);box-shadow:0 4px 18px rgba(0,0,0,.5)}
-.rf-scroll-card-name{font-family:'Cinzel',serif;font-size:14px;font-weight:900;color:#fff;text-align:center;letter-spacing:.5px;text-shadow:0 0 10px rgba(255,200,80,.3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;padding:0 8px}
-/* Winner reveal — BIG */
-.rf-winner-reveal{
-  display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;
-  animation:rfFadeUp .6s cubic-bezier(.34,1.56,.64,1) both;
-  padding:20px 16px;height:100%;justify-content:center;
-}
-.rf-win-label{font-family:'Cinzel',serif;font-size:60px;font-weight:900;letter-spacing:14px;color:var(--gold-bright);text-shadow:0 0 40px rgba(255,200,80,.6),0 0 80px rgba(255,180,0,.3);animation:rfFadeUp .5s cubic-bezier(.34,1.56,.64,1) both,rfPulse 2s .6s ease-in-out infinite;line-height:1;margin-bottom:4px}
+.rf-scroll-card-img{width:180px;height:180px;object-fit:cover;border-radius:20px;display:block;border:3px solid rgba(255,255,255,.25);box-shadow:0 4px 24px rgba(0,0,0,.4)}
+.rf-scroll-card-name{font-family:'Cinzel',serif;font-size:22px;font-weight:900;color:#fff;text-align:center;letter-spacing:.5px;text-shadow:0 0 16px rgba(255,200,80,.5),0 2px 8px rgba(0,0,0,.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:380px;padding:0 8px}
+/* Winner reveal — pushed down ~4cm (~60px) */
+.rf-win-label{font-family:'Cinzel',serif;font-size:68px;font-weight:900;letter-spacing:14px;color:var(--gold-bright);text-shadow:0 0 40px rgba(255,200,80,.6),0 0 80px rgba(255,180,0,.3);animation:rfFadeUp .5s cubic-bezier(.34,1.56,.64,1) both,rfPulse 2s .6s ease-in-out infinite;line-height:1;margin-bottom:4px;margin-top:60px}
 .rf-winner-crown,.rf-fireworks{display:none}
 .rf-winner-img{
-  width:260px;height:260px;border-radius:26px;object-fit:cover;
-  border:3px solid var(--gold);
+  width:300px;height:300px;border-radius:28px;object-fit:cover;
+  border:4px solid var(--gold);
   box-shadow:0 0 90px rgba(201,168,76,.85);
   animation:rfFadeUp .55s cubic-bezier(.34,1.56,.64,1) .1s both,rfWinGlow 1.4s .8s ease-in-out infinite alternate;
 }
-.rf-winner-name-row{display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap}
-.rf-winner-name{font-family:'Cinzel',serif;font-size:52px;font-weight:900;color:var(--gold-bright);text-shadow:0 0 40px rgba(255,200,80,.6);animation:rfNameIn .65s cubic-bezier(.34,1.56,.64,1) .3s both;line-height:1.1}
+.rf-winner-name-row{display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap}
+.rf-winner-name{font-family:'Cinzel',serif;font-size:58px;font-weight:900;color:var(--gold-bright);text-shadow:0 0 40px rgba(255,200,80,.6),0 2px 8px rgba(0,0,0,.9);animation:rfNameIn .65s cubic-bezier(.34,1.56,.64,1) .3s both;line-height:1.1}
 .rf-copy-btn{
-  font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:1.5px;
-  padding:5px 10px;border-radius:6px;border:1px solid rgba(201,168,76,.4);
+  font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:1.5px;
+  padding:7px 14px;border-radius:8px;border:1px solid rgba(201,168,76,.4);
   background:rgba(201,168,76,.12);color:var(--gold-bright);cursor:pointer;
   transition:all .18s;white-space:nowrap;flex-shrink:0;
 }
 .rf-copy-btn:hover{background:rgba(201,168,76,.24);border-color:var(--gold);transform:translateY(-1px)}
-.rf-winner-sub{font-family:'Share Tech Mono',monospace;font-size:15px;color:rgba(245,234,208,.5);animation:rfFadeUp .5s ease .4s both;letter-spacing:1px}
-.rf-winner-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;animation:rfFadeUp .5s ease .5s both}
+.rf-winner-sub{font-family:'Share Tech Mono',monospace;font-size:17px;color:rgba(245,234,208,.7);animation:rfFadeUp .5s ease .4s both;letter-spacing:1px;text-shadow:0 1px 4px rgba(0,0,0,.8)}
+.rf-winner-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;animation:rfFadeUp .5s ease .5s both}
 /* Idle hint */
-.rf-idle-hint{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;opacity:.35;text-align:center;padding:20px}
-.rf-idle-count{font-family:'Cinzel',serif;font-size:110px;font-weight:900;color:var(--gold-bright);line-height:1}
-.rf-idle-label{font-family:'Cinzel',serif;font-size:13px;letter-spacing:3px;color:rgba(245,234,208,.7)}
+.rf-idle-hint{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;opacity:.45;text-align:center;padding:24px}
+.rf-idle-count{font-family:'Cinzel',serif;font-size:130px;font-weight:900;color:var(--gold-bright);line-height:1;text-shadow:0 0 40px rgba(255,200,80,.3)}
+.rf-idle-label{font-family:'Cinzel',serif;font-size:16px;letter-spacing:3px;color:rgba(245,234,208,.8)}
 /* Right column split: main area + history sidebar */
 .rf-right-split{display:flex;flex-direction:row;width:100%;height:100%;min-height:0}
 /* History col */
-.rf-history-col{width:220px;flex-shrink:0;border-left:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;padding:18px 16px;gap:10px;overflow:hidden}
-.rf-history-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;border-bottom:1px solid rgba(201,168,76,.18);padding-bottom:8px}
-.rf-history-title{font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:3px;color:rgba(201,168,76,.7);text-transform:uppercase}
+.rf-history-col{width:280px;flex-shrink:0;border-left:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;padding:20px 18px;gap:12px;overflow:hidden;background:rgba(0,0,0,.15)}
+.rf-history-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;border-bottom:1px solid rgba(201,168,76,.22);padding-bottom:10px}
+.rf-history-title{font-family:'Cinzel',serif;font-size:15px;font-weight:700;letter-spacing:3px;color:rgba(201,168,76,.9);text-transform:uppercase}
 .rf-copy-all-btn{
-  font-family:'Cinzel',serif;font-size:8px;font-weight:700;letter-spacing:1.5px;
-  padding:3px 8px;border-radius:5px;
+  font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:1.5px;
+  padding:4px 10px;border-radius:6px;
   border:1px solid rgba(201,168,76,.35);
-  background:rgba(201,168,76,.1);
-  color:rgba(201,168,76,.8);
+  background:rgba(201,168,76,.12);
+  color:rgba(201,168,76,.9);
   cursor:pointer;transition:all .18s;white-space:nowrap;
 }
-.rf-copy-all-btn:hover{background:rgba(201,168,76,.22);border-color:var(--gold);color:var(--gold-bright)}
-.rf-history-list{display:flex;flex-direction:column;gap:7px;overflow-y:auto;flex:1;min-height:0}
-.rf-history-list::-webkit-scrollbar{width:2px}.rf-history-list::-webkit-scrollbar-thumb{background:rgba(201,168,76,.2)}
-.rf-history-empty{font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(245,234,208,.2);text-align:center;padding:16px 0}
-.rf-history-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);transition:background .15s;flex-shrink:0}
-.rf-history-item:hover{background:rgba(255,255,255,.07)}
-.rf-history-latest{background:rgba(201,168,76,.08)!important;border-color:rgba(201,168,76,.22)!important}
-.rf-history-img{width:40px;height:40px;border-radius:7px;object-fit:cover;flex-shrink:0;border:1px solid rgba(201,168,76,.3)}
+.rf-copy-all-btn:hover{background:rgba(201,168,76,.25);border-color:var(--gold);color:var(--gold-bright)}
+.rf-history-list{display:flex;flex-direction:column;gap:8px;overflow-y:auto;flex:1;min-height:0}
+.rf-history-list::-webkit-scrollbar{width:3px}.rf-history-list::-webkit-scrollbar-thumb{background:rgba(201,168,76,.25)}
+.rf-history-empty{font-family:'Share Tech Mono',monospace;font-size:13px;color:rgba(245,234,208,.3);text-align:center;padding:18px 0}
+.rf-history-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.08);transition:background .15s;flex-shrink:0}
+.rf-history-item:hover{background:rgba(0,0,0,.4)}
+.rf-history-latest{background:rgba(201,168,76,.1)!important;border-color:rgba(201,168,76,.3)!important}
+.rf-history-img{width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0;border:1px solid rgba(201,168,76,.35)}
 .rf-history-info{flex:1;min-width:0}
-.rf-history-name{font-family:'Cinzel',serif;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rf-history-id{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(245,234,208,.38)}
+.rf-history-name{font-family:'Cinzel',serif;font-size:17px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.rf-history-id{font-family:'Share Tech Mono',monospace;font-size:12px;color:rgba(245,234,208,.45)}
 /* Make scroll layout take remaining width */
 .rf-scroll-layout{flex:1;min-width:0}
 .rf-winner-reveal{flex:1;min-width:0}
-.rf-status{font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(245,234,208,.4);text-align:center;min-height:16px}
+.rf-status{font-family:'Share Tech Mono',monospace;font-size:13px;color:rgba(245,234,208,.6);text-align:center;min-height:18px}
 
 </style>
 </head>
@@ -1170,17 +1234,11 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 
   <!-- TOOLBAR (v6) -->
   <div class="toolbar">
-    <div class="controls">
-      <button class="vbtn active" id="vbtn-carousel" onclick="setView('carousel')">🏛 Moody Museum</button>
-      <button class="vbtn" id="vbtn-my" onclick="setView('my')">🖼 My Collection</button>
-      <button class="vbtn" id="vbtn-gifmachine" onclick="openGifMachine()">✂️ Gif Machine</button>
-      <button class="vbtn" id="vbtn-auto" onclick="setView('auto')">▶ Auto</button>
-      <button class="vbtn" id="vbtn-4" onclick="setView(4)">4</button>
-      <button class="vbtn" id="vbtn-6" onclick="setView(6)">6</button>
-      <button class="vbtn" id="vbtn-10" onclick="setView(10)">10</button>
-      <button class="vbtn" id="vbtn-12" onclick="setView(12)">12</button>
-      <button class="vbtn" id="vbtn-raffle" onclick="openRaffle()">Raffle</button>
-      <button class="btn-share" id="shareBtn" onclick="takeScreenshot()">📸 Share</button>
+    <div class="controls controls-main">
+      <button class="vbtn vbtn-main active" id="vbtn-carousel" onclick="setView('carousel')">🏛 Moody Museum</button>
+      <button class="vbtn vbtn-main" id="vbtn-my" onclick="setView('my')">🖼 My Collection</button>
+      <button class="vbtn vbtn-main" id="vbtn-gifmachine" onclick="openGifMachine()">✂️ GIF Machine</button>
+      <button class="vbtn vbtn-main vbtn-raffle" id="vbtn-raffle" onclick="openRaffle()">🎲 Host a Raffle</button>
     </div>
   </div>
 
@@ -1217,6 +1275,13 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
         <button class="v2-chip active" data-chain="all" onclick="setChainFilter(this,'all')">All Chains</button>
         <button class="v2-chip" data-chain="ethereum" onclick="setChainFilter(this,'ethereum')">Ethereum</button>
         <button class="v2-chip" data-chain="abstract" onclick="setChainFilter(this,'abstract')">Abstract</button>
+        <div class="col-view-divider"></div>
+        <button class="v2-chip v2-chip-view" id="vbtn-auto" onclick="setView('auto')">▶ Auto</button>
+        <button class="v2-chip v2-chip-view" id="vbtn-4" onclick="setView(4)">4</button>
+        <button class="v2-chip v2-chip-view" id="vbtn-6" onclick="setView(6)">6</button>
+        <button class="v2-chip v2-chip-view" id="vbtn-10" onclick="setView(10)">10</button>
+        <button class="v2-chip v2-chip-view" id="vbtn-12" onclick="setView(12)">12</button>
+        <button class="btn-share btn-share-col" id="shareBtn" onclick="takeScreenshot()">📸 Share</button>
       </div>
       <div class="col-toolbar-right">
         <div class="search-wrap">
@@ -1277,6 +1342,14 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 </div>
 
 <script>
+// ══ API KEYS — injected from environment (Vercel/Netlify/GitHub Actions) ══
+// Set these as environment variables in your deploy platform:
+//   ALCHEMY_KEY   → used for NFT wallet scanning
+//   OPENSEA_KEY   → used for activity ticker and live sales
+// Your build/deploy step should output a _env.js or inline them here.
+// Example for Vercel: add ALCHEMY_KEY in Project Settings → Environment Variables
+// then create /api/env.js or use a build script to replace window.__ALCHEMY_KEY__
+// DO NOT hardcode keys in this file.
 // ══ CONSTANTS ══
 const ETH_CONTRACT='0x1d4c28d4d484f494f58869192bc8de56c384c0f0';
 const ABSTRACT_CONTRACT='0x35ffe9d966e35bd1b0e79f0d91e438701ea1c644';
@@ -1291,7 +1364,7 @@ const LARGE_COLLECTION_THRESHOLD=15;
 const STORAGE_KEY='moodyMuseumHybridV1';
 const STREAM_KEY='moodyMuseumHybridStream';
 const ALCHEMY_KEY_STORAGE='moodyMuseumAlchemyKey';
-const HARDCODED_ALCHEMY_KEY=''; // key moved to server-side proxy
+const HARDCODED_ALCHEMY_KEY=window.__ALCHEMY_KEY__||''; // set via environment variable
 // OPENSEA_KEY defined in ticker section
 
 // ══ STATE ══
@@ -1398,8 +1471,27 @@ function setLoading(on){
 
 // ══ FETCH ══
 async function fetchAlchemyJson(params,key=''){
-  // Route through server-side proxy so Alchemy key stays hidden
+  const resolvedKey=(key||HARDCODED_ALCHEMY_KEY||'').trim();
   const network=params.network||'eth-mainnet';
+
+  // If we have a key, call Alchemy directly (works locally too)
+  if(resolvedKey){
+    const base=`https://${network}.g.alchemy.com/nft/v3/${resolvedKey}`;
+    let url;
+    if(params.action==='wallet'){
+      const suffix=params.pageKey?`&pageKey=${encodeURIComponent(params.pageKey)}`:'';
+      url=`${base}/getNFTsForOwner?owner=${encodeURIComponent(params.owner)}&contractAddresses[]=${encodeURIComponent(params.contractAddress)}&withMetadata=true&pageSize=${params.pageSize||50}${suffix}`;
+    } else if(params.action==='metadata'){
+      url=`${base}/getNFTMetadata?contractAddress=${encodeURIComponent(params.contractAddress)}&tokenId=${encodeURIComponent(params.tokenId)}&refreshCache=false`;
+    } else {
+      throw new Error('Unknown action');
+    }
+    const r=await fetch(url);
+    if(!r.ok)throw new Error(`Alchemy error ${r.status}`);
+    return await r.json();
+  }
+
+  // No key — route through server-side proxy
   let url;
   if(params.action==='wallet'){
     const suffix=params.pageKey?`&pageKey=${encodeURIComponent(params.pageKey)}`:'';
@@ -1762,28 +1854,28 @@ function applyTraitFilters(items){return items;}
     if(!wrap)return;
     wrap.innerHTML=`
       <div class="rf-hdr">
-        <div><div class="rf-ttl">Moody Raffle</div><div class="rf-sbtl">Add participants · Spin · One winner</div></div>
+        <div><div class="rf-ttl">Host a Raffle</div><div class="rf-sbtl">Add participants · Spin · One winner</div></div>
       </div>
       <button class="rf-x-btn" onclick="closeRaffle()" title="Close raffle">✕</button>
       <div class="rf-cols">
         <div class="rf-lcol">
-          <div class="rf-lbl">Add participant</div>
+          <div class="rf-lbl" style="font-size:18px;letter-spacing:2px;margin-bottom:12px">Add participant</div>
           <div class="rf-row">
             <input class="rf-inp" id="rfInp" placeholder="Name + Enter" maxlength="28" autocomplete="off">
             <button class="rf-addbtn" onclick="rfAdd()">+</button>
           </div>
-          <div class="rf-lbl">Or paste a list</div>
+          <div class="rf-lbl" style="font-size:18px;letter-spacing:2px;margin-bottom:12px;margin-top:10px">Or paste a list</div>
           <textarea class="rf-bulk" id="rfBulk" rows="3" placeholder="Alice, Bob, Charlie&#10;or one per line"></textarea>
-          <button class="v2-btn ghost" style="font-size:11px;padding:7px 12px;margin-bottom:10px" onclick="rfBulkAdd()">Import list</button>
+          <button class="v2-btn ghost" style="font-size:16px;padding:12px 20px;margin-bottom:10px;letter-spacing:1px" onclick="rfBulkAdd()">Import list</button>
           <div class="rf-divider"></div>
-          <div class="rf-lbl" style="margin-top:8px">
+          <div class="rf-lbl" style="margin-top:8px;font-size:18px;letter-spacing:2px">
             Participants
             <span id="rfCount" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,200,80,.45);margin-left:6px">${_parts.length}</span>
           </div>
           <div class="rf-chips" id="rfChips">${_renderChips()}</div>
           <div class="rf-lfooter">
             <button class="v2-btn primary" id="rfStartBtn" onclick="rfStartDraw()"
-              style="width:100%;letter-spacing:3px;font-size:14px;padding:15px"
+              style="width:100%;letter-spacing:3px;font-size:18px;padding:18px"
               ${_parts.length<2||_phase!=='setup'?'disabled':''}>SPIN</button>
           </div>
         </div>
@@ -1901,8 +1993,8 @@ function applyTraitFilters(items){return items;}
 
   // ── Card scroll animation ──
   // Build a long strip of cards: many shuffled rounds then stop on winner
-  const CARD_H=200; // px per card including gap
-  const CARD_GAP=12;
+  const CARD_H=250; // must match CSS .rf-scroll-card height
+  const CARD_GAP=16; // must match CSS .rf-scroll-card margin-bottom
   const CARD_FULL=CARD_H+CARD_GAP;
 
   function _buildStrip(winnerIdx){
@@ -1944,7 +2036,7 @@ function applyTraitFilters(items){return items;}
     // Viewport center (where selector sits) = vpH/2
     // We need: card center - offset = vpH/2
     // => offset = CARD_TRACK_PAD + i*CARD_FULL + CARD_H/2 - vpH/2
-    const CARD_TRACK_PAD=100; // must match CSS padding-top on .rf-scroll-track
+    const CARD_TRACK_PAD=120; // must match CSS padding:120px 0 on .rf-scroll-track
     const vpH=vp.clientHeight||380;
     const winnerI=items.length-1;
     const finalOffset=CARD_TRACK_PAD+winnerI*CARD_FULL+CARD_H/2-vpH/2;
@@ -1982,10 +2074,10 @@ function applyTraitFilters(items){return items;}
         lastActiveIdx=activeIdx;
         track.querySelectorAll('.rf-scroll-card').forEach((c,i)=>{
           const dist=Math.abs(i-activeIdx);
-          c.style.transform=dist===0?'scale(1.1)':'scale(0.92)';
-          c.style.opacity=dist===0?'1':dist===1?'0.5':'0.2';
-          c.style.filter=dist===0?'none':'blur(1.5px)';
-          c.style.transition='transform .12s ease,opacity .12s ease,filter .12s ease';
+          c.style.transform=dist===0?'scale(1.12)':dist===1?'scale(1.0)':'scale(0.94)';
+          c.style.opacity=dist===0?'1':dist===1?'0.92':'0.7';
+          c.style.filter='none';
+          c.style.transition='transform .1s ease,opacity .1s ease';
         });
       }
 
@@ -1993,25 +2085,51 @@ function applyTraitFilters(items){return items;}
         _animId=requestAnimationFrame(tick);
       } else {
         clearInterval(msgTimer);
-        // Snap precisely
+        // Hard-snap to exact center — NO CSS transition (transition causes visual mismatch)
         const snapOffset=CARD_TRACK_PAD+winnerI*CARD_FULL+CARD_H/2-vpH/2;
+        track.style.transition='none';
         track.style.transform=`translateY(-${snapOffset}px)`;
-        // Lock winner card in place, grow it
+
+        // Hide selector lines so no "empate" confusion
+        const selectorEl=vp.querySelector('.rf-scroll-selector');
+        if(selectorEl)selectorEl.style.opacity='0';
+        const fadeTop=vp.querySelector('.rf-scroll-fade-top');
+        const fadeBot=vp.querySelector('.rf-scroll-fade-bot');
+        if(fadeTop)fadeTop.style.opacity='0';
+        if(fadeBot)fadeBot.style.opacity='0';
+
+        // Fade out all losers completely
         const cards=track.querySelectorAll('.rf-scroll-card');
         cards.forEach((c,i)=>{
           const isWin=i===winnerI;
-          c.style.transition='transform .35s cubic-bezier(.34,1.56,.64,1),opacity .35s,filter .35s';
-          c.style.transform=isWin?'scale(1.18)':'scale(0.85)';
-          c.style.opacity=isWin?'1':'0.1';
-          c.style.filter=isWin?'none':'blur(3px)';
+          c.style.transition='transform .55s cubic-bezier(.34,1.56,.64,1),opacity .55s,filter .55s';
+          c.style.transform=isWin?'scale(1.22)':'scale(0.8)';
+          c.style.opacity=isWin?'1':'0';
+          c.style.filter=isWin?'none':'blur(6px)';
         });
-        // Winner card gets extra glow
+
+        // Winner card: big gold glow explosion
         if(cards[winnerI]){
-          cards[winnerI].style.boxShadow='0 0 40px rgba(201,168,76,.7),0 0 80px rgba(201,168,76,.25)';
-          cards[winnerI].style.borderRadius='16px';
+          const wc=cards[winnerI];
+          wc.style.boxShadow='0 0 60px rgba(255,200,80,.9),0 0 120px rgba(255,150,0,.5),0 0 200px rgba(255,100,0,.2)';
+          const wImg=wc.querySelector('.rf-scroll-card-img');
+          if(wImg){wImg.style.border='4px solid var(--gold-bright)';wImg.style.boxShadow='0 0 50px rgba(255,200,80,1),0 0 100px rgba(255,180,0,.6)';}
+          const wName=wc.querySelector('.rf-scroll-card-name');
+          if(wName){wName.style.color='var(--gold-bright)';wName.style.textShadow='0 0 30px rgba(255,200,80,1),0 0 60px rgba(255,180,0,.7)';wName.style.fontSize='28px';}
         }
+
+        // Status: AND THE WINNER IS... then fast reveal (800ms)
         const statusEl=$('rfScrollStatus');
-        if(statusEl){statusEl.style.animation='none';statusEl.style.opacity='1';statusEl.textContent='AND THE WINNER IS...';}
+        if(statusEl){
+          statusEl.style.animation='none';
+          statusEl.style.opacity='1';
+          statusEl.style.fontSize='28px';
+          statusEl.style.color='var(--gold-bright)';
+          statusEl.style.textShadow='0 0 30px rgba(255,200,80,.8)';
+          statusEl.textContent='🏆 AND THE WINNER IS...';
+        }
+
+        // Faster reveal: 800ms
         setTimeout(()=>{
           _winners.unshift({name:_parts[_winIdx].name,nft:_parts[_winIdx].nft});
           if(_winners.length>10)_winners.pop();
@@ -2550,9 +2668,10 @@ function setView(v){
   if(v!=='carousel'&&museumFullscreen)exitMuseumFullscreen(true);
   curView=v;
   document.querySelectorAll('.vbtn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.v2-chip-view').forEach(b=>b.classList.remove('active'));
   if(v==='carousel')$('vbtn-carousel')?.classList.add('active');
-  else if(v==='auto')$('vbtn-auto')?.classList.add('active');
-  else if(typeof v==='number')$('vbtn-'+v)?.classList.add('active');
+  else if(v==='auto'){$('vbtn-auto')?.classList.add('active');}
+  else if(typeof v==='number'){$('vbtn-'+v)?.classList.add('active');}
   else if(v==='my')$('vbtn-my')?.classList.add('active');
 
   const panel=$('collectionPanel');
@@ -2833,6 +2952,10 @@ async function takeScreenshot(){
 }
 $('shareOverlay').addEventListener('click',e=>{if(e.target===$('shareOverlay'))$('shareOverlay').classList.remove('open');});
 
+
+
+
+
 // ══ KEYBOARD ══
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
@@ -2990,15 +3113,25 @@ async function resolveGifStudioImage(n){
 
   let lastErr=null;
 
-  // --- Pass 1: try every source directly (own CDN will be first) ---
-  for(const src of deduped){
-    const attempts=[src,src+(src.includes('?')?'&':'?')+'_t='+Date.now()];
-    for(const attempt of attempts){
-      try{
-        const img=await loadImageForCanvas(attempt);
-        return{img,src:attempt};
-      }catch(err){lastErr=err;}
-    }
+  // --- Pass 0: try own CDN first (no CORS issues, fast) ---
+  if(ownCDN){
+    try{
+      const img=await loadImageForCanvas(ownCDN,8000);
+      return{img,src:ownCDN};
+    }catch(err){lastErr=err;}
+  }
+
+  // --- Pass 1: race direct load vs weserv proxy with 3s direct timeout ---
+  // This eliminates the long wait when CORS blocks the direct load
+  const proxyTargets=[...new Set(deduped.map(s=>s.split('?')[0]))];
+  for(const src of proxyTargets){
+    if(src===ownCDN)continue; // already tried
+    const proxyUrl=corsProxyUrl(src,0); // weserv.nl
+    const raceResult=await Promise.any([
+      loadImageForCanvas(src,3000).then(img=>({img,src})),
+      proxyUrl?loadImageForCanvas(proxyUrl,10000).then(img=>({img,src:proxyUrl})):Promise.reject('no proxy')
+    ]).catch(err=>{lastErr=err instanceof AggregateError?err.errors[err.errors.length-1]:err;return null;});
+    if(raceResult)return raceResult;
   }
 
   // --- Pass 1b: alternative IPFS gateways for any IPFS source that failed ---
@@ -3015,26 +3148,21 @@ async function resolveGifStudioImage(n){
     for(const alt of altGateways){
       if(deduped.includes(alt))continue;
       try{
-        const img=await loadImageForCanvas(alt);
+        const img=await loadImageForCanvas(alt,8000);
         return{img,src:alt};
       }catch(err){lastErr=err;}
     }
   }
 
-  // --- Pass 2: CORS proxy as last resort ---
-  setStatus('Direct load blocked — trying CORS proxy fallback…');
-  // Only proxy unique base URLs (skip cache-busted dupes)
-  const proxyTargets=[...new Set(deduped.map(s=>s.split('?')[0]))];
-  const NUM_PROXIES=2;
-  for(let pi=0;pi<NUM_PROXIES;pi++){
-    for(const src of proxyTargets){
-      const proxied=corsProxyUrl(src,pi);
-      if(!proxied)continue;
-      try{
-        const img=await loadImageForCanvas(proxied,15000);
-        return{img,src:proxied};
-      }catch(err){lastErr=err;}
-    }
+  // --- Pass 2: corsproxy.io as final resort ---
+  setStatus('Trying secondary CORS proxy…');
+  for(const src of proxyTargets){
+    const proxied=corsProxyUrl(src,1);
+    if(!proxied)continue;
+    try{
+      const img=await loadImageForCanvas(proxied,15000);
+      return{img,src:proxied};
+    }catch(err){lastErr=err;}
   }
 
   throw lastErr||new Error('Could not load a canvas-safe NFT image.');
