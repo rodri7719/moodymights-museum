@@ -47,7 +47,7 @@ body.museum-fullscreen #vbtn-auto,
 body.museum-fullscreen #vbtn-4,
 body.museum-fullscreen #vbtn-6,
 body.museum-fullscreen #vbtn-10,
-body.museum-fullscreen #vbtn-12,
+
 body.museum-fullscreen #activityTicker,
 body.museum-fullscreen #traitFilters,
 body.museum-fullscreen #vbtn-raffle,
@@ -292,135 +292,145 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
   border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
 .btn-rm:hover{background:rgba(255,60,0,.8);color:#fff;border-color:var(--red)}
 
-/* ══ MY COLLECTION PANEL (from v2) ══ */
-.collection-panel{display:none;flex-direction:column;gap:20px;margin:0 auto 20px;width:100%;padding-bottom:8px}
-.collection-panel.visible{display:flex}
+/* ══ MY COLLECTION — TWO-COLUMN LAYOUT ══ */
+.collection-panel{display:none;margin:0 auto 20px;width:100%;padding-bottom:8px}
+.collection-panel.visible{display:block}
+.col-layout{display:grid;grid-template-columns:240px 1fr;gap:18px;align-items:start}
+@media(max-width:900px){.col-layout{grid-template-columns:1fr;}}
 
-/* v2 style inputs and buttons adapted */
-.my-col-header{
-  padding:16px 20px;border-radius:20px;margin-top:10px;
-  background:linear-gradient(180deg,rgba(12,13,22,.54),rgba(7,8,15,.68));
-  border:1px solid rgba(255,255,255,.09);backdrop-filter:blur(20px);
-  box-shadow:0 20px 60px rgba(0,0,0,.42);position:relative;overflow:hidden
+/* ── Sidebar ── */
+.col-sidebar{
+  position:sticky;top:18px;
+  background:linear-gradient(180deg,rgba(12,10,20,.92),rgba(7,6,14,.96));
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:22px;
+  padding:20px 16px;
+  display:flex;flex-direction:column;gap:18px;
+  box-shadow:0 16px 48px rgba(0,0,0,.5);
 }
-.my-col-header::before{content:'';position:absolute;inset:-1px;background:linear-gradient(135deg,rgba(255,214,138,.18),transparent 30%,transparent 70%,rgba(98,229,255,.14));opacity:.6;pointer-events:none}
-.my-col-title{font-family:'Cinzel',serif;font-size:24px;font-weight:900;letter-spacing:.08em;color:var(--text);margin-bottom:6px;text-shadow:0 0 16px rgba(255,220,150,.16)}
-.my-col-sub{font-size:15px;color:rgba(245,234,208,.72);font-family:'Cormorant Garamond',serif;letter-spacing:.04em}
+.col-sidebar-brand{}
+.col-sidebar-title{
+  font-family:'Cinzel',serif;font-size:20px;font-weight:900;
+  letter-spacing:.1em;color:#ffe8aa;
+  text-shadow:0 0 22px rgba(255,210,120,.5),0 0 44px rgba(255,180,60,.2);
+  margin-bottom:3px;
+}
+.col-sidebar-sub{
+  font-family:'Cormorant Garamond',serif;font-size:13px;
+  color:rgba(245,234,208,.75);letter-spacing:.06em;
+}
+.col-sidebar-section{display:flex;flex-direction:column;gap:7px}
+.col-sidebar-label{
+  font-family:'Cinzel',serif;font-size:11px;font-weight:700;
+  letter-spacing:2.5px;text-transform:uppercase;
+  color:rgba(255,210,100,.9);
+  padding-bottom:4px;border-bottom:1px solid rgba(201,168,76,.25);
+  text-shadow:0 0 10px rgba(255,190,60,.3);
+}
+.col-sidebar-input{
+  width:100%;background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;padding:9px 12px;
+  color:#fff;font-family:'Share Tech Mono',monospace;font-size:14px;
+  outline:none;transition:border-color .2s,box-shadow .2s;
+}
+.col-sidebar-input:focus{border-color:rgba(201,168,76,.5);box-shadow:0 0 0 3px rgba(201,168,76,.08);}
+.col-sidebar-input::placeholder{color:rgba(255,255,255,.25);font-size:13px;}
+/* Search input — ancho, cuadrado */
+#v2Search{padding:8px 14px;border-radius:8px;font-size:15px;letter-spacing:.03em;}
+.col-sidebar-scan{
+  width:100%;padding:10px;border-radius:10px;cursor:pointer;
+  background:linear-gradient(135deg,rgba(212,173,99,.95),rgba(255,214,138,.9));
+  border:none;color:#0d0f16;
+  font-family:'Cinzel',serif;font-size:11px;font-weight:900;letter-spacing:2px;
+  text-transform:uppercase;
+  box-shadow:0 6px 20px rgba(212,173,99,.28);
+  transition:transform .18s,box-shadow .18s;
+}
+.col-sidebar-scan:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(212,173,99,.4);}
+.col-sidebar-scan:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.col-sidebar-pills{display:flex;flex-wrap:wrap;gap:6px;}
+.col-pill{
+  padding:6px 12px;border-radius:8px;cursor:pointer;
+  border:1px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.06);
+  color:rgba(255,255,255,.8);
+  font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:1px;
+  transition:all .18s;
+}
+.col-pill:hover{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.25);}
+.col-pill.active{background:rgba(201,168,76,.18);border-color:rgba(201,168,76,.55);color:var(--gold-bright);}
+.col-sidebar-action{
+  width:100%;padding:9px 12px;border-radius:9px;cursor:pointer;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+  color:rgba(255,255,255,.82);
+  font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:1px;
+  transition:all .18s;text-align:left;
+}
+.col-sidebar-action:hover{background:rgba(255,255,255,.09);color:#fff;}
+.col-sidebar-action.danger{color:rgba(255,111,97,.7);border-color:rgba(255,111,97,.15);}
+.col-sidebar-action.danger:hover{background:rgba(255,111,97,.1);color:#ff8875;}
+.col-sidebar-action.share{color:rgba(201,168,76,.8);border-color:rgba(201,168,76,.2);}
+.col-sidebar-action.share:hover{background:rgba(201,168,76,.1);color:var(--gold-bright);}
+/* Share section divider styling */
+.col-sidebar-section:has(#shareBtn){
+  padding-top:10px;
+  border-top:1px solid rgba(201,168,76,.1);
+  margin-top:2px;
+}
+.col-sidebar-status{
+  display:flex;gap:8px;align-items:flex-start;padding:10px 12px;
+  border-radius:12px;background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.07);
+}
+.col-sidebar-status .status-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.22);flex-shrink:0;margin-top:4px;}
+.col-sidebar-status .status-copy{font-size:12px;color:rgba(245,234,208,.85);font-family:'Inter',sans-serif;line-height:1.5;}
+.col-sidebar-status .status-copy strong{color:#fff;}
+.col-sidebar-status.ok .status-dot{background:var(--green);}
+.col-sidebar-status.error .status-dot{background:var(--danger);}
+.col-sidebar-status.loading .status-dot{background:var(--gold-2);animation:pulseDot 1s infinite;}
 
-/* Wallet + scan row */
-.scan-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
-@media(max-width:600px){.scan-row{grid-template-columns:1fr;display:flex;flex-wrap:wrap}}
-.v2-input{
-  width:100%;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);
-  color:var(--text);border-radius:18px;padding:14px 18px;outline:none;font-size:14px;
-  font-family:'Share Tech Mono',monospace;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.03);transition:border-color .2s,box-shadow .2s
+/* ── Main gallery area ── */
+.col-main{}
+/* Gallery shell — no backdrop-filter */
+.gallery-shell{border-radius:22px;background:linear-gradient(180deg,rgba(9,10,18,.7),rgba(7,8,14,.85));border:1px solid rgba(255,255,255,.08);box-shadow:0 20px 60px rgba(0,0,0,.42);overflow:hidden;}
+/* Search bar inside gallery */
+.gallery-search-bar{
+  position:absolute;top:12px;right:14px;z-index:10;
 }
-.v2-input:focus{border-color:rgba(98,229,255,.45);box-shadow:0 0 0 4px rgba(98,229,255,.08)}
-.v2-input::placeholder{color:rgba(243,245,251,.35)}
-.v2-btn{padding:13px 20px;border-radius:16px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04);
-  color:var(--text);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;
-  font-family:'Cinzel',serif;letter-spacing:.08em;
-  transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease,background .22s ease}
-.v2-btn:hover{transform:translateY(-1px);box-shadow:0 16px 30px rgba(0,0,0,.2);border-color:rgba(255,255,255,.18)}
-.v2-btn.primary{background:linear-gradient(135deg,rgba(212,173,99,.95),rgba(255,214,138,.92));color:#0d0f16;border-color:rgba(255,214,138,.55);box-shadow:0 12px 30px rgba(212,173,99,.22)}
-.v2-btn.primary:hover{transform:translateY(-2px);box-shadow:0 18px 36px rgba(212,173,99,.32)}
-.v2-btn.ghost{background:rgba(255,255,255,.03)}
-.v2-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
-
-/* ETH / Abstract load buttons */
-.chain-btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.v2-chain-btn{padding:10px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04);
-  color:var(--text);font-size:11px;font-weight:700;cursor:pointer;
-  font-family:'Cinzel',serif;letter-spacing:.08em;
-  transition:transform .22s,box-shadow .22s,border-color .22s,background .22s}
-.v2-chain-btn:hover{transform:translateY(-1px);box-shadow:0 12px 24px rgba(0,0,0,.2)}
-.v2-chain-btn.eth{border-color:rgba(98,229,255,.25);color:var(--cyan);background:rgba(98,229,255,.06)}
-.v2-chain-btn.eth:hover{border-color:rgba(98,229,255,.55);background:rgba(98,229,255,.12)}
-.v2-chain-btn.abs{border-color:rgba(157,124,255,.25);color:#d0c2ff;background:rgba(157,124,255,.06)}
-.v2-chain-btn.abs:hover{border-color:rgba(157,124,255,.55);background:rgba(157,124,255,.12)}
-.v2-chain-btn.clear{border-color:rgba(255,111,97,.2);color:var(--danger);background:rgba(255,111,97,.04)}
-.v2-chain-btn.clear:hover{border-color:rgba(255,111,97,.45);background:rgba(255,111,97,.1)}
-.v2-chain-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
-
-/* Status */
-.v2-status{display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding:13px 16px;border-radius:18px;
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);min-height:50px;margin-top:14px}
-.v2-status.ok{border-color:rgba(126,240,190,.2)}
-.v2-status.error{border-color:rgba(255,111,97,.2)}
-.v2-status.loading{border-color:rgba(212,173,99,.2)}
-.status-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.22);flex-shrink:0}
-.v2-status.loading .status-dot{background:var(--gold-2);animation:pulseDot 1s infinite}
-.v2-status.ok .status-dot{background:var(--green)}
-.v2-status.error .status-dot{background:var(--danger)}
-.status-copy{font-size:14px;color:rgba(245,234,208,.72);font-family:'Cormorant Garamond',serif;letter-spacing:.03em}
-.v2-status strong{color:var(--text)}
-@keyframes pulseDot{50%{box-shadow:0 0 0 8px rgba(212,173,99,0);opacity:.7}}
-
-/* Stats metrics */
-.v2-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-.v2-metric{padding:18px;border-radius:22px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(16px)}
-.v2-metric label{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;font-family:'Inter',sans-serif}
-.v2-metric strong{display:block;font-family:'Space Grotesk',sans-serif;font-size:28px;color:var(--text)}
-.v2-metric small{display:block;margin-top:6px;color:var(--muted);font-size:11px;font-family:'Inter',sans-serif}
-
-/* Collection toolbar (filters + search) */
-.col-toolbar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:8px}
-.col-toolbar-left,.col-toolbar-right{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.v2-chip{
-  padding:10px 18px;border-radius:10px;
-  border:1px solid rgba(255,255,255,.14);
-  background:rgba(8,6,4,.88);
-  color:rgba(255,255,255,.75);
-  font-size:11px;font-weight:700;cursor:pointer;font-family:'Cinzel',serif;
-  letter-spacing:1px;text-transform:uppercase;
-  transition:all .2s cubic-bezier(.34,1.4,.64,1);
-  box-shadow:0 3px 12px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.06);
+.gallery-search-input{
+  background:rgba(10,8,20,.82);
+  border:1px solid rgba(201,168,76,.3);border-radius:8px;
+  padding:6px 12px;color:#fff;
+  font-family:'Share Tech Mono',monospace;font-size:12px;
+  width:180px;outline:none;
+  transition:border-color .2s,box-shadow .2s,width .25s;
+  backdrop-filter:blur(8px);
 }
-.v2-chip:hover{
-  background:rgba(20,14,8,.95);
-  border-color:rgba(255,255,255,.28);
-  color:#fff;
-  transform:translateY(-2px);
-  box-shadow:0 6px 18px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08);
+.gallery-search-input:focus{
+  border-color:rgba(201,168,76,.65);
+  box-shadow:0 0 0 3px rgba(201,168,76,.1);
+  width:220px;
 }
-.v2-chip.active{
-  background:rgba(0,0,0,.96);
-  border-color:rgba(255,255,255,.45);
-  color:#fff;
-  box-shadow:0 4px 16px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.1),0 0 16px rgba(255,255,255,.04);
-}
-.search-wrap{min-width:220px;max-width:320px}
-.sort-sel{
-  width:100%;
-  border:1px solid rgba(255,255,255,.14);
-  background:rgba(8,6,4,.88);
-  color:#fff;border-radius:10px;
-  padding:11px 16px;outline:none;font-size:12px;font-family:'Cinzel',serif;letter-spacing:.5px;
-  transition:border-color .2s,box-shadow .2s;cursor:pointer;
-  box-shadow:0 3px 12px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.06);
-}
-.sort-sel:focus{border-color:rgba(255,255,255,.35);box-shadow:0 0 0 3px rgba(255,255,255,.05)}
-.sort-sel option{background:#0a0704;color:#fff}
-
-.col-toolbar-right .v2-input{
-  background:rgba(8,6,4,.88);
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:10px;
-  color:#fff;
-  font-family:'Cinzel',serif;
-  font-size:11px;
-  letter-spacing:.5px;
-  padding:11px 16px;
-  box-shadow:0 3px 12px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.06);
-}
-.col-toolbar-right .v2-input:focus{
-  border-color:rgba(255,255,255,.35);
-  box-shadow:0 0 0 3px rgba(255,255,255,.05);
-}
-.col-toolbar-right .v2-input::placeholder{color:rgba(255,255,255,.3)}
-/* Gallery shell */
-.gallery-shell{padding:14px 22px 22px;border-radius:28px;background:linear-gradient(180deg,rgba(9,10,18,.52),rgba(7,8,14,.68));border:1px solid rgba(255,255,255,.08);box-shadow:0 20px 60px rgba(0,0,0,.42);backdrop-filter:blur(14px)}
+.gallery-search-input::placeholder{color:rgba(255,255,255,.35);font-size:12px;}
+/* Virtual viewport — fills available height */
+.v2-virtual-viewport{height:76vh;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:rgba(201,168,76,.45) rgba(0,0,0,.2);padding:52px 16px 16px;}
+.v2-virtual-viewport::-webkit-scrollbar{width:6px}
+.v2-virtual-viewport::-webkit-scrollbar-track{background:rgba(0,0,0,.3);border-radius:3px}
+.v2-virtual-viewport::-webkit-scrollbar-thumb{background:rgba(201,168,76,.5);border-radius:3px}
+.v2-virtual-viewport::-webkit-scrollbar-thumb:hover{background:rgba(201,168,76,.8)}
+.v2-virtual-spacer-top,.v2-virtual-spacer-bot{width:100%;pointer-events:none;}
+/* List / table mode */
+.v2-list-table{width:100%;border-collapse:collapse;font-family:'Inter',sans-serif}
+.v2-list-table thead tr{border-bottom:1px solid rgba(255,255,255,.1)}
+.v2-list-table th{padding:8px 12px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:rgba(255,223,150,.6);text-transform:uppercase;text-align:left;font-weight:700}
+.v2-list-row{border-bottom:1px solid rgba(255,255,255,.05);transition:background .15s;cursor:pointer}
+.v2-list-row:hover{background:rgba(255,255,255,.04)}
+.v2-list-thumb{width:52px;padding:6px 8px}
+.v2-list-thumb img{width:44px;height:44px;border-radius:8px;object-fit:cover;display:block;border:1px solid rgba(255,255,255,.1)}
+.v2-list-name{padding:8px 12px;font-family:'Cinzel',serif;font-size:13px;color:#fff;font-weight:700;letter-spacing:.04em}
+.v2-list-id{padding:8px 8px;font-family:'Share Tech Mono',monospace;font-size:12px;color:rgba(245,234,208,.5)}
+.v2-list-row td:last-child{padding:8px 12px;text-align:right}
 .v2-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
 .v2-grid-4{grid-template-columns:repeat(4,1fr)!important}
 .v2-grid-6{grid-template-columns:repeat(6,1fr)!important}
@@ -473,7 +483,7 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 .v2-card-aura{position:absolute;inset:-14px;border-radius:22px;pointer-events:none;z-index:0;filter:blur(14px);background:radial-gradient(ellipse at 50% 50%,rgba(180,80,255,.28) 0%,rgba(255,60,0,.1) 50%,transparent 70%);animation:auraPulse 3s ease-in-out infinite}
 .v2-card::after{content:'';position:absolute;left:-14%;right:-14%;bottom:-22%;height:40%;border-radius:50%;background:radial-gradient(circle at 50% 20%,rgba(157,124,255,.16),transparent 34%),radial-gradient(circle at 50% 90%,rgba(98,229,255,.14),transparent 34%);pointer-events:none}
 .v2-card:hover::after{transform:translateY(0)}
-.v2-card-media{position:relative;aspect-ratio:1/1;background:linear-gradient(135deg,rgba(18,21,35,.9),rgba(10,12,18,.96));overflow:hidden}
+.v2-card-media{position:relative;aspect-ratio:1/1;background:rgba(12,8,20,.6);overflow:hidden}
 .v2-card-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s,filter .45s}
 .v2-card:hover .v2-card-media img{transform:scale(1.05);filter:saturate(1.1)}
 .v2-card-rb{position:absolute;inset:0;border-radius:24px;z-index:3;pointer-events:none;padding:2px;opacity:.22;transition:opacity .3s;background:conic-gradient(from 0deg,#ff3c00,#ff8c00,#ffd700,#00ffcc,#0088ff,#cc00ff,#ff3c00);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;animation:spinRB 5s linear infinite}
@@ -500,6 +510,9 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 .v2-card-title{font-family:'Cinzel',serif;font-size:14px;line-height:1.1;color:#fff;font-weight:700;letter-spacing:.04em;text-shadow:0 0 10px rgba(255,255,255,.18)}
 .v2-card-sub{font-size:14px;color:rgba(245,234,208,.66);margin-top:4px;font-family:'Cormorant Garamond',serif}
 .v2-card-content{padding:12px 14px 14px;background:linear-gradient(180deg,rgba(32,10,44,.88),rgba(10,4,24,.74));backdrop-filter:blur(6px);position:relative;z-index:7}
+.v2-card.fx-static .v2-card-content,
+.v2-card.fx-mass .v2-card-content,
+.v2-card.fx-ultra .v2-card-content{backdrop-filter:none!important;}
 .v2-card-content::before{content:'';display:block;height:2px;background:linear-gradient(90deg,transparent,var(--red),var(--gold),var(--purple),transparent);margin-bottom:8px;animation:lineGlow 3s ease-in-out infinite}
 .v2-card.fx-lite .v2-card-glow{opacity:.68}
 .v2-card.fx-lite{animation-duration:6s}
@@ -523,8 +536,42 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 .v2-card.fx-ultra,.v2-card.fx-ultra:hover{transform:none!important}
 .v2-card.fx-ultra::before,.v2-card.fx-ultra::after,.v2-card.fx-ultra .v2-card-aura,.v2-card.fx-ultra .v2-card-rb,.v2-card.fx-ultra .v2-card-holo,.v2-card.fx-ultra .v2-scan,.v2-card.fx-ultra .v2-card-rgb,.v2-card.fx-ultra .v2-card-glow,.v2-card.fx-ultra .v2-card-pc{display:none!important}
 .v2-card.fx-ultra .v2-card-media img{transform:none!important;filter:none!important}
+/* ══ SLEEPING: cards outside viewport — all animations/effects paused ══ */
+.v2-sleeping{
+  animation:none!important;
+  transition:none!important;
+}
+.v2-sleeping .v2-card-aura,
+.v2-sleeping .v2-card-rb,
+.v2-sleeping .v2-card-holo,
+.v2-sleeping .v2-scan,
+.v2-sleeping .v2-card-rgb,
+.v2-sleeping .v2-card-glow,
+.v2-sleeping .v2-card-glow::after,
+.v2-sleeping .v2-card-pc,
+.v2-sleeping::before,
+.v2-sleeping::after{
+  animation:none!important;
+  opacity:0!important;
+  transition:none!important;
+}
+.v2-sleeping .v2-card-content::before{animation:none!important;}
 .v2-card-fallback{width:100%;height:100%;display:grid;place-items:center;font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(243,245,251,.4);letter-spacing:.14em;text-transform:uppercase}
 .chain-badge{padding:7px 10px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:1px solid rgba(255,255,255,.1);white-space:nowrap}
+/* ══ KNOWN HOLDER BADGE ══ */
+.holder-badge{
+  position:absolute;bottom:10px;left:0;right:0;
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:none;z-index:3;
+  background:none;
+}
+.holder-badge-name{
+  font-family:'Cinzel',serif;font-size:13px;font-weight:900;
+  letter-spacing:2px;text-transform:uppercase;
+  color:#fff;
+  text-shadow:0 0 14px rgba(255,200,60,1),0 0 28px rgba(255,160,0,.7),0 1px 6px rgba(0,0,0,1),0 2px 12px rgba(0,0,0,.9);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;
+}
 .chain-badge.ethereum{color:var(--cyan);background:rgba(98,229,255,.08)}
 .chain-badge.abstract{color:#d6c6ff;background:rgba(157,124,255,.12)}
 .v2-card-meta{display:flex;justify-content:space-between;gap:10px;align-items:center;color:rgba(245,234,208,.64);font-size:12px;margin-top:6px;font-family:'Cormorant Garamond',serif}
@@ -830,6 +877,32 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 .gif-machine-card h3{font-family:'Cinzel',serif;font-size:24px;letter-spacing:1px;color:var(--gold-bright)}
 .gif-machine-card p{font-size:15px;line-height:1.55;color:rgba(245,234,208,.82)}
 .gif-machine-card .v2-input{font-size:18px;padding:16px 18px}
+/* ══ v2-input & v2-btn (GIF Machine + Raffle) ══ */
+.v2-input{
+  width:100%;background:rgba(255,255,255,.06);
+  border:1px solid rgba(201,168,76,.35);border-radius:12px;
+  padding:14px 18px;color:#fff;
+  font-family:'Share Tech Mono',monospace;font-size:18px;
+  outline:none;transition:border-color .2s,box-shadow .2s;
+}
+.v2-input:focus{border-color:rgba(201,168,76,.7);box-shadow:0 0 0 3px rgba(201,168,76,.12);}
+.v2-input::placeholder{color:rgba(255,255,255,.3);}
+.v2-btn{
+  padding:13px 24px;border-radius:12px;cursor:pointer;
+  font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;transition:all .2s;border:1px solid transparent;
+}
+.v2-btn.primary{
+  background:linear-gradient(135deg,rgba(212,173,99,.95),rgba(255,214,138,.9));
+  color:#0d0f16;border-color:rgba(255,214,138,.5);
+  box-shadow:0 6px 20px rgba(212,173,99,.28);
+}
+.v2-btn.primary:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(212,173,99,.4);}
+.v2-btn.ghost{
+  background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);
+  border-color:rgba(255,255,255,.15);
+}
+.v2-btn.ghost:hover{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3);}
 .gif-machine-actions{display:flex;gap:10px;flex-wrap:wrap}
 .gif-machine-note{font-size:12px;color:rgba(255,255,255,.45);font-family:'Inter',sans-serif;line-height:1.45}
 .gs-guide{margin-top:6px;padding:14px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);display:flex;flex-direction:column;gap:8px}
@@ -1030,26 +1103,26 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 }
 #raffleModal.open{opacity:1;pointer-events:auto}
 #raffleModal>*{position:relative;z-index:1}
-.rf-wrap{width:min(1400px,100%);max-height:96vh;display:flex;flex-direction:column;border-radius:28px;background:linear-gradient(160deg,rgba(18,10,2,.08),rgba(8,4,1,.12));border:1px solid rgba(201,168,76,.4);box-shadow:0 0 100px rgba(201,168,76,.22),0 32px 90px rgba(0,0,0,.3);overflow:visible;position:relative;backdrop-filter:blur(2px)}
+.rf-wrap{width:min(1400px,100%);height:90vh;max-height:90vh;min-height:0;display:flex;flex-direction:column;border-radius:28px;background:linear-gradient(160deg,rgba(18,10,2,.08),rgba(8,4,1,.12));border:1px solid rgba(201,168,76,.4);box-shadow:0 0 100px rgba(201,168,76,.22),0 32px 90px rgba(0,0,0,.3);overflow:hidden;position:relative;backdrop-filter:blur(2px)}
 /* BG image behind raffle card */
 .rf-wrap::before{display:none}
 /* X button floats on the top-right corner of the card, half outside */
 .rf-x-btn{
-  position:absolute;top:-18px;right:-18px;z-index:12;
-  width:52px;height:52px;border-radius:50%;
-  border:2px solid rgba(201,168,76,.5);
-  background:linear-gradient(135deg,rgba(30,10,2,.98),rgba(12,4,1,1));
-  color:rgba(255,255,255,.8);font-size:22px;font-weight:700;
+  position:absolute;top:16px;right:16px;z-index:12;
+  width:44px;height:44px;border-radius:12px;
+  border:1.5px solid rgba(255,100,60,.5);
+  background:linear-gradient(135deg,rgba(60,16,6,.98),rgba(20,6,2,1));
+  color:rgba(255,160,120,.9);font-size:20px;font-weight:700;
   cursor:pointer;display:flex;align-items:center;justify-content:center;
   transition:all .2s;
-  box-shadow:0 4px 18px rgba(0,0,0,.6),0 0 12px rgba(201,168,76,.2);
-  line-height:1;
+  box-shadow:0 4px 18px rgba(0,0,0,.6),0 0 14px rgba(255,80,30,.2);
+  line-height:1;letter-spacing:0;
 }
-.rf-x-btn:hover{background:rgba(220,40,0,.9);border-color:rgba(255,80,40,.8);color:#fff;transform:scale(1.12);box-shadow:0 6px 22px rgba(0,0,0,.7),0 0 18px rgba(255,60,0,.3)}
-.rf-hdr{padding:26px 32px 20px;background:linear-gradient(180deg,rgba(255,200,80,.07),transparent);border-bottom:1px solid rgba(201,168,76,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:28px 28px 0 0;overflow:hidden;text-align:center}
+.rf-x-btn:hover{background:linear-gradient(135deg,rgba(180,30,10,.97),rgba(100,12,4,1));border-color:rgba(255,100,60,.85);color:#fff;transform:scale(1.08);box-shadow:0 6px 22px rgba(0,0,0,.7),0 0 20px rgba(255,60,20,.35)}
+.rf-hdr{padding:26px 72px 20px 32px;background:linear-gradient(180deg,rgba(255,200,80,.07),transparent);border-bottom:1px solid rgba(201,168,76,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:28px 28px 0 0;overflow:visible;text-align:center;position:relative}
 .rf-ttl{font-family:'Cinzel',serif;font-size:42px;font-weight:900;color:var(--gold-bright);letter-spacing:.12em;text-shadow:0 0 28px rgba(255,200,80,.45);text-align:center}
 .rf-sbtl{font-family:'Cormorant Garamond',serif;font-size:17px;color:rgba(245,234,208,.6);margin-top:4px;text-align:center}
-.rf-cols{display:grid;grid-template-columns:400px 1fr;flex:1;overflow:hidden;min-height:0;border-radius:0 0 28px 28px}
+.rf-cols{display:grid;grid-template-columns:400px 1fr;flex:1;overflow:hidden;min-height:0;border-radius:0 0 28px 28px;height:0}
 @media(max-width:680px){.rf-cols{grid-template-columns:1fr;overflow-y:auto}}
 .rf-lcol{display:flex;flex-direction:column;gap:0;border-right:1px solid rgba(255,255,255,.08);overflow-y:auto;padding:24px 22px}
 .rf-lbl{font-family:'Cinzel',serif;font-size:13px;letter-spacing:2.5px;color:#ffe066;text-transform:uppercase;margin-bottom:10px;font-weight:700;text-shadow:0 0 12px rgba(255,210,0,.55),0 0 24px rgba(255,180,0,.25)}
@@ -1066,14 +1139,14 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 .rf-chip{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.12);animation:fadeUp .18s ease-out both;transition:background .15s}
 .rf-chip:hover{background:rgba(0,0,0,.45)}
 .rf-chip img{width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0;border:1px solid rgba(201,168,76,.3)}
-.rf-chip-name{font-family:'Cinzel',serif;font-size:20px;color:#fff;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 4px rgba(0,0,0,.8)}
+.rf-chip-name{font-family:'Cinzel',serif;font-size:26px;color:#fff;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 4px rgba(0,0,0,.8)}
 .rf-chip-id{font-family:'Share Tech Mono',monospace;font-size:12px;color:rgba(245,234,208,.5);flex-shrink:0}
 .rf-chip-del{background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:15px;padding:0 2px;transition:color .15s;flex-shrink:0}
 .rf-chip-del:hover{color:#ff6644}
 .rf-empty-chips{font-family:'Share Tech Mono',monospace;font-size:12px;color:rgba(245,234,208,.35);padding:14px 4px}
 .rf-lfooter{margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;flex-shrink:0}
 .rf-count{font-family:'Share Tech Mono',monospace;font-size:13px;color:rgba(245,234,208,.55)}
-.rf-rcol{display:flex;flex-direction:column;align-items:stretch;justify-content:stretch;padding:0;gap:0;overflow:hidden;position:relative;min-height:420px}
+.rf-rcol{display:flex;flex-direction:column;align-items:stretch;justify-content:stretch;padding:0;gap:0;overflow:hidden;position:relative;}
 .rf-arena{width:100%;flex:1;position:relative;display:flex;align-items:center;justify-content:center;min-height:240px}
 #rfCardGrid{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-items:center;width:100%;padding:6px}
 .rf-pcard{display:flex;flex-direction:column;align-items:center;gap:6px;width:100px;flex-shrink:0;animation:rfCardIn .3s cubic-bezier(.34,1.56,.64,1) both;position:relative}
@@ -1084,7 +1157,7 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 .rf-pcard-img{width:90px;height:90px;border-radius:14px;object-fit:cover;border:2px solid rgba(255,255,255,.15);box-shadow:0 4px 16px rgba(0,0,0,.5);transition:all .2s;display:block}
 .rf-pcard-name{font-family:'Cinzel',serif;font-size:11px;color:#fff;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:98px;letter-spacing:.03em;text-shadow:0 1px 4px rgba(0,0,0,.9)}
 #rfExpCanvas{position:absolute;inset:0;pointer-events:none;z-index:10}
-.rf-winner-reveal{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;animation:fadeUp .5s cubic-bezier(.34,1.56,.64,1) both;padding:10px}
+.rf-winner-reveal{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;animation:fadeUp .5s cubic-bezier(.34,1.56,.64,1) both;padding:10px;overflow-y:auto;justify-content:center}
 .rf-winner-crown{font-size:38px;animation:rfBounce .5s cubic-bezier(.34,1.56,.64,1) both}
 @keyframes rfBounce{0%{transform:scale(0) rotate(-15deg)}100%{transform:scale(1) rotate(0)}}
 .rf-winner-img{width:140px;height:140px;border-radius:22px;object-fit:cover;border:3px solid var(--gold);box-shadow:0 0 50px rgba(201,168,76,.7);animation:rfBounce .5s cubic-bezier(.34,1.56,.64,1) both;animation-delay:.1s}
@@ -1097,17 +1170,18 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 @keyframes rfWinGlow{0%{box-shadow:0 0 40px rgba(201,168,76,.55),0 0 80px rgba(201,168,76,.25)}100%{box-shadow:0 0 90px rgba(201,168,76,1),0 0 180px rgba(201,168,76,.45)}}
 @keyframes rfNameIn{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:scale(1)}}
 @keyframes rfPulse{0%,100%{opacity:.55}50%{opacity:1}}
-.rf-rcol{position:relative;overflow:hidden;display:flex;align-items:stretch;justify-content:stretch;min-height:600px}
+.rf-rcol{position:relative;overflow:hidden;display:flex;align-items:stretch;justify-content:stretch;}
 /* Scroll animation layout */
 .rf-scroll-layout{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px;position:relative}
 .rf-scroll-status{font-family:'Cinzel',serif;font-size:24px;font-weight:700;letter-spacing:5px;color:var(--gold-bright);text-align:center;min-height:32px;animation:rfPulse 1s ease-in-out infinite;transition:opacity .2s;text-shadow:0 0 20px rgba(255,200,80,.5)}
 /* Viewport window — bigger, brighter, stream-friendly */
 .rf-scroll-viewport{
-  position:relative;width:440px;height:580px;overflow:hidden;
+  position:relative;width:440px;max-width:100%;height:min(580px,65vh);overflow:hidden;
   border-radius:22px;
   border:3px solid rgba(201,168,76,.6);
   box-shadow:0 0 0 1px rgba(255,200,0,.1),0 0 60px rgba(201,168,76,.35),inset 0 0 20px rgba(0,0,0,.1);
   background:rgba(20,12,4,.3);
+  flex-shrink:0;
 }
 .rf-scroll-fade-top{position:absolute;top:0;left:0;right:0;height:120px;z-index:3;pointer-events:none;background:linear-gradient(180deg,rgba(8,5,2,.75) 0%,transparent 100%);transition:opacity .4s}
 .rf-scroll-fade-bot{position:absolute;bottom:0;left:0;right:0;height:120px;z-index:3;pointer-events:none;background:linear-gradient(0deg,rgba(8,5,2,.75) 0%,transparent 100%);transition:opacity .4s}
@@ -1130,16 +1204,16 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 .rf-scroll-card-img{width:180px;height:180px;object-fit:cover;border-radius:20px;display:block;border:3px solid rgba(255,255,255,.25);box-shadow:0 4px 24px rgba(0,0,0,.4)}
 .rf-scroll-card-name{font-family:'Cinzel',serif;font-size:22px;font-weight:900;color:#fff;text-align:center;letter-spacing:.5px;text-shadow:0 0 16px rgba(255,200,80,.5),0 2px 8px rgba(0,0,0,.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:380px;padding:0 8px}
 /* Winner reveal — pushed down ~4cm (~60px) */
-.rf-win-label{font-family:'Cinzel',serif;font-size:68px;font-weight:900;letter-spacing:14px;color:var(--gold-bright);text-shadow:0 0 40px rgba(255,200,80,.6),0 0 80px rgba(255,180,0,.3);animation:rfFadeUp .5s cubic-bezier(.34,1.56,.64,1) both,rfPulse 2s .6s ease-in-out infinite;line-height:1;margin-bottom:4px;margin-top:60px}
+.rf-win-label{font-family:'Cinzel',serif;font-size:clamp(32px,5vh,56px);font-weight:900;letter-spacing:10px;color:var(--gold-bright);text-shadow:0 0 40px rgba(255,200,80,.6),0 0 80px rgba(255,180,0,.3);animation:rfFadeUp .5s cubic-bezier(.34,1.56,.64,1) both,rfPulse 2s .6s ease-in-out infinite;line-height:1;margin-bottom:4px;margin-top:20px}
 .rf-winner-crown,.rf-fireworks{display:none}
 .rf-winner-img{
-  width:300px;height:300px;border-radius:28px;object-fit:cover;
+  width:min(220px,35vh);height:min(220px,35vh);border-radius:28px;object-fit:cover;
   border:4px solid var(--gold);
   box-shadow:0 0 90px rgba(201,168,76,.85);
   animation:rfFadeUp .55s cubic-bezier(.34,1.56,.64,1) .1s both,rfWinGlow 1.4s .8s ease-in-out infinite alternate;
 }
 .rf-winner-name-row{display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap}
-.rf-winner-name{font-family:'Cinzel',serif;font-size:58px;font-weight:900;color:var(--gold-bright);text-shadow:0 0 40px rgba(255,200,80,.6),0 2px 8px rgba(0,0,0,.9);animation:rfNameIn .65s cubic-bezier(.34,1.56,.64,1) .3s both;line-height:1.1}
+.rf-winner-name{font-family:'Cinzel',serif;font-size:clamp(36px,5vh,64px);font-weight:900;color:var(--gold-bright);text-shadow:0 0 40px rgba(255,200,80,.6),0 2px 8px rgba(0,0,0,.9);animation:rfNameIn .65s cubic-bezier(.34,1.56,.64,1) .3s both;line-height:1.1}
 .rf-copy-btn{
   font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:1.5px;
   padding:7px 14px;border-radius:8px;border:1px solid rgba(201,168,76,.4);
@@ -1154,7 +1228,7 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 .rf-idle-count{font-family:'Cinzel',serif;font-size:130px;font-weight:900;color:var(--gold-bright);line-height:1;text-shadow:0 0 40px rgba(255,200,80,.3)}
 .rf-idle-label{font-family:'Cinzel',serif;font-size:16px;letter-spacing:3px;color:rgba(245,234,208,.8)}
 /* Right column split: main area + history sidebar */
-.rf-right-split{display:flex;flex-direction:row;width:100%;height:100%;min-height:0}
+.rf-right-split{display:flex;flex-direction:row;width:100%;height:100%;min-height:0;overflow:hidden}
 /* History col */
 .rf-history-col{width:280px;flex-shrink:0;border-left:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;padding:20px 18px;gap:12px;overflow:hidden;background:rgba(0,0,0,.15)}
 .rf-history-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;border-bottom:1px solid rgba(201,168,76,.22);padding-bottom:10px}
@@ -1177,11 +1251,11 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 .rf-history-latest{background:rgba(201,168,76,.1)!important;border-color:rgba(201,168,76,.3)!important}
 .rf-history-img{width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0;border:1px solid rgba(201,168,76,.35)}
 .rf-history-info{flex:1;min-width:0}
-.rf-history-name{font-family:'Cinzel',serif;font-size:17px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.rf-history-name{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px rgba(0,0,0,.8)}
 .rf-history-id{font-family:'Share Tech Mono',monospace;font-size:12px;color:rgba(245,234,208,.45)}
 /* Make scroll layout take remaining width */
-.rf-scroll-layout{flex:1;min-width:0}
-.rf-winner-reveal{flex:1;min-width:0}
+.rf-scroll-layout{flex:1;min-width:0;overflow:hidden}
+.rf-winner-reveal{flex:1;min-width:0;overflow:hidden}
 .rf-status{font-family:'Share Tech Mono',monospace;font-size:13px;color:rgba(245,234,208,.6);text-align:center;min-height:18px}
 
 </style>
@@ -1245,57 +1319,78 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 
   <!-- MY COLLECTION PANEL (v2 system — visible only in my/4/6/10/12/auto views) -->
   <div class="collection-panel" id="collectionPanel">
+    <div class="col-layout">
 
-    <!-- Header + wallet scanner -->
-    <div class="my-col-header">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-        <div>
-          <div class="my-col-title">My Collection</div>
-          <div class="my-col-sub">Scan your wallet on Ethereum &amp; Abstract</div>
+      <!-- LEFT SIDEBAR: scanner + controls -->
+      <aside class="col-sidebar">
+        <div class="col-sidebar-brand">
+          <div class="col-sidebar-title">My Collection</div>
+          <div class="col-sidebar-sub">Ethereum &amp; Abstract</div>
         </div>
-        <div class="chain-btns">
-          <button class="v2-chain-btn clear" id="btnClearEth" onclick="clearChain('ethereum')">Clear ETH</button>
-          <button class="v2-chain-btn clear" id="btnClearAbs" onclick="clearChain('abstract')">Clear Abstract</button>
-          <button class="v2-chain-btn clear" id="btnClearAll" onclick="clearAll()">Clear All</button>
+
+        <!-- WALLET ADDRESS -->
+        <div class="col-sidebar-section">
+          <div class="col-sidebar-label">Wallet Address</div>
+          <input class="col-sidebar-input" id="walletAddress" placeholder="0x..." autocomplete="off">
+          <button class="col-sidebar-scan" id="btnScan" onclick="scanWallet()">⬡ Scan Wallet</button>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="col-sidebar-section">
+          <div class="col-sidebar-label">Actions</div>
+          <button class="col-sidebar-action" onclick="clearChain('ethereum')">Clear ETH</button>
+          <button class="col-sidebar-action" onclick="clearChain('abstract')">Clear Abstract</button>
+          <button class="col-sidebar-action danger" onclick="clearAll()">Clear All</button>
+        </div>
+
+        <!-- CHAIN VIEW -->
+        <div class="col-sidebar-section">
+          <div class="col-sidebar-label">Chain</div>
+          <div class="col-sidebar-pills">
+            <button class="col-pill active" data-chain="all" onclick="setChainFilter(this,'all')">All</button>
+            <button class="col-pill" data-chain="ethereum" onclick="setChainFilter(this,'ethereum')">ETH</button>
+            <button class="col-pill" data-chain="abstract" onclick="setChainFilter(this,'abstract')">ABS</button>
+          </div>
+        </div>
+
+        <!-- VIEW -->
+        <div class="col-sidebar-section">
+          <div class="col-sidebar-label">View</div>
+          <div class="col-sidebar-pills">
+            <button class="col-pill col-pill-view active" id="vbtn-4" onclick="setView(4)">4</button>
+            <button class="col-pill col-pill-view" id="vbtn-6" onclick="setView(6)">6</button>
+            <button class="col-pill col-pill-view" id="vbtn-10" onclick="setView(10)">10</button>
+            <button class="col-pill col-pill-view" id="vbtn-list" onclick="setView('list')">☰ List</button>
+          </div>
+        </div>
+
+        <!-- SHARE -->
+        <div class="col-sidebar-section">
+          <div class="col-sidebar-label">Share</div>
+          <button class="col-sidebar-action share" id="shareBtn" onclick="takeScreenshot()">📸 Share Collection</button>
+        </div>
+
+        <div class="col-sidebar-status" id="v2Status">
+          <div class="status-dot"></div>
+          <div class="status-copy" id="v2StatusText"><strong>Ready.</strong> Enter a wallet and scan.</div>
+        </div>
+      </aside>
+
+      <!-- RIGHT: gallery -->
+      <div class="col-main">
+        <div class="gallery-shell" style="position:relative;">
+          <div class="gallery-search-bar">
+            <input class="gallery-search-input" id="v2Search" placeholder="🔍 Name or ID…" oninput="refreshCurrentView()">
+          </div>
+          <div class="v2-virtual-viewport" id="v2Viewport">
+            <div class="v2-virtual-spacer-top" id="v2SpacerTop"></div>
+            <div class="v2-grid" id="v2Grid"></div>
+            <div class="v2-virtual-spacer-bot" id="v2SpacerBot"></div>
+          </div>
         </div>
       </div>
-      <div class="scan-row" style="margin-top:14px">
-        <input class="v2-input" id="walletAddress" placeholder="Wallet address (0x...)" autocomplete="off">
-        <button class="v2-btn primary" id="btnScan" onclick="scanWallet()">Scan Wallet</button>
-      </div>
-      <!-- Status -->
-      <div class="v2-status" id="v2Status" style="margin-top:10px">
-        <div class="status-dot"></div>
-        <div class="status-copy" id="v2StatusText"><strong>Ready.</strong> Enter a wallet address and press Scan Wallet.</div>
-      </div>
-    </div>
 
-    <!-- Collection toolbar -->
-    <div class="col-toolbar">
-      <div class="col-toolbar-left">
-        <button class="v2-chip active" data-chain="all" onclick="setChainFilter(this,'all')">All Chains</button>
-        <button class="v2-chip" data-chain="ethereum" onclick="setChainFilter(this,'ethereum')">Ethereum</button>
-        <button class="v2-chip" data-chain="abstract" onclick="setChainFilter(this,'abstract')">Abstract</button>
-        <div class="col-view-divider"></div>
-        <button class="v2-chip v2-chip-view" id="vbtn-auto" onclick="setView('auto')">▶ Auto</button>
-        <button class="v2-chip v2-chip-view" id="vbtn-4" onclick="setView(4)">4</button>
-        <button class="v2-chip v2-chip-view" id="vbtn-6" onclick="setView(6)">6</button>
-        <button class="v2-chip v2-chip-view" id="vbtn-10" onclick="setView(10)">10</button>
-        <button class="v2-chip v2-chip-view" id="vbtn-12" onclick="setView(12)">12</button>
-        <button class="btn-share btn-share-col" id="shareBtn" onclick="takeScreenshot()">📸 Share</button>
-      </div>
-      <div class="col-toolbar-right">
-        <div class="search-wrap">
-          <input class="v2-input" style="padding:11px 16px;font-size:13px" id="v2Search" placeholder="Search by name or ID" oninput="refreshCurrentView()">
-        </div>
-      </div>
     </div>
-
-    <!-- Gallery -->
-    <div class="gallery-shell">
-      <div class="v2-grid" id="v2Grid"></div>
-    </div>
-
   </div>
 
   <!-- MUSEUM / CAROUSEL container -->
@@ -1361,7 +1456,25 @@ const SLUG='moody-mights';
 // Direct Alchemy API calls (no proxy needed for static hosting)
 const MOODY_COLLECTION_URL='https://opensea.io/es/collection/moody-mights';
 const ABSTRACT_COLLECTION_URL='https://opensea.io/es/collection/moody-archives';
-const FEATURED_STREAM_IDS=['319','427','505','768','796','898','950','991','1002','1035','1593','2110','2456'];
+// Order: original featured first, then known community holders, randoms appended by fetchStreamNFTs
+const ORIGINAL_STREAM_IDS=['319','427','950','2456','796','898','768','991','1002','1035','2110'];
+const HOLDER_STREAM_IDS=['505','105','1310','2357','309','1029','1120','183','1850','221','1593'];
+const FEATURED_STREAM_IDS_ORDERED=[...ORIGINAL_STREAM_IDS,...HOLDER_STREAM_IDS];
+// Flat list for exclusion from random picks
+const FEATURED_STREAM_IDS=[...FEATURED_STREAM_IDS_ORDERED];
+// Known community holders — displayed as a badge on their card
+const KNOWN_HOLDERS={
+  '105':'Deepak',
+  '183':'Luofi',
+  '221':'MadMaxx',
+  '309':'Nedi',
+  '505':'AlexMaze',
+  '1029':'Dan_Wins',
+  '1120':'HarmonyQ',
+  '1310':'ZkMeSSirve',
+  '1850':'CriptoTrader',
+  '2357':'Jordan23',
+};
 const MIN_STREAM_TOKEN=101,MAX_STREAM_TOKEN=2500,RANDOM_STREAM_COUNT=6,FULLSCREEN_RANDOM_COUNT=22;
 const LARGE_COLLECTION_THRESHOLD=15;
 const STORAGE_KEY='moodyMuseumHybridV1';
@@ -1466,7 +1579,7 @@ function wireImageFallback(imgEl,nft){
 }
 
 // ══ V2 STATUS BAR ══
-function setV2Status(msg,type=''){const bar=$('v2Status');bar.className='v2-status'+(type?' '+type:'');$('v2StatusText').innerHTML=msg;}
+function setV2Status(msg,type=''){const bar=$('v2Status');bar.className='col-sidebar-status'+(type?' '+type:'');$('v2StatusText').innerHTML=msg;}
 function setLoading(on){
   document.body.classList.toggle('loading',on);
   const btnScan=$('btnScan');if(btnScan)btnScan.disabled=on;
@@ -1530,9 +1643,15 @@ function pickRandomMuseumIds(count,excludedIds=[]){
   return picked;
 }
 async function fetchStreamNFTs(){
-  const ids=[...FEATURED_STREAM_IDS,...pickRandomMuseumIds(RANDOM_STREAM_COUNT,FEATURED_STREAM_IDS)];
-  const res=await Promise.allSettled(ids.map(id=>fetchAlchemyNFT(id)));
-  const pool=res.filter(r=>r.status==='fulfilled').map(r=>r.value).filter(n=>n.id&&n.image&&parseInt(n.id,10)>100);
+  const randomIds=pickRandomMuseumIds(RANDOM_STREAM_COUNT,FEATURED_STREAM_IDS);
+  // Fetch all in parallel but keep order: ordered featured first, randoms appended at end
+  const allIds=[...FEATURED_STREAM_IDS_ORDERED,...randomIds];
+  const res=await Promise.allSettled(allIds.map(id=>fetchAlchemyNFT(id)));
+  const fetched=res.map((r,i)=>r.status==='fulfilled'?r.value:null).filter(n=>n&&n.id&&n.image&&parseInt(n.id,10)>100);
+  // Deduplicate preserving first occurrence (keeps the ordered sequence intact)
+  const seen=new Set();
+  const pool=[];
+  for(const n of fetched){const k=nftKey(n);if(!seen.has(k)){seen.add(k);pool.push(n);}}
   if(pool.length){
     streamNFTs=pool;
     save();
@@ -1869,15 +1988,16 @@ function applyTraitFilters(items){return items;}
           <textarea class="rf-bulk" id="rfBulk" rows="3" placeholder="Alice, Bob, Charlie&#10;or one per line"></textarea>
           <button class="v2-btn ghost" style="font-size:16px;padding:12px 20px;margin-bottom:10px;letter-spacing:1px" onclick="rfBulkAdd()">Import list</button>
           <div class="rf-divider"></div>
-          <div class="rf-lbl" style="margin-top:8px;font-size:18px;letter-spacing:2px;color:#ffe040;text-shadow:0 0 14px rgba(255,210,0,.7)">
-            Participants
-            <span id="rfCount" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#ffe066;margin-left:6px;text-shadow:0 0 8px rgba(255,210,0,.5)">${_parts.length}</span>
+          <div style="margin-top:8px;display:flex;align-items:center;gap:10px;white-space:nowrap;overflow:hidden">
+            <span style="font-family:'Cinzel',serif;font-size:16px;font-weight:900;letter-spacing:2px;color:#ffe040;text-shadow:0 0 14px rgba(255,210,0,.7);text-transform:uppercase;flex-shrink:0">Participants</span>
+            <span id="rfCount" style="font-family:'Share Tech Mono',monospace;font-size:28px;font-weight:700;color:#ffe066;text-shadow:0 0 16px rgba(255,210,0,.9),0 0 32px rgba(255,200,0,.5);line-height:1;flex-shrink:0">${_parts.length}</span>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:16px;font-weight:700;color:rgba(255,210,0,.5);line-height:1;flex-shrink:0">/ MAX 300</span>
           </div>
           <div class="rf-chips" id="rfChips">${_renderChips()}</div>
           <div class="rf-lfooter">
-            <button class="v2-btn primary" id="rfStartBtn" onclick="rfStartDraw()"
+            <button class="v2-btn primary" id="rfStartBtn" onclick="_phase==='winner'?rfRespin():rfStartDraw()"
               style="width:100%;letter-spacing:3px;font-size:18px;padding:18px"
-              ${_parts.length<2||_phase!=='setup'?'disabled':''}>SPIN</button>
+              ${_parts.length<2||_phase==='spinning'?'disabled':''}>${_phase==='winner'?'RESPIN':'SPIN'}</button>
           </div>
         </div>
         <div class="rf-rcol" id="rfRcol">
@@ -1889,7 +2009,7 @@ function applyTraitFilters(items){return items;}
       inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();rfAdd();}});
       if(_phase==='setup')setTimeout(()=>inp.focus(),30);
     }
-    if(_phase==='spinning')setTimeout(_doScroll,60);
+    // spinning phase now triggers _doScroll directly from rfStartDraw/rfRespin
   }
 
   // ── Right column — always two panels: main | winners history ──
@@ -1912,7 +2032,7 @@ function applyTraitFilters(items){return items;}
     </div>`;
   }
   function _renderHistoryItems(){
-    if(!_winners.length)return `<div class="rf-history-empty">No winners yet</div>`;
+    if(!_winners.length)return '';
     return _winners.map((w,i)=>`
       <div class="rf-history-item ${i===0?'rf-history-latest':''}">
         <div class="rf-history-num">${_winners.length - i}</div>
@@ -1957,10 +2077,10 @@ function applyTraitFilters(items){return items;}
   }
 
   function _renderChips(){
-    if(!_parts.length)return `<div class="rf-empty-chips">No participants yet</div>`;
+    if(!_parts.length)return '';
     return _parts.map((p,i)=>`
       <div class="rf-chip">
-        <img src="${moodyImgUrl(p.nft.id)}" onerror="this.style.opacity='.2'" loading="lazy">
+        <img src="${moodyImgUrl(p.nft.id)}" onerror="this.style.opacity='.2'" loading="lazy" decoding="async">
         <span class="rf-chip-name">${p.name}</span>
         <span class="rf-chip-id">#${p.nft.id}</span>
         ${_phase==='setup'?`<button class="rf-chip-del" onclick="rfDel(${i})">✕</button>`:''}
@@ -1971,13 +2091,18 @@ function applyTraitFilters(items){return items;}
   window.rfAdd=function(){
     const inp=$('rfInp');if(!inp)return;
     const name=inp.value.trim();
-    if(name&&_parts.length<60){_parts.push({name,nft:pickNFT()});_refreshLeft();}
+    if(name&&_parts.length<300){
+      _parts.push({name,nft:pickNFT()});
+      _refreshLeft();
+      // scroll chips to bottom so last added is visible
+      requestAnimationFrame(()=>{const ch=$('rfChips');if(ch)ch.scrollTop=ch.scrollHeight;});
+    }
     inp.value='';inp.focus();
   };
   window.rfBulkAdd=function(){
     const ta=$('rfBulk');if(!ta)return;
     ta.value.split(/[\n,]+/).map(s=>s.trim()).filter(Boolean)
-      .forEach(n=>{if(_parts.length<60)_parts.push({name:n,nft:pickNFT()});});
+      .forEach(n=>{if(_parts.length<300)_parts.push({name:n,nft:pickNFT()});});
     ta.value='';_refreshLeft();
     const inp=$('rfInp');if(inp)inp.focus();
   };
@@ -1989,7 +2114,12 @@ function applyTraitFilters(items){return items;}
     const chips=$('rfChips');const count=$('rfCount');const btn=$('rfStartBtn');const rcol=$('rfRcol');
     if(chips)chips.innerHTML=_renderChips();
     if(count)count.textContent=String(_parts.length);
-    if(btn)btn.disabled=(_parts.length<2||_phase!=='setup');
+    if(btn){
+      if(_phase==='spinning'){btn.disabled=true;btn.textContent='SPIN';}
+      else if(_phase==='winner'){btn.disabled=false;btn.textContent='RESPIN';}
+      else{btn.disabled=(_parts.length<2);btn.textContent='SPIN';}
+      btn.onclick=(_phase==='winner')?()=>rfRespin():()=>rfStartDraw();
+    }
     if(rcol&&_phase==='setup')rcol.innerHTML=_renderRight();
   }
 
@@ -2014,7 +2144,8 @@ function applyTraitFilters(items){return items;}
   // we swap the first card to avoid a back-to-back repeat.
   // The winner card is appended at the very end.
   function _buildStrip(winnerIdx){
-    const rounds=6;
+    // Fewer DOM nodes for large pools — still feels random and exciting  
+    const rounds=_parts.length>=60?1:_parts.length>=30?2:_parts.length>=15?3:4;
     const items=[];
 
     for(let r=0;r<rounds;r++){
@@ -2058,7 +2189,7 @@ function applyTraitFilters(items){return items;}
     const div=document.createElement('div');
     div.className='rf-scroll-card';
     div.innerHTML=`
-      <img class="rf-scroll-card-img" src="${moodyImgUrl(p.nft.id)}" onerror="this.style.opacity='.2'" loading="lazy">
+      <img class="rf-scroll-card-img" src="${moodyImgUrl(p.nft.id)}" onerror="this.style.opacity='.2'" loading="lazy" decoding="async">
       <div class="rf-scroll-card-name">${p.name}</div>`;
     return div;
   }
@@ -2070,7 +2201,25 @@ function applyTraitFilters(items){return items;}
 
     const items=_buildStrip(_winIdx);
     track.innerHTML='';
-    items.forEach(p=>track.appendChild(_makeCardEl(p)));
+
+    // Build cards in chunks to avoid freezing the main thread with 100+ participants
+    const CHUNK=30;
+    let idx=0;
+    function appendChunk(){
+      const end=Math.min(idx+CHUNK,items.length);
+      const frag=document.createDocumentFragment();
+      for(let i=idx;i<end;i++)frag.appendChild(_makeCardEl(items[i]));
+      track.appendChild(frag);
+      idx=end;
+      if(idx<items.length){setTimeout(appendChunk,0);return;}
+      // All cards appended — now start the animation
+      _startScrollAnim(track,vp,items);
+    }
+    appendChunk();
+    return; // animation started inside _startScrollAnim after chunks done
+  }
+
+  function _startScrollAnim(track,vp,items){
 
     // Precise centering:
     // track has padding-top = CARD_TRACK_PAD so first card top = CARD_TRACK_PAD
@@ -2192,11 +2341,14 @@ function applyTraitFilters(items){return items;}
           _winners.unshift({name:_parts[_winIdx].name,nft:_parts[_winIdx].nft});
           if(_winners.length>10)_winners.pop();
           _phase='winner';_renderModal();_launchConfetti();
+          // Update spin button to RESPIN
+          const sb=$('rfStartBtn');
+          if(sb){sb.disabled=false;sb.textContent='RESPIN';sb.onclick=()=>rfRespin();}
         },800);
       }
     }
     _animId=requestAnimationFrame(tick);
-  }
+  } // end _startScrollAnim
 
   // ── Confetti ──
   const CONF_COLS=['#ff4400','#ffcc00','#c9a84c','#fff','#cc00ff','#00aaff','#00ff88'];
@@ -2237,7 +2389,14 @@ function applyTraitFilters(items){return items;}
     _winIdx=Math.floor(Math.random()*_parts.length);
     _phase='spinning';
     cancelAnimationFrame(_animId);
-    _renderModal();
+    // Fast path — same as rfStartDraw: only swap right column, no full rebuild
+    const chips3=$('rfChips');
+    if(chips3){chips3.innerHTML=_renderChips();}
+    const rcol3=$('rfRcol');
+    if(rcol3){
+      rcol3.innerHTML=`<div class="rf-right-split">${_renderScroller()}${_renderHistory()}</div>`;
+      requestAnimationFrame(()=>requestAnimationFrame(()=>_doScroll()));
+    } else {_renderModal();}
   };
   window.rfReset=function(){
     _parts=[];_phase='setup';_winIdx=-1;
@@ -2273,7 +2432,26 @@ function applyTraitFilters(items){return items;}
     _winIdx=Math.floor(Math.random()*_parts.length);
     _phase='spinning';
     cancelAnimationFrame(_animId);
-    _renderModal();
+
+    // Fast path: don't rebuild the whole modal — just update what's needed in-place
+    // 1. Disable spin button immediately
+    const spinBtn=$('rfStartBtn');
+    if(spinBtn){spinBtn.disabled=true;spinBtn.textContent='SPIN';}
+
+    // 2. Refresh chips in place (keep list visible, just remove delete buttons)
+    const chips=$('rfChips');
+    if(chips)chips.innerHTML=_renderChips();
+
+    // 3. Swap only the right column
+    const rcol=$('rfRcol');
+    if(rcol){
+      rcol.innerHTML=`<div class="rf-right-split">${_renderScroller()}${_renderHistory()}</div>`;
+      // kick off the scroll animation after a paint frame so the DOM is ready
+      requestAnimationFrame(()=>requestAnimationFrame(()=>_doScroll()));
+    } else {
+      // fallback: full rebuild
+      _renderModal();
+    }
   };
 })();
 
@@ -2301,87 +2479,118 @@ function isCardInViewport(el,margin=220){
   const r=el.getBoundingClientRect();
   return r.bottom>=-margin&&r.right>=-margin&&r.top<=(window.innerHeight||document.documentElement.clientHeight)+margin&&r.left<=(window.innerWidth||document.documentElement.clientWidth)+margin;
 }
-function renderV2Grid(cols){
-  const grid=$('v2Grid');
-  // apply column count if specified (4/6/10/12 views)
-  if(cols&&[4,6,10,12].includes(cols)){
-    grid.className='v2-grid v2-grid-'+cols;
-  } else {
-    grid.className='v2-grid';
-  }
-  v2RenderJob++;
-  const renderJob=v2RenderJob;
-  const items=getFilteredV2();
-  const reduceVisualFx=items.length>=18;
-  const disableMotionFx=items.length>=36;
-  const massLiteFx=items.length>=72;
-  const ultraLiteFx=items.length>=120;
-  const batchSize=ultraLiteFx?10:massLiteFx?16:28;
+// ══ VIRTUAL SCROLLER ══
+let _vsItems=[];
+let _vsCols=0;
+let _vsRowH=0;
+let _vsRendered={start:-1,end:-1};
+const _vsBuffer=3;
+
+function _vsGetCols(grid,colsOverride){
+  if(colsOverride&&[4,6,10,12].includes(colsOverride))return colsOverride;
+  const tpl=getComputedStyle(grid).getPropertyValue('grid-template-columns');
+  return Math.max(1,(tpl.match(/\s*[^\s]+/g)||[]).length);
+}
+function _vsRowHeight(){
+  // Only measure from a real rendered card — never call this during a flush
+  const sample=$('v2Grid')?.querySelector('.v2-card');
+  if(sample){const h=sample.getBoundingClientRect().height;if(h>20)return h+18;}
+  const vp=$('v2Viewport');
+  if(!vp||!_vsCols)return 300;
+  const cardW=Math.floor((vp.clientWidth-18*(_vsCols-1))/_vsCols);
+  return cardW+82+18; // image square + content ~82px + gap
+}
+function _vsMakeCard(nft,idx,total){
+  const fx=total>=120?'fx-ultra':total>=72?'fx-mass':total>=36?'fx-static':total>=18?'fx-lite':'';
+  const card=document.createElement('article');
+  card.className='v2-card'+(fx?' '+fx:'');
+  const imgSrc=nft.image||'';
+  const skipRgb=total>=36;
+  card.innerHTML=`
+    <div class="v2-card-aura"></div><div class="v2-card-rb"></div>
+    <div class="v2-card-media">
+      ${nft.image?`<img src="${nft.image}" alt="${nft.name}" loading="lazy">`:`<div class="v2-card-fallback">No Image</div>`}
+      <div class="v2-card-holo"></div><div class="v2-scan"></div>
+      ${skipRgb?'':`<div class="v2-card-rgb"><div class="v2-card-r" style="background-image:url('${imgSrc}')"></div><div class="v2-card-b" style="background-image:url('${imgSrc}')"></div></div>`}
+      <div class="v2-card-glow"></div><canvas class="v2-card-pc"></canvas>
+    </div>
+    <div class="v2-card-content">
+      <div class="v2-card-head">
+        <div><div class="v2-card-title">${nft.name}</div><div class="v2-card-sub">${nft.chain==='abstract'?'Abstract Chain':'Ethereum Mainnet'}</div></div>
+        <div class="chain-badge ${nft.chain}">${nft.chain}</div>
+      </div>
+      <div class="v2-card-meta"><div class="v2-card-id">#${nft.id}</div><div>${isAbstract(nft)?'Abstract':'Ethereum'}</div></div>
+      <button class="v2-card-action">Open details</button>
+    </div>`;
+  const img=card.querySelector('img');
+  if(img)wireImageFallback(img,nft);
+  const holo=card.querySelector('.v2-card-holo');
+  if(holo){holo.style.setProperty('--vhue',String((idx*37)%360));holo.style.setProperty('--vang',`${118+(idx%5)*9}deg`);holo.style.setProperty('--vmx',`${42+(idx%4)*6}%`);holo.style.setProperty('--vmy',`${28+(idx%5)*8}%`);}
+  card.querySelector('.v2-card-action').onclick=(e)=>{e.stopPropagation();openV2Modal(nft);};
+  card.querySelector('.v2-card-media').onclick=()=>openV2Modal(nft);
+  if(fx!=='fx-ultra')requestAnimationFrame(()=>attachCard(card,imgSrc,idx/Math.max(1,total),total));
+  return card;
+}
+function _vsMakeRow(nft,idx){
+  const tr=document.createElement('tr');
+  tr.className='v2-list-row';
+  tr.innerHTML=`
+    <td class="v2-list-thumb"><img src="${nft.image||''}" alt="${nft.name}" loading="lazy" onerror="this.style.opacity='.2'"></td>
+    <td class="v2-list-name">${nft.name}</td>
+    <td class="v2-list-id">#${nft.id}</td>
+    <td><span class="chain-badge ${nft.chain}">${nft.chain}</span></td>
+    <td><button class="v2-card-action" style="padding:6px 12px;font-size:10px">Details</button></td>`;
+  tr.querySelector('button').onclick=()=>openV2Modal(nft);
+  tr.querySelector('img').onclick=()=>openV2Modal(nft);
+  return tr;
+}
+let _vsScrollRaf=null;
+let _vsListMode=false;
+// Direct render — no virtual scroller, native scroll is smooth and reliable
+function _vsFlush(){/* no-op */}
+function _vsMount(items,colsOverride){
+  const vp=$('v2Viewport'),grid=$('v2Grid'),st=$('v2SpacerTop'),sb=$('v2SpacerBot');
+  if(!vp||!grid)return;
+  _vsItems=items;_vsListMode=false;
+  if(st)st.style.height='0';if(sb)sb.style.height='0';
+  vp.scrollTop=0;
+  if(colsOverride&&[4,6,10,12].includes(colsOverride))grid.className='v2-grid v2-grid-'+colsOverride;
+  else grid.className='v2-grid';
+  grid.querySelectorAll('.v2-card').forEach(c=>cardStates.delete(c));
   grid.innerHTML='';
-  cardStates.forEach((_,card)=>{if(card.classList&&card.classList.contains('v2-card'))cardStates.delete(card);});
+  const frag=document.createDocumentFragment();
+  items.forEach((nft,i)=>frag.appendChild(_vsMakeCard(nft,i,items.length)));
+  grid.appendChild(frag);
+}
+function _vsListMount(items){
+  const vp=$('v2Viewport'),grid=$('v2Grid'),st=$('v2SpacerTop'),sb=$('v2SpacerBot');
+  if(!vp||!grid)return;
+  _vsItems=items;_vsListMode=true;
+  if(st)st.style.height='0';if(sb)sb.style.height='0';
+  vp.scrollTop=0;
+  grid.className='';
+  grid.innerHTML=`<table class="v2-list-table"><thead><tr>
+    <th></th><th>Name</th><th>ID</th><th>Chain</th><th></th>
+  </tr></thead><tbody></tbody></table>`;
+  const tbody=grid.querySelector('tbody');
+  if(tbody){
+    const frag=document.createDocumentFragment();
+    items.forEach((nft,i)=>frag.appendChild(_vsMakeRow(nft,i)));
+    tbody.appendChild(frag);
+  }
+}
+function renderV2Grid(cols){
+  v2RenderJob++;
+  cardStates.forEach((_,c)=>{if(c.classList?.contains('v2-card'))cardStates.delete(c);});
+  const items=getFilteredV2();
+  const st=$('v2SpacerTop'),sb=$('v2SpacerBot'),grid=$('v2Grid');
   if(!items.length){
-    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><h3>Ready for your first scan</h3><p>Enter a wallet address above and load Ethereum, Abstract, or both chains at once using the Scan Wallet button.</p></div>`;
+    if(st)st.style.height='0';if(sb)sb.style.height='0';
+    if(grid)grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><h3>Ready for your first scan</h3><p>Enter a wallet address above and load Ethereum, Abstract, or both chains at once using the Scan Wallet button.</p></div>`;
     updateV2Stats();return;
   }
-  let idx=0;
-  function appendBatch(){
-    if(renderJob!==v2RenderJob)return;
-    const frag=document.createDocumentFragment();
-    const end=Math.min(items.length,idx+batchSize);
-    for(;idx<end;idx++){
-      const nft=items[idx],i=idx;
-    const card=document.createElement('article');
-    card.className='v2-card';
-    if(reduceVisualFx)card.classList.add('fx-lite');
-    if(disableMotionFx)card.classList.add('fx-static');
-    if(massLiteFx)card.classList.add('fx-mass');
-    if(ultraLiteFx)card.classList.add('fx-ultra');
-    card.style.animationDelay=(i*0.04)+'s';
-    const imgSrc=nft.image||'';
-    card.innerHTML=`
-      <div class="v2-card-aura"></div>
-      <div class="v2-card-rb"></div>
-      <div class="v2-card-media">
-        ${nft.image?`<img src="${nft.image}" alt="${nft.name}">`:`<div class="v2-card-fallback">No Image</div>`}
-        <div class="v2-card-holo"></div>
-        <div class="v2-scan"></div>
-        <div class="v2-card-rgb"><div class="v2-card-r" style="background-image:url('${imgSrc}')"></div><div class="v2-card-b" style="background-image:url('${imgSrc}')"></div></div>
-        <div class="v2-card-glow"></div>
-        <canvas class="v2-card-pc"></canvas>
-      </div>
-      <div class="v2-card-content">
-        <div class="v2-card-head">
-          <div>
-            <div class="v2-card-title">${nft.name}</div>
-            <div class="v2-card-sub">${nft.chain==='abstract'?'Abstract Chain':'Ethereum Mainnet'}</div>
-          </div>
-          <div class="chain-badge ${nft.chain}">${nft.chain}</div>
-        </div>
-        <div class="v2-card-meta">
-          <div class="v2-card-id">#${nft.id}</div>
-          <div>${isAbstract(nft)?'Abstract':'Ethereum'}</div>
-        </div>
-        <button class="v2-card-action">Open details</button>
-      </div>`;
-    const img=card.querySelector('img');
-    if(img)wireImageFallback(img,nft);
-    const holo=card.querySelector('.v2-card-holo');
-    if(holo){
-      holo.style.setProperty('--vhue',String((i*37)%360));
-      holo.style.setProperty('--vang',`${118+(i%5)*9}deg`);
-      holo.style.setProperty('--vmx',`${42+(i%4)*6}%`);
-      holo.style.setProperty('--vmy',`${28+(i%5)*8}%`);
-    }
-    card.querySelector('.v2-card-action').onclick=(e)=>{e.stopPropagation();openV2Modal(nft);};
-    card.querySelector('.v2-card-media').onclick=()=>openV2Modal(nft);
-    const shouldAttach=!ultraLiteFx&&( !massLiteFx || i<36 || isCardInViewport(card,400));
-    if(shouldAttach)requestAnimationFrame(()=>{if(renderJob===v2RenderJob)attachCard(card,nft.image||'',i/Math.max(1,items.length),items.length);});
-    frag.appendChild(card);
-    }
-    grid.appendChild(frag);
-    if(idx<items.length)setTimeout(appendBatch,0);
-  }
-  appendBatch();
+  if(cols==='list'){_vsListMount(items);}
+  else{_vsMount(items,cols);}
   updateV2Stats();
 }
 function updateV2Stats(){
@@ -2590,7 +2799,8 @@ function buildCard(nft,i=0,inCarousel=false,fromCollection=false,totalCount=1){
   infoLine.className='info-line';
   const name=document.createElement('div');
   name.className='nft-name';
-  name.textContent=nft.name||`NFT #${nft.id}`;
+  const holderNameBelow=KNOWN_HOLDERS[String(nft.id||'')];
+  name.textContent=holderNameBelow?`${holderNameBelow} #${nft.id}`:nft.name||`NFT #${nft.id}`;
   info.appendChild(infoLine);
   info.appendChild(name);
   // Only show price tag if there's an actual price — don't repeat the ID
@@ -2666,6 +2876,7 @@ async function openMuseumModal(nft){
       <div class="m-header">
         <div class="m-collection">✦ ${collLabel}</div>
         <div class="m-name">${nft.name}</div>
+        ${KNOWN_HOLDERS[String(nft.id||'')]?`<div style="display:inline-flex;align-items:center;gap:6px;margin-top:4px;padding:5px 12px;border-radius:999px;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.35);font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--gold-bright);text-shadow:0 0 10px rgba(255,200,60,.5)">👑 ${KNOWN_HOLDERS[String(nft.id||'')]}</div>`:''}
         <div class="m-price-row">${flHTML}</div>
       </div>
       <div class="tabs">
@@ -2727,10 +2938,11 @@ function setView(v){
   curView=v;
   document.querySelectorAll('.vbtn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.v2-chip-view').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.col-pill-view').forEach(b=>b.classList.remove('active'));
   if(v==='carousel')$('vbtn-carousel')?.classList.add('active');
-  else if(v==='auto'){$('vbtn-auto')?.classList.add('active');}
+  else if(v==='my'){$('vbtn-4')?.classList.add('active');}
+  else if(v==='list'){$('vbtn-list')?.classList.add('active');}
   else if(typeof v==='number'){$('vbtn-'+v)?.classList.add('active');}
-  else if(v==='my')$('vbtn-my')?.classList.add('active');
 
   const panel=$('collectionPanel');
   const container=$('container');
@@ -2740,22 +2952,11 @@ function setView(v){
     panel.classList.remove('visible');
     container.style.display='block';
     renderAll();
-  } else if(v==='auto'){
-    panel.classList.add('visible');
-    if(shell)shell.style.display='none';
-    container.style.display='block';
-    renderAll();
-  } else if(v==='my'){
+  } else if(v==='my'||v==='list'||typeof v==='number'){
     panel.classList.add('visible');
     if(shell)shell.style.display='block';
     container.style.display='none';
-    renderV2Grid();
-  } else if(typeof v==='number'){
-    // numeric views use the v2 grid with column override
-    panel.classList.add('visible');
-    if(shell)shell.style.display='block';
-    container.style.display='none';
-    renderV2Grid(v);
+    renderV2Grid(v==='my'?4:v);
   }
 
   syncMuseumState();
@@ -2955,8 +3156,10 @@ function mainLoop(ts){
   for(const [card,st] of cardStates){
     if(!document.body.contains(card)){cardStates.delete(card);continue}
     const isV2Card=card.classList&&card.classList.contains('v2-card');
+    // Virtual scroller guarantees only visible v2-cards are in the DOM — skip sleeping/ultra checks
     if(isV2Card&&card.classList.contains('fx-ultra'))continue;
-    const visible=isCardInViewport(card,isV2Card?280:420);
+    // For v2-cards we still skip viewport check (they're always visible by definition)
+    const visible=isV2Card?true:isCardInViewport(card,420);
     if(!visible){
       if(isV2Card&&Math.abs(st.tmx-.5)>.001){st.tmx=.5;st.tmy=.5;}
       continue;
@@ -4066,7 +4269,7 @@ setTimeout(()=>{
    </div>
   </div>
   <div class="gs-right">
-   <div class="gs-thumb" id="gsThumb"></div>
+   <div id="gsThumb" style="display:none"></div>
    <!-- panel crop -->
    <div id="gsp-crop" class="gs-sec">
     <div class="gs-lbl">Step 1 — Remove Background</div>
