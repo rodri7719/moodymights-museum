@@ -195,7 +195,7 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 .carousel-outer::before{left:0;background:linear-gradient(90deg,rgba(5,4,2,.18),transparent)}
 .carousel-outer::after{right:0;background:linear-gradient(-90deg,rgba(5,4,2,.18),transparent)}
 .carousel-outer:hover .carousel-track{animation-play-state:paused}
-.carousel-track{display:flex;gap:28px;animation:scrollLeft 48s linear infinite;will-change:transform;align-items:flex-end}
+.carousel-track{display:flex;gap:28px;animation:scrollLeft 30s linear infinite;will-change:transform;align-items:flex-end}
 @keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(var(--sd,-50%))}}
 .grid{display:grid;gap:20px;justify-items:center}
 .g2{grid-template-columns:repeat(2,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
@@ -1458,7 +1458,7 @@ const MOODY_COLLECTION_URL='https://opensea.io/es/collection/moody-mights';
 const ABSTRACT_COLLECTION_URL='https://opensea.io/es/collection/moody-archives';
 // Order: original featured first, then known community holders, randoms appended by fetchStreamNFTs
 const ORIGINAL_STREAM_IDS=['319','427','950','2456','796','898','768','991','1002','1035','2110'];
-const HOLDER_STREAM_IDS=['505','105','1310','2357','309','1029','1120','183','1850','221','1593'];
+const HOLDER_STREAM_IDS=['505','105','309','2102','212','1310','2357','1029','1120','183','2142','1033','wtf'];
 const FEATURED_STREAM_IDS_ORDERED=[...ORIGINAL_STREAM_IDS,...HOLDER_STREAM_IDS];
 // Flat list for exclusion from random picks
 const FEATURED_STREAM_IDS=[...FEATURED_STREAM_IDS_ORDERED];
@@ -1466,13 +1466,17 @@ const FEATURED_STREAM_IDS=[...FEATURED_STREAM_IDS_ORDERED];
 const KNOWN_HOLDERS={
   '105':'Deepak',
   '183':'Luofi',
+  '212':'GMB',
   '221':'MadMaxx',
   '309':'Nedi',
   '505':'AlexMaze',
   '1029':'Dan_Wins',
+  '1033':'Di3ReKT',
   '1120':'HarmonyQ',
   '1310':'ZkMeSSirve',
   '1850':'CriptoTrader',
+  '2102':'Meta-Tomix',
+  '2142':'omaritsulaia',
   '2357':'Jordan23',
 };
 const MIN_STREAM_TOKEN=101,MAX_STREAM_TOKEN=2500,RANDOM_STREAM_COUNT=6,FULLSCREEN_RANDOM_COUNT=22;
@@ -1645,13 +1649,15 @@ function pickRandomMuseumIds(count,excludedIds=[]){
 async function fetchStreamNFTs(){
   const randomIds=pickRandomMuseumIds(RANDOM_STREAM_COUNT,FEATURED_STREAM_IDS);
   // Fetch all in parallel but keep order: ordered featured first, randoms appended at end
-  const allIds=[...FEATURED_STREAM_IDS_ORDERED,...randomIds];
+  const allIds=[...FEATURED_STREAM_IDS_ORDERED,...randomIds].filter(id=>id!=='wtf');
   const res=await Promise.allSettled(allIds.map(id=>fetchAlchemyNFT(id)));
   const fetched=res.map((r,i)=>r.status==='fulfilled'?r.value:null).filter(n=>n&&n.id&&n.image&&parseInt(n.id,10)>100);
   // Deduplicate preserving first occurrence (keeps the ordered sequence intact)
   const seen=new Set();
   const pool=[];
   for(const n of fetched){const k=nftKey(n);if(!seen.has(k)){seen.add(k);pool.push(n);}}
+  // Inject meme card at the end
+  pool.push({id:'wtf',name:'?????',image:'wtf.png',contractAddress:ETH_CONTRACT,chain:'ethereum'});
   if(pool.length){
     streamNFTs=pool;
     save();
@@ -2989,7 +2995,7 @@ function renderAll(){
     const copies=isMobileLite()?2:3;
     for(let copy=0;copy<copies;copy++)items.forEach((nft,i)=>track.appendChild(buildCard(nft,i,true,false,items.length)));
     outer.appendChild(track);container.appendChild(outer);
-    requestAnimationFrame(()=>{const cardW=isMobileLite()?Math.min(window.innerWidth*.72,270):356;const setW=(cardW+28)*items.length;track.style.setProperty('--sd',`-${setW}px`);track.style.animationDuration=(setW/(isMobileLite()?34:62))+'s';});
+    requestAnimationFrame(()=>{const cardW=isMobileLite()?Math.min(window.innerWidth*.72,270):356;const setW=(cardW+28)*items.length;track.style.setProperty('--sd',`-${setW}px`);track.style.animationDuration=(setW/(isMobileLite()?55:110))+'s';});
   } else if(v==='auto'){
     const filtered=getFilteredV2();
     if(!filtered.length){container.innerHTML=`<div class="grid g4" style="margin-top:40px"><div class="empty"><div class="empty-icon">◆</div><div>No NFTs in My Collection yet</div></div></div>`;return;}
@@ -2998,7 +3004,7 @@ function renderAll(){
     const copies=isMobileLite()?2:3;
     for(let copy=0;copy<copies;copy++)filtered.forEach((nft,i)=>{const co=buildCard(nft,i,true,true,filtered.length);const c=co.querySelector('.card');if(c)c.dataset.view='auto';track.appendChild(co);});
     outer.appendChild(track);container.appendChild(outer);
-    requestAnimationFrame(()=>{const cardW=isMobileLite()?Math.min(window.innerWidth*.72,270):356;const setW=(cardW+28)*filtered.length;track.style.setProperty('--sd',`-${setW}px`);track.style.animationDuration=(setW/(isMobileLite()?34:62))+'s';});
+    requestAnimationFrame(()=>{const cardW=isMobileLite()?Math.min(window.innerWidth*.72,270):356;const setW=(cardW+28)*filtered.length;track.style.setProperty('--sd',`-${setW}px`);track.style.animationDuration=(setW/(isMobileLite()?55:110))+'s';});
   } else if(typeof v==='number'){
     const filtered=getFilteredV2();
     if(!filtered.length){container.innerHTML=`<div class="grid g4" style="margin-top:40px"><div class="empty"><div class="empty-icon">◆</div><div>No NFTs in My Collection yet</div></div></div>`;return;}
@@ -3345,10 +3351,11 @@ function estimateGlobalBgHint(img){
   const n0=Math.max(1,edgeSamples.length);
   const r0=Math.round(sr/n0),g0=Math.round(sg/n0),b0=Math.round(sb/n0),l0=sl/n0;
   // IMPROVED: Filter to only keep samples close to the median estimate (removes stray character pixels on the border)
+  // Tighter thresholds (40/22 → 35/18) to avoid including character pixels
   const filtered=edgeSamples.filter(p=>{
     const d=colorDist(data[p],data[p+1],data[p+2],r0,g0,b0);
     const ld=Math.abs(luminance(data[p],data[p+1],data[p+2])-l0);
-    return d<55&&ld<30;
+    return d<35&&ld<18;
   });
   const useSamples=filtered.length>8?filtered:edgeSamples;
   let sr2=0,sg2=0,sb2=0,sl2=0;
@@ -3444,6 +3451,7 @@ async function resolveGifStudioImage(n){
   throw lastErr||new Error('Could not load a canvas-safe NFT image.');
 }
 function buildEdgeMask(canvas,bgHint=null,protectMode=false){
+  // protectMode may be upgraded to true mid-function when tight-crop detection fires
   const w=canvas.width,h=canvas.height;
   const cx=canvas.getContext('2d',{willReadFrequently:true});
   const img=cx.getImageData(0,0,w,h);
@@ -3508,23 +3516,29 @@ function buildEdgeMask(canvas,bgHint=null,protectMode=false){
   let avgLumaVariance=lumaVariance/Math.max(1,limit);
   if(bgHint){
     const hintDist=colorDist(edgeBr,edgeBg,edgeBb,bgHint.r,bgHint.g,bgHint.b);
-    const hintLumaDist=Math.abs(edgeBl-bgHint.l);
-    // IMPROVED: When crop is tight (crop edges contain character pixels, not background),
-    // high avgVariance signals mixed content — trust the global bgHint much more heavily.
-    const isTightCrop=avgVariance>30||hintDist<60;
-    if(isTightCrop||hintDist<48||hintLumaDist<24||avgVariance>22){
-      const hintWeight=isTightCrop?Math.min(0.92,0.6+(avgVariance-30)/120):0.67;
-      const edgeWeight=1-hintWeight;
-      br=Math.round(edgeBr*edgeWeight+bgHint.r*hintWeight);
-      bg=Math.round(edgeBg*edgeWeight+bgHint.g*hintWeight);
-      bb=Math.round(edgeBb*edgeWeight+bgHint.b*hintWeight);
-      bl=edgeBl*edgeWeight+bgHint.l*hintWeight;
-      avgVariance=(avgVariance+(bgHint.avgVariance||avgVariance))/2;
-      avgLumaVariance=(avgLumaVariance+(bgHint.avgLumaVariance||avgLumaVariance))/2;
-      if(isTightCrop){
-        avgVariance=Math.min(avgVariance,bgHint.avgVariance||avgVariance);
-        avgLumaVariance=Math.min(avgLumaVariance,bgHint.avgLumaVariance||avgLumaVariance);
-      }
+    // hintDist>55: crop is very tight, borders contain character pixels.
+    // Trust global hint fully and activate protectMode to avoid erasing head.
+    if(hintDist>55){
+      br=bgHint.r;bg=bgHint.g;bb=bgHint.b;bl=bgHint.l;
+      avgVariance=bgHint.avgVariance!=null?bgHint.avgVariance:avgVariance;
+      avgLumaVariance=bgHint.avgLumaVariance!=null?bgHint.avgLumaVariance:avgLumaVariance;
+      if(!protectMode)protectMode=true;
+    }else if(hintDist>30){
+      // Moderate disagreement - lean heavily on global hint
+      br=Math.round(edgeBr*0.15+bgHint.r*0.85);
+      bg=Math.round(edgeBg*0.15+bgHint.g*0.85);
+      bb=Math.round(edgeBb*0.15+bgHint.b*0.85);
+      bl=edgeBl*0.15+bgHint.l*0.85;
+      avgVariance=Math.min(avgVariance,bgHint.avgVariance!=null?bgHint.avgVariance:avgVariance);
+      avgLumaVariance=Math.min(avgLumaVariance,bgHint.avgLumaVariance!=null?bgHint.avgLumaVariance:avgLumaVariance);
+    }else{
+      // Edges agree - blend with 80% global hint weight
+      br=Math.round(edgeBr*0.20+bgHint.r*0.80);
+      bg=Math.round(edgeBg*0.20+bgHint.g*0.80);
+      bb=Math.round(edgeBb*0.20+bgHint.b*0.80);
+      bl=edgeBl*0.20+bgHint.l*0.80;
+      avgVariance=Math.min(avgVariance,bgHint.avgVariance!=null?bgHint.avgVariance:avgVariance);
+      avgLumaVariance=Math.min(avgLumaVariance,bgHint.avgLumaVariance!=null?bgHint.avgLumaVariance:avgLumaVariance);
     }
   }
   
@@ -3551,11 +3565,21 @@ function buildEdgeMask(canvas,bgHint=null,protectMode=false){
     strongLumaTol=Math.min(100,softLumaTol+18);
   }
   
+  // Saturation of the detected background color (0=gray, high=colorful)
+  const bgChroma=Math.max(br,bg,bb)-Math.min(br,bg,bb);
+  const bgSat=Math.max(br,bg,bb)>0?bgChroma/Math.max(br,bg,bb):0;
+
   function isBgLike(p,tol,lumaTol){
     const r=data[p],g=data[p+1],b=data[p+2],a=data[p+3];
     if(a<12)return true;
     if(colorDist(r,g,b,br,bg,bb)>tol)return false;
     if(Math.abs(luminance(r,g,b)-bl)>lumaTol)return false;
+    // If background is near-gray but this pixel is colorful, it is NOT background
+    if(bgSat<0.15){
+      const pChroma=Math.max(r,g,b)-Math.min(r,g,b);
+      const pSat=Math.max(r,g,b)>0?pChroma/Math.max(r,g,b):0;
+      if(pSat>0.20)return false;
+    }
     return true;
   }
   function trySeed(x,y,tol=hardTol,lumaTol=hardLumaTol,force=false){
@@ -3891,11 +3915,11 @@ window.gsRemoveBg=async function(){
     syncBrushFromOffscreen();
     $g('gsBtnDl').disabled=false;
     setStatus('✓ Done! Refine if needed, then download.','ok');
-    // If protect mode was on, show the tip so users know to try unchecking it if needed
+    // Show tip when protect mode is OFF — suggest activating it if character was erased
     const tipEl=$g('gsProtectTip');
     if(tipEl){
       const isProtected=$g('gsProtectChk')&&$g('gsProtectChk').checked;
-      tipEl.style.display=isProtected?'block':'none';
+      tipEl.style.display=isProtected?'none':'block';
     }
     gsTab('paint');
   }catch(e){setStatus((e&&e.message)||'Background removal failed.','err');btn.disabled=false;}
@@ -4142,15 +4166,15 @@ function initBrushEvents(){
 
 function initCropEvents(){
   const box=$g('gsCropBox');if(!box)return;
-  let mode='',sx=0,sy=0,sc={};
+  let mode='',sx=0,sy=0,sc={},cR=null,cW=1,cH=1;
   function relPct(e){
-    const r=$g('gsCvWrap').getBoundingClientRect();
     const src=e.touches?e.touches[0]:e;
-    return{x:(src.clientX-r.left)/r.width*100,y:(src.clientY-r.top)/r.height*100};
+    return{x:(src.clientX-cR.left)/cW*100,y:(src.clientY-cR.top)/cH*100};
   }
   function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
   function down(e){
     e.preventDefault();e.stopPropagation();
+    const wrap=$g('gsCvWrap');cR=wrap.getBoundingClientRect();cW=cR.width||1;cH=cR.height||1;
     const h=e.target.dataset&&e.target.dataset.h;
     mode=h?'r-'+h:'move';
     const p=relPct(e);sx=p.x;sy=p.y;sc={...cropPct};
@@ -4173,7 +4197,7 @@ function initCropEvents(){
       else if(mode==='r-tl'){const nx=clamp(sc.x+dx,0,sc.x+sc.w-MIN);const ny=clamp(sc.y+dy,0,sc.y+sc.h-MIN);w=sc.w-(nx-sc.x);h=sc.h-(ny-sc.y);x=nx;y=ny;}
       cropPct={x,y,w,h};
     }
-    const wrap=$g('gsCvWrap');constrainCropToDisplay(wrap.offsetWidth||500,wrap.offsetHeight||500);updateCropBox(wrap.offsetWidth||500,wrap.offsetHeight||500);
+    constrainCropToDisplay(cW,cH);updateCropBox(cW,cH);
   }
   function up(){
     mode='';
@@ -4275,17 +4299,15 @@ setTimeout(()=>{
     <div class="gs-lbl">Step 1 — Remove Background</div>
     <div style="font-size:10px;color:var(--muted);font-family:'Inter',sans-serif;line-height:1.5">Adjust the blue crop box around the area you want, then press the button to remove the background locally with no credits required.</div>
     <!-- PROTECT CHARACTER TOGGLE -->
-    <label id="gsProtectLabel" style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:6px;padding:10px 12px;border-radius:10px;border:1px solid rgba(0,255,136,.35);background:rgba(0,255,136,.08)">
-      <input type="checkbox" id="gsProtectChk" style="width:17px;height:17px;accent-color:#00ff88;cursor:pointer;flex-shrink:0" checked>
+    <label id="gsProtectLabel" style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:6px;padding:10px 12px;border-radius:10px;border:1px solid rgba(157,124,255,.35);background:rgba(157,124,255,.08)">
+      <input type="checkbox" id="gsProtectChk" style="width:17px;height:17px;accent-color:#9d7cff;cursor:pointer;flex-shrink:0">
       <div>
-        <div style="font-family:'Inter',sans-serif;font-size:12px;color:#00ff88;font-weight:700;letter-spacing:.3px;margin-bottom:2px">🛡 Protect Character <span style="font-weight:400;font-size:10px;opacity:.7">(checked by default)</span></div>
-        <div style="font-family:'Inter',sans-serif;font-size:10px;color:rgba(243,245,251,.55);line-height:1.45">Uses tighter color matching to preserve character details. <strong style="color:rgba(255,220,100,.8)">If the background isn't fully removed, try unchecking this.</strong></div>
+        <div style="font-family:'Inter',sans-serif;font-size:12px;color:#c4aaff;font-weight:700;letter-spacing:.3px;margin-bottom:2px">🛡 Protect Character</div>
+        <div style="font-family:'Inter',sans-serif;font-size:10px;color:rgba(243,245,251,.55);line-height:1.45">Uses stricter color matching — enable this if the character shares similar colors with the background.</div>
       </div>
     </label>
-    <!-- Tip shown when background removal likely failed (toggled by JS) -->
-    <div id="gsProtectTip" style="display:none;margin-top:6px;padding:9px 12px;border-radius:9px;border:1px solid rgba(255,200,60,.35);background:rgba(255,180,40,.07)">
-      <div style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,210,100,.9);font-weight:600;margin-bottom:3px">💡 Background still showing?</div>
-      <div style="font-family:'Inter',sans-serif;font-size:10px;color:rgba(243,245,251,.6);line-height:1.5">Uncheck <strong style="color:#00ff88">Protect Character</strong> above and try again — this works better for NFTs with light or uniform backgrounds.</div>
+    <div id="gsProtectTip" style="display:none;margin-top:6px;padding:9px 12px;border-radius:9px;border:1px solid rgba(157,124,255,.3);background:rgba(157,124,255,.07)">
+      <div style="font-family:'Inter',sans-serif;font-size:10px;color:rgba(200,180,255,.75);line-height:1.5">💡 Enable <strong style="color:#c4aaff">Protect Character</strong> if the character has colors close to the background.</div>
     </div>
     <button class="gs-btn cta big" id="gsBtnRm" onclick="gsRemoveBg()">🪄 Auto Remove Background</button>
    </div>
