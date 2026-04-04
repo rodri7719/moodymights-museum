@@ -7473,27 +7473,35 @@ setTimeout(()=>{
   const ABSTRACT_LOGO_SRC = 'logitoabstract.png';
 
   const imgCache = {};
+  const imgPromiseCache = {};
   function loadImg(src){
-    return new Promise(resolve=>{
-      if(!src){resolve(null);return;}
-      if(imgCache[src]){resolve(imgCache[src]);return;}
-      fetch(src)
-        .then(r=>r.blob())
-        .then(blob=>{
-          const url=URL.createObjectURL(blob);
+    if(!src) return Promise.resolve(null);
+    if(imgCache[src]) return Promise.resolve(imgCache[src]);
+    if(imgPromiseCache[src]) return imgPromiseCache[src];
+    const promise = fetch(src, {mode:'cors',credentials:'omit'})
+      .then(r=>{
+        if(!r.ok) throw new Error('fetch failed');
+        return r.blob();
+      })
+      .then(blob=>{
+        const url=URL.createObjectURL(blob);
+        return new Promise((res,rej)=>{
           const img=new Image();
-          img.onload=()=>{imgCache[src]=img;resolve(img);}
-          img.onerror=()=>resolve(null);
+          img.onload=()=>{imgCache[src]=img;res(img);}
+          img.onerror=rej;
           img.src=url;
-        })
-        .catch(()=>{
-          const img=new Image();
-          img.crossOrigin='anonymous';
-          img.onload=()=>{imgCache[src]=img;resolve(img);}
-          img.onerror=()=>resolve(null);
-          img.src=src;
         });
-    });
+      })
+      .catch(()=>new Promise(res=>{
+        // Last resort: direct load without crossOrigin (no canvas export but shows preview)
+        const img=new Image();
+        img.onload=()=>{imgCache[src]=img;res(img);}
+        img.onerror=()=>res(null);
+        img.src=src;
+      }))
+      .finally(()=>{delete imgPromiseCache[src];});
+    imgPromiseCache[src]=promise;
+    return promise;
   }
 
   function drawAbstractSymbolFromAsset(ctx,img,x,y,size,color){
@@ -7821,15 +7829,18 @@ setTimeout(()=>{
       div.className='xp-bg-thumb';
       div.title=bg.label;
       if(i===0) div.style.borderColor='#00ff88';
-      const testImg=new Image();
-      testImg.onload=()=>{div.style.backgroundImage=`url('${bg.src}')`;}
-      testImg.onerror=()=>{
-        div.style.background=`linear-gradient(135deg,hsl(${i*55},50%,16%),hsl(${i*55+40},60%,10%))`;
-        div.style.display='flex';div.style.alignItems='center';div.style.justifyContent='center';
-        div.style.fontSize='7px';div.style.fontFamily='Cinzel,serif';div.style.color='rgba(255,255,255,.35)';
-        div.textContent=bg.label;
-      }
-      testImg.src=bg.src;
+      // Load thumbs with staggered delay to avoid R2 rate limiting
+      setTimeout(()=>{
+        const testImg=new Image();
+        testImg.onload=()=>{div.style.backgroundImage=`url('${bg.src}')`;}
+        testImg.onerror=()=>{
+          div.style.background=`linear-gradient(135deg,hsl(${i*55},50%,16%),hsl(${i*55+40},60%,10%))`;
+          div.style.display='flex';div.style.alignItems='center';div.style.justifyContent='center';
+          div.style.fontSize='7px';div.style.fontFamily='Cinzel,serif';div.style.color='rgba(255,255,255,.35)';
+          div.textContent=bg.label;
+        }
+        testImg.src=bg.src;
+      }, i * 80);
       div.onclick=()=>{
         document.querySelectorAll('.xp-bg-thumb').forEach(t=>{t.style.borderColor='transparent';});
         div.style.borderColor='#00ff88';
