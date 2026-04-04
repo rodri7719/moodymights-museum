@@ -7493,17 +7493,12 @@ setTimeout(()=>{
     return new Promise(resolve=>{
       if(!src){resolve(null);return;}
       if(imgCache[src]){resolve(imgCache[src]);return;}
+      const proxied=src.includes('r2.dev')?'/api/proxy?url='+encodeURIComponent(src):src;
       const img=new Image();
       img.crossOrigin='anonymous';
       img.onload=()=>{imgCache[src]=img;resolve(img);}
-      img.onerror=()=>{
-        // retry without crossOrigin so image shows (download won't work but at least it renders)
-        const img2=new Image();
-        img2.onload=()=>{imgCache[src]=img2;resolve(img2);}
-        img2.onerror=()=>resolve(null);
-        img2.src=src;
-      };
-      img.src=src;
+      img.onerror=()=>resolve(null);
+      img.src=proxied;
     });
   }
 
@@ -7707,7 +7702,7 @@ setTimeout(()=>{
         div.innerHTML=`<span style="font-family:'Cinzel',serif;font-size:9px;color:rgba(255,255,255,.35);letter-spacing:1px">None</span>`;
       } else {
         const imgEl=document.createElement('img');
-        imgEl.src=logo.src;
+        imgEl.src=logo.src.includes('r2.dev')?'/api/proxy?url='+encodeURIComponent(logo.src):logo.src;
         imgEl.style.cssText='max-width:100%;max-height:100%;object-fit:contain;opacity:.96;';
         imgEl.onerror=()=>{div.innerHTML=`<span style="font-family:'Cinzel',serif;font-size:8px;color:rgba(255,255,255,.4)">${logo.label}</span>`;};
         div.appendChild(imgEl);
@@ -7793,7 +7788,7 @@ setTimeout(()=>{
         if(valueLabel) valueLabel.textContent=next+'%';
         row.style.borderColor='rgba(125,255,155,.45)';
         row.style.background='rgba(125,255,155,.08)';
-        xpRender();
+        xpRenderRAF();
       });
       input.addEventListener('change',e=>{
         e.stopPropagation();
