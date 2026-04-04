@@ -7473,16 +7473,37 @@ setTimeout(()=>{
   const ABSTRACT_LOGO_SRC = 'logitoabstract.png';
 
   const imgCache = {};
+  // RAF-based render throttle so drag stays fluid
+  let _xpRafPending = false;
+  function xpRenderRAF(){
+    if(_xpRafPending) return;
+    _xpRafPending = true;
+    requestAnimationFrame(()=>{ _xpRafPending=false; xpRender(); });
+  }
+  // Preload image into cache via proxy
+  function preloadImg(src){
+    if(imgCache[src]) return;
+    const proxied=src.includes('r2.dev')?'/api/proxy?url='+encodeURIComponent(src):src;
+    const img=new Image();
+    img.crossOrigin='anonymous';
+    img.onload=()=>{imgCache[src]=img;}
+    img.src=proxied;
+  }
   function loadImg(src){
     return new Promise(resolve=>{
       if(!src){resolve(null);return;}
       if(imgCache[src]){resolve(imgCache[src]);return;}
-      const proxied=src.includes('r2.dev')?'/api/proxy?url='+encodeURIComponent(src):src;
       const img=new Image();
       img.crossOrigin='anonymous';
       img.onload=()=>{imgCache[src]=img;resolve(img);}
-      img.onerror=()=>resolve(null);
-      img.src=proxied;
+      img.onerror=()=>{
+        // retry without crossOrigin so image shows (download won't work but at least it renders)
+        const img2=new Image();
+        img2.onload=()=>{imgCache[src]=img2;resolve(img2);}
+        img2.onerror=()=>resolve(null);
+        img2.src=src;
+      };
+      img.src=src;
     });
   }
 
@@ -8122,7 +8143,6 @@ setTimeout(()=>{
         activeLogo.x=state.logoStartX;
         activeLogo.y=state.logoStartY;
         renderLogoSizeList();
-        buildLogoGrid();
         cv.style.cursor='grabbing';
         e.preventDefault();
       } else if(inTextBlock(p.x,p.y)){
@@ -8142,7 +8162,7 @@ setTimeout(()=>{
         const activeLogo=state.logos.find(logo=>logo.id===state.activeLogoId);
         if(activeLogo) setLogoScaleAroundCenter(activeLogo,state.logoScale);
         renderLogoSizeList();
-        xpRender(); e.preventDefault(); return;
+        xpRenderRAF(); e.preventDefault(); return;
       }
       if(state.dragTarget==='logo'){
         const p=canvasPos(e);
@@ -8150,13 +8170,13 @@ setTimeout(()=>{
         if(!activeLogo)return;
         activeLogo.x=p.x-state.logoPointerOffsetX;
         activeLogo.y=p.y-state.logoPointerOffsetY;
-        xpRender(); e.preventDefault(); return;
+        xpRenderRAF(); e.preventDefault(); return;
       }
       if(state.dragTarget==='text'){
         const p=canvasPos(e);
         state.textOffsetX=state.textStartOffsetX+(p.x-state.textDragStartX);
         state.textOffsetY=state.textStartOffsetY+(p.y-state.textDragStartY);
-        xpRender(); e.preventDefault(); return;
+        xpRenderRAF(); e.preventDefault(); return;
       }
       // Update cursor
       if(!state.dragTarget){
@@ -8184,7 +8204,7 @@ setTimeout(()=>{
         setLogoScaleAroundCenter(activeLogo,Math.max(0.1,Math.min(5,activeLogo.scale+delta)));
         state.logoScale=activeLogo.scale;
         renderLogoSizeList();
-        xpRender();
+        xpRenderRAF();
       }
     },{passive:false});
 
@@ -8268,6 +8288,8 @@ setTimeout(()=>{
     modal.style.display='';
     requestAnimationFrame(()=>modal.classList.add('open'));
     loadImg(ABSTRACT_LOGO_SRC).then(img=>{state.abstractLogoImg=img; xpRender();});
+    // Preload all backgrounds in background so they're instant on click
+    BG_IMAGES.forEach((bg,i)=>setTimeout(()=>preloadImg(bg.src), i*60));
     buildBgGrid();
     buildLogoGrid();
     xpRender();
