@@ -7473,35 +7473,22 @@ setTimeout(()=>{
   const ABSTRACT_LOGO_SRC = 'logitoabstract.png';
 
   const imgCache = {};
-  const imgPromiseCache = {};
   function loadImg(src){
-    if(!src) return Promise.resolve(null);
-    if(imgCache[src]) return Promise.resolve(imgCache[src]);
-    if(imgPromiseCache[src]) return imgPromiseCache[src];
-    const promise = fetch(src, {mode:'cors',credentials:'omit'})
-      .then(r=>{
-        if(!r.ok) throw new Error('fetch failed');
-        return r.blob();
-      })
-      .then(blob=>{
-        const url=URL.createObjectURL(blob);
-        return new Promise((res,rej)=>{
-          const img=new Image();
-          img.onload=()=>{imgCache[src]=img;res(img);}
-          img.onerror=rej;
-          img.src=url;
-        });
-      })
-      .catch(()=>new Promise(res=>{
-        // Last resort: direct load without crossOrigin (no canvas export but shows preview)
-        const img=new Image();
-        img.onload=()=>{imgCache[src]=img;res(img);}
-        img.onerror=()=>res(null);
-        img.src=src;
-      }))
-      .finally(()=>{delete imgPromiseCache[src];});
-    imgPromiseCache[src]=promise;
-    return promise;
+    return new Promise(resolve=>{
+      if(!src){resolve(null);return;}
+      if(imgCache[src]){resolve(imgCache[src]);return;}
+      const img=new Image();
+      img.crossOrigin='anonymous';
+      img.onload=()=>{imgCache[src]=img;resolve(img);}
+      img.onerror=()=>{
+        // retry without crossOrigin so image shows (download won't work but at least it renders)
+        const img2=new Image();
+        img2.onload=()=>{imgCache[src]=img2;resolve(img2);}
+        img2.onerror=()=>resolve(null);
+        img2.src=src;
+      };
+      img.src=src;
+    });
   }
 
   function drawAbstractSymbolFromAsset(ctx,img,x,y,size,color){
