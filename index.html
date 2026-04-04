@@ -1359,7 +1359,7 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 .xp-color-swatch.selected{border-color:#fff;box-shadow:0 0 10px rgba(255,255,255,.55)}
 .xp-color-custom{width:34px;height:34px;border-radius:50%;cursor:pointer;border:2px solid rgba(125,255,155,.34);overflow:hidden;flex-shrink:0;padding:0}
 .xp-color-custom input[type=color]{width:200%;height:200%;margin:-50%;border:none;cursor:pointer;padding:0}
-.pfp-wrap{width:min(1480px,100%);max-height:96vh;overflow-y:auto;overflow-x:hidden;border-radius:26px;background:url('jordan23art.png') center center/contain no-repeat,linear-gradient(180deg,rgba(10,6,22,.80),rgba(5,3,14,.83));border:1px solid rgba(157,124,255,.18);box-shadow:0 0 80px rgba(120,60,255,.14),0 24px 70px rgba(0,0,0,.7);display:flex;flex-direction:column;gap:0;position:relative}
+.pfp-wrap{width:min(1480px,100%);max-height:96vh;overflow-y:auto;overflow-x:hidden;border-radius:26px;background:linear-gradient(180deg,rgba(10,6,22,.80),rgba(5,3,14,.83));border:1px solid rgba(157,124,255,.18);box-shadow:0 0 80px rgba(120,60,255,.14),0 24px 70px rgba(0,0,0,.7);display:flex;flex-direction:column;gap:0;position:relative}
 .pfp-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
 .pfp-title{font-family:'Cinzel',serif;font-size:22px;font-weight:900;letter-spacing:1px;color:var(--gold-bright)}
 .pfp-head-left{display:flex;flex-direction:column;gap:12px}
@@ -1500,7 +1500,7 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 <div class="app">
   <!-- HEADER -->
   <div class="header">
-    <img class="museum-top-logo" src="xp-backgrounds/logomoody1.png" alt="Moody logo">
+    <img class="museum-top-logo" src="https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/logomoody1.png" alt="Moody logo">
     <div class="logo-box">
       <div class="logo">MOODY<span>MIGHTS</span> MUSEUM</div>
       <div class="logo-line"></div>
@@ -4626,9 +4626,9 @@ setTimeout(()=>{
 
   // ── Logo overlays ── (multi-logo, each with independent position)
   const LOGO_OPTIONS=[
-    {id:'abstractlogo',  label:'Abstract', src:'moodyplaya/abstractlogo.png'},
-    {id:'moodymadness',  label:'Moody',    src:'moodyplaya/moodymadnesslogo.png'},
-    {id:'moody2',        label:'Moody 2',  src:'moodyplaya/moody2.png'},
+    {id:'abstractlogo',  label:'Abstract', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/abstractlogo.png'},
+    {id:'moodymadness',  label:'Moody',    src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/moodymadnesslogo.png'},
+    {id:'moody2',        label:'Moody 2',  src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/moody2.png'},
     {id:'customlogo',    label:'Upload Logo', src:''},
   ];
   // State per logo: active flag + normalized position
@@ -4687,36 +4687,36 @@ setTimeout(()=>{
   // ── Backgrounds ──
   // Image backgrounds loaded from moodyplaya/ folder
   const BG_IMAGE_OPTIONS=[
-    {id:'bg_ciudad',   label:'City',    src:'moodyplaya/ciudad.png'},
-    {id:'bg_playa',    label:'Beach',   src:'moodyplaya/playa.png'},
-    {id:'bg_espacio',  label:'Space',   src:'moodyplaya/espacio.png'},
-    {id:'bg_bosque',   label:'Forest',  src:'moodyplaya/bosque.png'},
-    {id:'bg_fuego',    label:'Fire',    src:'moodyplaya/fuego.png'},
-    {id:'bg_olimpo',   label:'Olympus', src:'moodyplaya/olimpo.png'},
-    {id:'bg_mafia',    label:'Mafia',   src:'moodyplaya/mafia.png'},
-    {id:'bg_pirates',  label:'Pirates', src:'moodyplaya/pirates.png'},
-    {id:'bg_batman',   label:'Batman',  src:'moodyplaya/batman.png'},
-    {id:'bg_spartan',  label:'Spartan', src:'moodyplaya/spartan.png'},
-    {id:'bg_extra_1',  label:'Extra 1', src:'moodyplaya/pfp-extra-1.png'},
-    {id:'bg_extra_2',  label:'Extra 2', src:'moodyplaya/pfp-extra-2.png'},
-    {id:'bg_extra_3',  label:'Extra 3', src:'moodyplaya/pfp-extra-3.png'},
-    {id:'bg_extra_4',  label:'Extra 4', src:'moodyplaya/pfp-extra-4.png'},
-    {id:'bg_extra_5',  label:'Extra 5', src:'moodyplaya/pfp-extra-5.png'},
-    {id:'bg_extra_6',  label:'Extra 6', src:'moodyplaya/pfp-extra-6.png'},
-    {id:'bg_extra_7',  label:'Extra 7', src:'moodyplaya/pfp-extra-7.png'},
-    {id:'bg_extra_8',  label:'Extra 8', src:'moodyplaya/pfp-extra-8.png'},
-    {id:'bg_extra_9',  label:'Extra 9', src:'moodyplaya/pfp-extra-9.png'},
-    {id:'bg_extra_10', label:'Extra 10', src:'moodyplaya/pfp-extra-10.png'},
-    {id:'bg_banner_1',  label:'Banner 1', src:'moodyplaya/banner-extra-1.png', bannerOnly:true},
-    {id:'bg_banner_2',  label:'Banner 2', src:'moodyplaya/banner-extra-2.png', bannerOnly:true},
-    {id:'bg_banner_3',  label:'Banner 3', src:'moodyplaya/banner-extra-3.png', bannerOnly:true},
-    {id:'bg_banner_4',  label:'Banner 4', src:'moodyplaya/banner-extra-4.png', bannerOnly:true},
-    {id:'bg_banner_5',  label:'Banner 5', src:'moodyplaya/banner-extra-5.png', bannerOnly:true},
-    {id:'bg_banner_6',  label:'Banner 6', src:'moodyplaya/banner-extra-6.png', bannerOnly:true},
-    {id:'bg_banner_7',  label:'Banner 7', src:'moodyplaya/banner-extra-7.png', bannerOnly:true},
-    {id:'bg_banner_8',  label:'Banner 8', src:'moodyplaya/banner-extra-8.png', bannerOnly:true},
-    {id:'bg_banner_9',  label:'Banner 9', src:'moodyplaya/banner-extra-9.png', bannerOnly:true},
-    {id:'bg_banner_10', label:'Banner 10', src:'moodyplaya/banner-extra-10.png', bannerOnly:true},
+    {id:'bg_ciudad',   label:'City',    src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/ciudad.png'},
+    {id:'bg_playa',    label:'Beach',   src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/playa.png'},
+    {id:'bg_espacio',  label:'Space',   src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/espacio.png'},
+    {id:'bg_bosque',   label:'Forest',  src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/bosque.png'},
+    {id:'bg_fuego',    label:'Fire',    src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/fuego.png'},
+    {id:'bg_olimpo',   label:'Olympus', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/olimpo.png'},
+    {id:'bg_mafia',    label:'Mafia',   src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/mafia.png'},
+    {id:'bg_pirates',  label:'Pirates', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/pirates.png'},
+    {id:'bg_batman',   label:'Batman',  src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/batman.png'},
+    {id:'bg_spartan',  label:'Spartan', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/spartan.png'},
+    {id:'bg_extra_1',  label:'Extra 1', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/pfp-extra-1.png'},
+    {id:'bg_extra_2',  label:'Extra 2', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/pfp-extra-2.png'},
+    {id:'bg_extra_3',  label:'Extra 3', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/pfp-extra-3.png'},
+    {id:'bg_extra_4',  label:'Extra 4', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/pfp-extra-4.png'},
+    {id:'bg_extra_5',  label:'Extra 5', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/pfp-extra-5.png'},
+    {id:'bg_extra_6',  label:'Extra 6', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/pfp-extra-6.png'},
+    {id:'bg_extra_7',  label:'Extra 7', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/pfp-extra-7.png'},
+    {id:'bg_extra_8',  label:'Extra 8', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/pfp-extra-8.png'},
+    {id:'bg_extra_9',  label:'Extra 9', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/pfp-extra-9.png'},
+    {id:'bg_extra_10', label:'Extra 10', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/pfp-extra-10.png'},
+    {id:'bg_banner_1',  label:'Banner 1', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/banner-extra-1.png', bannerOnly:true},
+    {id:'bg_banner_2',  label:'Banner 2', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/banner-extra-2.png', bannerOnly:true},
+    {id:'bg_banner_3',  label:'Banner 3', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/banner-extra-3.png', bannerOnly:true},
+    {id:'bg_banner_4',  label:'Banner 4', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/banner-extra-4.png', bannerOnly:true},
+    {id:'bg_banner_5',  label:'Banner 5', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/banner-extra-5.png', bannerOnly:true},
+    {id:'bg_banner_6',  label:'Banner 6', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/banner-extra-6.png', bannerOnly:true},
+    {id:'bg_banner_7',  label:'Banner 7', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/banner-extra-7.png', bannerOnly:true},
+    {id:'bg_banner_8',  label:'Banner 8', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/banner-extra-8.png', bannerOnly:true},
+    {id:'bg_banner_9',  label:'Banner 9', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/banner-extra-9.png', bannerOnly:true},
+    {id:'bg_banner_10', label:'Banner 10', src:'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/moodyplaya/banner-extra-10.png', bannerOnly:true},
   ];
 
   // Solid colour backgrounds (shown as plain circles, no label)
@@ -7439,35 +7439,35 @@ setTimeout(()=>{
   };
 
   const BG_IMAGES = [
-    { key: 'bg1', src: 'xp-backgrounds/xp-bg-1.png', label: 'BG 1' },
-    { key: 'bg2', src: 'xp-backgrounds/xp-bg-2.png', label: 'BG 2' },
-    { key: 'bg3', src: 'xp-backgrounds/xp-bg-3.png', label: 'BG 3' },
-    { key: 'bg4', src: 'xp-backgrounds/xp-bg-4.png', label: 'BG 4' },
-    { key: 'bg5', src: 'xp-backgrounds/xp-bg-5.png', label: 'BG 5' },
-    { key: 'bg6', src: 'xp-backgrounds/xp-bg-6.png', label: 'BG 6' },
-    { key: 'bg7', src: 'xp-backgrounds/xp-bg-7.png', label: 'BG 7' },
-    { key: 'bg8', src: 'xp-backgrounds/xp-bg-8.png', label: 'BG 8' },
-    { key: 'bg9', src: 'xp-backgrounds/xp-bg-9.png', label: 'BG 9' },
-    { key: 'bg10', src: 'xp-backgrounds/xp-bg-10.png', label: 'BG 10' },
-    { key: 'bg11', src: 'xp-backgrounds/xp-bg-11.png', label: 'BG 11' },
-    { key: 'bg12', src: 'xp-backgrounds/xp-bg-12.png', label: 'BG 12' },
-    { key: 'bg13', src: 'xp-backgrounds/xp-bg-13.png', label: 'BG 13' },
-    { key: 'bg14', src: 'xp-backgrounds/xp-bg-14.png', label: 'BG 14' },
-    { key: 'bg15', src: 'xp-backgrounds/xp-bg-15.png', label: 'BG 15' },
-    { key: 'bg16', src: 'xp-backgrounds/xp-bg-16.png', label: 'BG 16' },
-    { key: 'bg17', src: 'xp-backgrounds/xp-bg-17.png', label: 'BG 17' },
-    { key: 'bg18', src: 'xp-backgrounds/xp-bg-18.png', label: 'BG 18' },
-    { key: 'bg19', src: 'xp-backgrounds/xp-bg-19.png', label: 'BG 19' },
-    { key: 'bg20', src: 'xp-backgrounds/xp-bg-20.png', label: 'BG 20' },
-    { key: 'bg21', src: 'xp-backgrounds/xp-gb-21.png', label: 'BG 21' },
+    { key: 'bg1', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-bg-1.png', label: 'BG 1' },
+    { key: 'bg2', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-bg-2.png', label: 'BG 2' },
+    { key: 'bg3', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-bg-3.png', label: 'BG 3' },
+    { key: 'bg4', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-bg-4.png', label: 'BG 4' },
+    { key: 'bg5', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-bg-5.png', label: 'BG 5' },
+    { key: 'bg6', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-bg-6.png', label: 'BG 6' },
+    { key: 'bg7', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-bg-7.png', label: 'BG 7' },
+    { key: 'bg8', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-bg-8.png', label: 'BG 8' },
+    { key: 'bg9', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-bg-9.png', label: 'BG 9' },
+    { key: 'bg10', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-bg-10.png', label: 'BG 10' },
+    { key: 'bg11', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-bg-11.png', label: 'BG 11' },
+    { key: 'bg12', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-bg-12.png', label: 'BG 12' },
+    { key: 'bg13', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-bg-13.png', label: 'BG 13' },
+    { key: 'bg14', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-bg-14.png', label: 'BG 14' },
+    { key: 'bg15', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-bg-15.png', label: 'BG 15' },
+    { key: 'bg16', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-bg-16.png', label: 'BG 16' },
+    { key: 'bg17', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-bg-17.png', label: 'BG 17' },
+    { key: 'bg18', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-bg-18.png', label: 'BG 18' },
+    { key: 'bg19', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-bg-19.png', label: 'BG 19' },
+    { key: 'bg20', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-bg-20.png', label: 'BG 20' },
+    { key: 'bg21', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/xp-gb-21.png', label: 'BG 21' },
   ];
 
   const LOGO_IMAGES = [
     { key: 'none',  src: null,                             label: 'None' },
-    { key: 'logo1', src: 'xp-backgrounds/logomoody1.png', label: 'Moody 1' },
-    { key: 'logo2', src: 'xp-backgrounds/logomoody2.png', label: 'Moody 2' },
-    { key: 'logo3', src: 'xp-backgrounds/logomoody3.png', label: 'Moody 3' },
-    { key: 'logo4', src: 'xp-backgrounds/logomoody4.png', label: 'Moody 4' },
+    { key: 'logo1', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/logomoody1.png', label: 'Moody 1' },
+    { key: 'logo2', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/logomoody2.png', label: 'Moody 2' },
+    { key: 'logo3', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/logomoody3.png', label: 'Moody 3' },
+    { key: 'logo4', src: 'https://pub-cc93c3a0717945fb90d8b40577934a22.r2.dev/xp-backgrounds/logomoody4.png', label: 'Moody 4' },
   ];
 
   const ABSTRACT_LOGO_SRC = 'logitoabstract.png';
