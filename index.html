@@ -5280,68 +5280,68 @@ setTimeout(()=>{
     cx.restore();
   }
 
-  function drawEffect(cx,S,effectId){
+  function drawEffect(cx,S,effectId,W,H){
     if(effectId==='none')return;
+    // Support banner (W x H) or square (S x S)
+    const EW=W||S, EH=H||S;
     cx.save();
-    // Clip effect to the NFT alpha mask to avoid square border artifact
-    if(pfpNFTStripped){
+    // Clip effect to the NFT alpha mask to avoid square border artifact (square mode only)
+    if(pfpNFTStripped && !W){
       const pad=pfpFrame==='none'?0:S*.025;
       const r=S*.06;
       cx.beginPath();cx.roundRect(pad,pad,S-pad*2,S-pad*2,r);cx.clip();
     }
     if(effectId==='vignette'){
-      const vg=cx.createRadialGradient(S/2,S/2,S*.3,S/2,S/2,S*.8);
+      const vg=cx.createRadialGradient(EW/2,EH/2,Math.min(EW,EH)*.3,EW/2,EH/2,Math.max(EW,EH)*.8);
       vg.addColorStop(0,'transparent');vg.addColorStop(1,'rgba(0,0,0,.72)');
-      cx.fillStyle=vg;cx.fillRect(0,0,S,S);
+      cx.fillStyle=vg;cx.fillRect(0,0,EW,EH);
     } else if(effectId==='holo'){
-      // Rainbow iridescent overlay
-      for(let i=0;i<S;i+=4){
-        const h=(i/S)*360;
+      for(let i=0;i<EH;i+=4){
+        const h=(i/EH)*360;
         cx.fillStyle=`hsla(${h},100%,70%,.03)`;
-        cx.fillRect(0,i,S,4);
+        cx.fillRect(0,i,EW,4);
       }
-      const hg=cx.createLinearGradient(0,0,S,S);
+      const hg=cx.createLinearGradient(0,0,EW,EH);
       hg.addColorStop(0,'rgba(255,60,200,.06)');hg.addColorStop(.5,'rgba(60,200,255,.06)');hg.addColorStop(1,'rgba(200,255,60,.06)');
-      cx.fillStyle=hg;cx.fillRect(0,0,S,S);
+      cx.fillStyle=hg;cx.fillRect(0,0,EW,EH);
     } else if(effectId==='glitch'){
-      // RGB split glitch lines
       cx.globalCompositeOperation='screen';
       for(let i=0;i<8;i++){
-        const y=(Math.random()*S)|0,h=((Math.random()*S*.04)+2)|0;
+        const y=(Math.random()*EH)|0,h=((Math.random()*EH*.04)+2)|0;
         const ox=(Math.random()*20-10)|0;
-        cx.fillStyle=`rgba(255,0,80,.14)`;cx.fillRect(ox,y,S,h);
-        cx.fillStyle=`rgba(0,200,255,.14)`;cx.fillRect(-ox,y+h,S,h);
+        cx.fillStyle=`rgba(255,0,80,.14)`;cx.fillRect(ox,y,EW,h);
+        cx.fillStyle=`rgba(0,200,255,.14)`;cx.fillRect(-ox,y+h,EW,h);
       }
       cx.globalCompositeOperation='source-over';
     } else if(effectId==='gold_tint'){
       cx.globalCompositeOperation='multiply';
-      const gg=cx.createLinearGradient(0,0,S,S);
+      const gg=cx.createLinearGradient(0,0,EW,EH);
       gg.addColorStop(0,'rgba(255,210,80,.35)');gg.addColorStop(1,'rgba(200,150,0,.35)');
-      cx.fillStyle=gg;cx.fillRect(0,0,S,S);
+      cx.fillStyle=gg;cx.fillRect(0,0,EW,EH);
       cx.globalCompositeOperation='source-over';
     } else if(effectId==='cold'){
       cx.globalCompositeOperation='multiply';
-      cx.fillStyle='rgba(60,120,255,.28)';cx.fillRect(0,0,S,S);
+      cx.fillStyle='rgba(60,120,255,.28)';cx.fillRect(0,0,EW,EH);
       cx.globalCompositeOperation='source-over';
     } else if(effectId==='warm'){
       cx.globalCompositeOperation='multiply';
-      cx.fillStyle='rgba(255,120,40,.22)';cx.fillRect(0,0,S,S);
+      cx.fillStyle='rgba(255,120,40,.22)';cx.fillRect(0,0,EW,EH);
       cx.globalCompositeOperation='source-over';
     } else if(effectId==='grayscale'){
-      const imgd=cx.getImageData(0,0,S,S);const d=imgd.data;
+      const imgd=cx.getImageData(0,0,EW,EH);const d=imgd.data;
       for(let i=0;i<d.length;i+=4){const g=d[i]*.3+d[i+1]*.59+d[i+2]*.11;d[i]=d[i+1]=d[i+2]=g;}
       cx.putImageData(imgd,0,0);
     } else if(effectId==='neon_glow'){
       cx.globalCompositeOperation='screen';
-      const ng=cx.createRadialGradient(S/2,S/2,0,S/2,S/2,S*.6);
+      const ng=cx.createRadialGradient(EW/2,EH/2,0,EW/2,EH/2,Math.max(EW,EH)*.6);
       ng.addColorStop(0,'rgba(157,124,255,.2)');ng.addColorStop(.5,'rgba(98,229,255,.1)');ng.addColorStop(1,'transparent');
-      cx.fillStyle=ng;cx.fillRect(0,0,S,S);
+      cx.fillStyle=ng;cx.fillRect(0,0,EW,EH);
       cx.globalCompositeOperation='source-over';
     } else if(effectId==='scanlines'){
       cx.globalCompositeOperation='multiply';
-      for(let i=0;i<S;i+=3){
+      for(let i=0;i<EH;i+=3){
         cx.fillStyle='rgba(0,0,0,.22)';
-        cx.fillRect(0,i,S,1.5);
+        cx.fillRect(0,i,EW,1.5);
       }
       cx.globalCompositeOperation='source-over';
     }
@@ -6973,7 +6973,7 @@ setTimeout(()=>{
     });
 
     // 2.5 Effect overlay on banner
-    drawEffect(cx,BH,pfpEffect);
+    drawEffect(cx,BH,pfpEffect,BW,BH);
 
     // 3. Logo overlays on banner
     drawAllLogosBanner(cx,BW,BH);
