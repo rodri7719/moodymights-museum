@@ -7477,17 +7477,12 @@ setTimeout(()=>{
     return new Promise(resolve=>{
       if(!src){resolve(null);return;}
       if(imgCache[src]){resolve(imgCache[src]);return;}
+      const proxied=src.includes('r2.dev')?'/api/proxy?url='+encodeURIComponent(src):src;
       const img=new Image();
       img.crossOrigin='anonymous';
       img.onload=()=>{imgCache[src]=img;resolve(img);}
-      img.onerror=()=>{
-        // retry without crossOrigin so image shows (download won't work but at least it renders)
-        const img2=new Image();
-        img2.onload=()=>{imgCache[src]=img2;resolve(img2);}
-        img2.onerror=()=>resolve(null);
-        img2.src=src;
-      };
-      img.src=src;
+      img.onerror=()=>resolve(null);
+      img.src=proxied;
     });
   }
 
