@@ -7687,18 +7687,10 @@ setTimeout(()=>{
   }
 
   function pointHitsLogo(item,x,y){
-    if(!item || x<item.x || x>item.x+item.w || y<item.y || y>item.y+item.h) return false;
-    const logo=state.logos.find(entry=>entry.id===item.id);
-    if(!logo || !logo.img) return false;
-    const sampleCanvas=document.createElement('canvas');
-    sampleCanvas.width=Math.max(1,Math.round(item.w));
-    sampleCanvas.height=Math.max(1,Math.round(item.h));
-    const sctx=sampleCanvas.getContext('2d',{willReadFrequently:true});
-    sctx.drawImage(logo.img,0,0,sampleCanvas.width,sampleCanvas.height);
-    const localX=Math.max(0,Math.min(sampleCanvas.width-1,Math.floor(x-item.x)));
-    const localY=Math.max(0,Math.min(sampleCanvas.height-1,Math.floor(y-item.y)));
-    const alpha=sctx.getImageData(localX,localY,1,1).data[3];
-    return alpha>24;
+    // Simple bounding box hit test - no getImageData (avoids canvas taint & is much faster)
+    if(!item) return false;
+    const pad = 8;
+    return x>=item.x-pad && x<=item.x+item.w+pad && y>=item.y-pad && y<=item.y+item.h+pad;
   }
 
   // ── Build logo grid ─────────────────────
