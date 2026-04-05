@@ -4769,11 +4769,27 @@ setTimeout(()=>{
         });
       return;
     }
-    // External URLs: always use crossOrigin=anonymous. Never fall back without it.
+    // External URLs: try direct first, fall back to weserv proxy on CORS error
     const img=new Image();
     img.crossOrigin='anonymous';
     img.onload=()=>{if(callback)callback(img);};
-    img.onerror=()=>{if(callback)callback(null);};
+    img.onerror=()=>{
+      // Direct load failed (likely CORS) — retry through weserv.nl proxy
+      const proxied='https://images.weserv.nl/?url='+encodeURIComponent(src)+'&output=png&n=-1';
+      const img2=new Image();
+      img2.crossOrigin='anonymous';
+      img2.onload=()=>{if(callback)callback(img2);};
+      img2.onerror=()=>{
+        // Last resort: corsproxy.io
+        const proxied2='https://corsproxy.io/?url='+encodeURIComponent(src);
+        const img3=new Image();
+        img3.crossOrigin='anonymous';
+        img3.onload=()=>{if(callback)callback(img3);};
+        img3.onerror=()=>{if(callback)callback(null);};
+        img3.src=proxied2;
+      };
+      img2.src=proxied;
+    };
     img.src=src;
   }
   function loadBgImage(opt,callback){
