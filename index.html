@@ -1305,7 +1305,7 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 
 
 /* ══ PFP BUILDER ══ */
-#pfpModal{position:fixed;inset:0;z-index:2900;background:rgba(4,6,10,.88);backdrop-filter:blur(18px);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .28s}
+#pfpModal{position:fixed;inset:0;z-index:2900;background:rgba(2,4,12,.92);backdrop-filter:blur(22px) saturate(1.4);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .28s}
 #pfpModal.open{opacity:1;pointer-events:auto}
 
 /* ══ XP CARD BUILDER ══ */
@@ -1359,6 +1359,8 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 .xp-color-swatch.selected{border-color:#fff;box-shadow:0 0 10px rgba(255,255,255,.55)}
 .xp-color-custom{width:34px;height:34px;border-radius:50%;cursor:pointer;border:2px solid rgba(125,255,155,.34);overflow:hidden;flex-shrink:0;padding:0}
 .xp-color-custom input[type=color]{width:200%;height:200%;margin:-50%;border:none;cursor:pointer;padding:0}
+.xp-upload-logo-btn{width:100%;padding:9px 12px;border-radius:9px;border:1px dashed rgba(125,255,155,.42);background:rgba(125,255,155,.05);color:rgba(125,255,155,.82);font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:1.4px;cursor:pointer;transition:all .2s;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:6px}
+.xp-upload-logo-btn:hover{background:rgba(125,255,155,.12);border-color:rgba(125,255,155,.72);color:#7dff9b;border-style:solid;transform:translateY(-1px)}
 .pfp-wrap{width:min(1480px,100%);max-height:96vh;overflow-y:auto;overflow-x:hidden;border-radius:26px;background:linear-gradient(180deg,rgba(10,6,22,.80),rgba(5,3,14,.83));border:1px solid rgba(157,124,255,.18);box-shadow:0 0 80px rgba(120,60,255,.14),0 24px 70px rgba(0,0,0,.7);display:flex;flex-direction:column;gap:0;position:relative}
 .pfp-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
 .pfp-title{font-family:'Cinzel',serif;font-size:22px;font-weight:900;letter-spacing:1px;color:var(--gold-bright)}
@@ -7355,6 +7357,10 @@ setTimeout(()=>{
      <div class="xp-logo-grid" id="xpLogoGrid">
       <!-- populated by JS -->
      </div>
+     <div style="margin-top:8px">
+      <button class="xp-upload-logo-btn" type="button" onclick="document.getElementById('xpCustomLogoInput').click()">⬖ Upload Custom Logo</button>
+      <input id="xpCustomLogoInput" type="file" accept="image/*" multiple style="display:none" onchange="xpUploadCustomLogo(this)">
+     </div>
      <div id="xpLogoSizeList" style="display:flex;flex-direction:column;gap:8px;margin-top:10px"></div>
     </div>
 
@@ -8235,6 +8241,31 @@ setTimeout(()=>{
       img.src=e.target.result;
     };
     reader.readAsDataURL(file);input.value='';
+  };
+
+  // ── Custom Logo upload ───────────────────
+  window.xpUploadCustomLogo=function(input){
+    const files=Array.from(input.files||[]);
+    if(!files.length)return;
+    files.forEach(file=>{
+      const reader=new FileReader();
+      reader.onload=e=>{
+        const img=new Image();
+        img.onload=()=>{
+          const id=`customlogo-${Date.now()}-${Math.random().toString(16).slice(2,7)}`;
+          const placement=getDefaultLogoPlacement(state.logos.length,img,1,1160);
+          state.logos.push({id,key:'customlogo-'+id,img,scale:1,x:placement.x,y:placement.y,isCustom:true});
+          state.activeLogoId=id;
+          state.logoScale=1;
+          renderLogoSizeList();
+          buildLogoGrid();
+          xpRender();
+        };
+        img.src=e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+    input.value='';
   };
 
   // ── Download ─────────────────────────────
