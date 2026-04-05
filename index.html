@@ -4793,9 +4793,9 @@ setTimeout(()=>{
     img.src=src;
   }
   function loadBgImage(opt,callback){
-    // Only use cache if it's a real loaded Image (not null/undefined)
     if(bgImageCache[opt.id] instanceof HTMLImageElement){if(callback)callback(bgImageCache[opt.id]);return;}
-    pfpLoadImageSafe(opt.src,'bg:'+opt.id,img=>{bgImageCache[opt.id]=img||null;if(callback)callback(img||null);});
+    const src=opt.src.includes('r2.dev')?opt.src+'?v=2':opt.src;
+    pfpLoadImageSafe(src,'bg:'+opt.id,img=>{bgImageCache[opt.id]=img||null;if(callback)callback(img||null);});
   }
   // Preload all bg images silently on DOMContentLoaded
   if(document.readyState==='loading'){
