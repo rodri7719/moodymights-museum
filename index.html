@@ -104,6 +104,30 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 @keyframes spinLight1{to{--ang1:360deg}}
 @keyframes spinLight2{to{--ang2:540deg}}
 
+/* ══ TIER SYSTEM ══ */
+.xp-tier-btn{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:5px;padding:10px 6px 8px;border-radius:12px;border:2px solid transparent;
+  background:rgba(10,8,20,.55);cursor:pointer;transition:all .18s ease;
+  font-family:'Cinzel',serif;font-size:9px;letter-spacing:1.2px;
+  color:rgba(255,255,255,.5);position:relative;overflow:hidden;
+}
+.xp-tier-btn:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.25);}
+.xp-tier-btn.selected{border-color:currentColor;box-shadow:0 0 18px var(--tier-glow,rgba(255,255,255,.15)),inset 0 0 12px var(--tier-glow,rgba(255,255,255,.05));color:var(--tier-text,#fff);}
+.xp-tier-btn .tier-gem{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;}
+.xp-tier-btn.selected .tier-gem{box-shadow:0 0 14px var(--tier-glow,rgba(255,255,255,.3));}
+.xp-tier-lvl{
+  font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:1.5px;
+  padding:5px 12px;border-radius:8px;cursor:pointer;
+  border:1px solid rgba(125,255,155,.25);background:rgba(10,20,12,.45);
+  color:rgba(125,255,155,.6);transition:all .15s;
+}
+.xp-tier-lvl:hover{border-color:rgba(125,255,155,.5);color:rgba(180,255,200,.9);}
+.xp-tier-lvl.selected{background:rgba(0,255,100,.12);border-color:rgba(125,255,155,.7);color:#7dff9b;box-shadow:0 0 10px rgba(0,255,100,.15);}
+
+/* Tier badge on canvas — drawn via JS, no CSS needed */
+@keyframes tierShimmer{0%,100%{opacity:.7}50%{opacity:1}}
+
 /* ══ MAIN NAV BUTTONS (bigger) ══ */
 .controls-main{gap:12px;padding:8px 0}
 .vbtn-main{
@@ -4793,9 +4817,9 @@ setTimeout(()=>{
     img.src=src;
   }
   function loadBgImage(opt,callback){
+    // Only use cache if it's a real loaded Image (not null/undefined)
     if(bgImageCache[opt.id] instanceof HTMLImageElement){if(callback)callback(bgImageCache[opt.id]);return;}
-    const src=opt.src.includes('r2.dev')?opt.src+'?v=2':opt.src;
-    pfpLoadImageSafe(src,'bg:'+opt.id,img=>{bgImageCache[opt.id]=img||null;if(callback)callback(img||null);});
+    pfpLoadImageSafe(opt.src,'bg:'+opt.id,img=>{bgImageCache[opt.id]=img||null;if(callback)callback(img||null);});
   }
   // Preload all bg images silently on DOMContentLoaded
   if(document.readyState==='loading'){
@@ -7301,6 +7325,21 @@ setTimeout(()=>{
      <input class="xp-input" id="xpCustomText" placeholder="Week 61 · Season 2" maxlength="48" oninput="xpRender()">
     </div>
 
+    <!-- TIER -->
+    <div class="xp-control-card" id="xpTierCard">
+     <div class="xp-sec-label">Tier <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(125,255,155,.5);margin-left:4px">optional</span></div>
+     <div id="xpTierGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px"></div>
+     <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+      <span style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:1.5px;color:rgba(125,255,155,.65);text-transform:uppercase">Level</span>
+      <div id="xpTierLevelBtns" style="display:flex;gap:5px">
+       <button class="xp-tier-lvl selected" data-lvl="I" onclick="xpSetTierLevel(this,'I')">I</button>
+       <button class="xp-tier-lvl" data-lvl="II" onclick="xpSetTierLevel(this,'II')">II</button>
+       <button class="xp-tier-lvl" data-lvl="III" onclick="xpSetTierLevel(this,'III')">III</button>
+      </div>
+      <button onclick="xpClearTier()" style="margin-left:auto;font-family:'Inter',sans-serif;font-size:10px;border:1px solid rgba(255,120,120,.32);background:rgba(80,10,18,.38);color:rgba(255,160,140,.7);border-radius:7px;padding:3px 9px;cursor:pointer">✕ None</button>
+     </div>
+    </div>
+
     <!-- FONT -->
     <div class="xp-control-card">
      <div class="xp-sec-label">Font Style</div>
@@ -7420,7 +7459,7 @@ setTimeout(()=>{
 /* ══════════════════════════════════════════
    XP CARD BUILDER
 ══════════════════════════════════════════ */
-(function(){
+(async function(){
   // Load extra Google Fonts
   (function(){
     const l=document.createElement('link');
@@ -7458,6 +7497,7 @@ setTimeout(()=>{
     textStartOffsetX: 0,
     textStartOffsetY: 0,
     dragTarget: null, // 'logo' | 'text' | null
+    tier: null,      // null | { id, label, level }
   };
 
   const BG_IMAGES = [
@@ -7481,6 +7521,7 @@ setTimeout(()=>{
     { key: 'bg18', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-18.png', label: 'BG 18' },
     { key: 'bg19', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-19.png', label: 'BG 19' },
     { key: 'bg20', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-20.png', label: 'BG 20' },
+    { key: 'bg22', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-22.png', label: 'BG 22' },
     { key: 'bg21', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-gb-21.png', label: 'BG 21' },
   ];
 
@@ -7493,6 +7534,73 @@ setTimeout(()=>{
   ];
 
   const ABSTRACT_LOGO_SRC = 'logitoabstract.png';
+
+  // ── Tier Data ──────────────────────────────
+  const TIERS = [
+    { id:'bronze',   label:'Bronze',   emoji:'🟤',
+      colors:['#cd7f32','#a0522d','#e8a87c'],
+      glow:'rgba(205,127,50,.55)', badge:'rgba(205,127,50,1)',
+      bg:'linear-gradient(135deg,rgba(100,40,0,.85),rgba(60,20,0,.9))',
+      border:'rgba(205,127,50,.8)', shine:'rgba(255,200,140,.6)' },
+    { id:'silver',   label:'Silver',   emoji:'⚪',
+      colors:['#c0c0c0','#909090','#e8e8e8'],
+      glow:'rgba(192,192,192,.55)', badge:'rgba(210,210,210,1)',
+      bg:'linear-gradient(135deg,rgba(60,60,70,.88),rgba(30,30,40,.92))',
+      border:'rgba(192,192,192,.8)', shine:'rgba(255,255,255,.65)' },
+    { id:'gold',     label:'Gold',     emoji:'🟡',
+      colors:['#ffd700','#c9a84c','#fff4a0'],
+      glow:'rgba(255,215,0,.6)', badge:'rgba(255,215,0,1)',
+      bg:'linear-gradient(135deg,rgba(80,55,0,.88),rgba(50,32,0,.92))',
+      border:'rgba(255,215,0,.85)', shine:'rgba(255,255,180,.7)' },
+    { id:'platinum', label:'Platinum', emoji:'🔵',
+      colors:['#e5e4e2','#78c8d4','#ffffff'],
+      glow:'rgba(120,200,212,.6)', badge:'rgba(180,240,250,1)',
+      bg:'linear-gradient(135deg,rgba(0,60,75,.88),rgba(0,30,40,.92))',
+      border:'rgba(120,200,212,.85)', shine:'rgba(200,255,255,.7)' },
+    { id:'diamond',  label:'Diamond',  emoji:'💎',
+      colors:['#b9f2ff','#62e5ff','#ffffff'],
+      glow:'rgba(98,229,255,.65)', badge:'rgba(180,245,255,1)',
+      bg:'linear-gradient(135deg,rgba(0,50,90,.88),rgba(0,20,55,.92))',
+      border:'rgba(98,229,255,.9)', shine:'rgba(230,255,255,.75)' },
+    { id:'obsidian', label:'Obsidian', emoji:'🟣',
+      colors:['#9d7cff','#cc00ff','#e0c0ff'],
+      glow:'rgba(157,124,255,.7)', badge:'rgba(200,150,255,1)',
+      bg:'linear-gradient(135deg,rgba(40,0,80,.92),rgba(15,0,40,.96))',
+      border:'rgba(157,124,255,.9)', shine:'rgba(220,180,255,.75)' },
+  ];
+
+  function buildTierGrid(){
+    const grid=document.getElementById('xpTierGrid');
+    if(!grid)return;
+    grid.innerHTML='';
+    TIERS.forEach(t=>{
+      const btn=document.createElement('button');
+      btn.className='xp-tier-btn'+(state.tier&&state.tier.id===t.id?' selected':'');
+      btn.dataset.tierId=t.id;
+      btn.style.setProperty('--tier-glow',t.glow);
+      btn.style.setProperty('--tier-text',t.colors[0]);
+      btn.style.color=state.tier&&state.tier.id===t.id?t.colors[0]:'rgba(255,255,255,.48)';
+      btn.innerHTML=`<div class="tier-gem">${t.emoji}</div><span>${t.label}</span>`;
+      btn.onclick=()=>{
+        state.tier=state.tier&&state.tier.id===t.id?null:{id:t.id,label:t.label,level:document.querySelector('.xp-tier-lvl.selected')?.dataset.lvl||'I'};
+        buildTierGrid();
+        xpRender();
+      };
+      grid.appendChild(btn);
+    });
+  }
+
+  window.xpSetTierLevel=function(btn,lvl){
+    document.querySelectorAll('.xp-tier-lvl').forEach(b=>b.classList.remove('selected'));
+    btn.classList.add('selected');
+    if(state.tier) state.tier.level=lvl;
+    xpRender();
+  };
+  window.xpClearTier=function(){
+    state.tier=null;
+    buildTierGrid();
+    xpRender();
+  };
 
   const imgCache = {};
   // RAF-based render throttle so drag stays fluid
@@ -7902,7 +8010,118 @@ setTimeout(()=>{
     ctx.restore();
   }
 
-  // ── Render ──────────────────────────────
+  // ── Draw Tier Badge ─────────────────────────
+  function drawTierBadge(ctx, tier, x, y){
+    const t = TIERS.find(tt=>tt.id===tier.id);
+    if(!t) return;
+    const lvl = tier.level || 'I';
+
+    ctx.save();
+
+    const LABEL_SIZE = 16;
+    const LVL_SIZE   = 13;
+    const PAD_X = 14, PAD_Y = 9;
+    const GAP_LV = 10; // gap between tier name and level pill
+    const RR = 9;
+
+    // ── Measure everything first ──
+    ctx.font = `900 ${LABEL_SIZE}px 'Cinzel',serif`;
+    const labelW = ctx.measureText(t.label.toUpperCase()).width;
+
+    ctx.font = `800 ${LVL_SIZE}px 'Cinzel',serif`;
+    const lvlW = ctx.measureText(lvl).width;
+    const pillPadX = 9, pillPadY = 5;
+    const pillW = lvlW + pillPadX * 2;
+    const pillH = LVL_SIZE + pillPadY * 2;
+
+    // Badge height = tallest of label vs pill, + vertical padding
+    const rowH = Math.max(LABEL_SIZE, pillH);
+    const RH = rowH + PAD_Y * 2;
+    const RW = PAD_X + labelW + GAP_LV + pillW + PAD_X;
+
+    // Vertical centers
+    const midY = y + PAD_Y + rowH / 2;
+
+    // ── Background: transparent (no fill) ──
+    // Just draw the border with glow — no background fill at all
+
+    // Border glow
+    ctx.save();
+    ctx.shadowColor = t.glow;
+    ctx.shadowBlur = 16;
+    roundedRect(ctx, x, y, RW, RH, RR);
+    ctx.strokeStyle = t.border;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.restore();
+
+    // Subtle inner highlight stroke (top-left)
+    roundedRect(ctx, x+1.5, y+1.5, RW-3, RH-3, RR-1);
+    ctx.strokeStyle = t.shine.replace(/[\d.]+\)$/, '0.12)');
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // ── Tier name ──
+    const labelX = x + PAD_X;
+    const labelY = midY + LABEL_SIZE * 0.36; // baseline offset from center
+
+    ctx.save();
+    ctx.font = `900 ${LABEL_SIZE}px 'Cinzel',serif`;
+    ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = 'left';
+    // Black outline for readability on any bg
+    ctx.strokeStyle = 'rgba(0,0,0,0.88)';
+    ctx.lineWidth = 3;
+    ctx.lineJoin = 'round';
+    ctx.strokeText(t.label.toUpperCase(), labelX, labelY);
+    // Metallic gradient fill
+    const tg = ctx.createLinearGradient(labelX, labelY - LABEL_SIZE, labelX, labelY + 3);
+    tg.addColorStop(0,    t.shine);
+    tg.addColorStop(0.4,  t.colors[0]);
+    tg.addColorStop(1,    t.colors[1]);
+    ctx.fillStyle = tg;
+    ctx.shadowColor = t.glow;
+    ctx.shadowBlur = 10;
+    ctx.fillText(t.label.toUpperCase(), labelX, labelY);
+    ctx.restore();
+
+    // ── Level pill (active level only, right of name) ──
+    const pillX = labelX + labelW + GAP_LV;
+    const pillY2 = midY - pillH / 2;
+
+    // Pill fill: tier color gradient
+    ctx.save();
+    roundedRect(ctx, pillX, pillY2, pillW, pillH, 6);
+    const pg = ctx.createLinearGradient(pillX, pillY2, pillX, pillY2 + pillH);
+    pg.addColorStop(0, t.shine.replace(/[\d.]+\)$/, '0.85)'));
+    pg.addColorStop(1, t.colors[1]);
+    ctx.fillStyle = pg;
+    ctx.shadowColor = t.glow;
+    ctx.shadowBlur = 14;
+    ctx.fill();
+    ctx.restore();
+
+    // Pill border
+    roundedRect(ctx, pillX, pillY2, pillW, pillH, 6);
+    ctx.strokeStyle = t.shine;
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+
+    // Pill text
+    ctx.save();
+    ctx.font = `800 ${LVL_SIZE}px 'Cinzel',serif`;
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center';
+    ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+    ctx.lineWidth = 2;
+    ctx.lineJoin = 'round';
+    ctx.strokeText(lvl, pillX + pillW / 2, midY + 0.5);
+    ctx.fillStyle = '#000000';
+    ctx.fillText(lvl, pillX + pillW / 2, midY + 0.5);
+    ctx.restore();
+
+    ctx.restore();
+  }
   async function xpRender(){
     const cv=document.getElementById('xpCanvas');
     if(!cv)return;
@@ -7939,11 +8158,14 @@ setTimeout(()=>{
     }
 
     // ── Abstract logo top-left ──
-    // Try to use the custom logo image (logitoabstract.png)
-    // Match height to the wordmark font size
     const absLogoH = 34;
     const lx = 30, ly = 24;
     drawAbstractLogoMark(ctx,lx,ly,absLogoH,col,useOutline);
+
+    // ── Tier Badge (below abstract logo, fixed offset) ──
+    if(state.tier){
+      drawTierBadge(ctx, state.tier, lx, ly + absLogoH + 16);
+    }
 
     // ── Moody logo top-right ──
     state._logoDrawItems=[];
@@ -8326,6 +8548,7 @@ setTimeout(()=>{
     BG_IMAGES.forEach((bg,i)=>setTimeout(()=>preloadImg(bg.src), i*60));
     buildBgGrid();
     buildLogoGrid();
+    buildTierGrid();
     xpRender();
     setupLogoDrag();
   };
