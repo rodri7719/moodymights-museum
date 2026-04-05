@@ -7518,10 +7518,9 @@ setTimeout(()=>{
     { key: 'bg15', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-15.png', label: 'BG 15' },
     { key: 'bg16', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-16.png', label: 'BG 16' },
     { key: 'bg17', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-17.png', label: 'BG 17' },
-    { key: 'bg18', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-18.png', label: 'BG 18' },
+    { key: 'bg18', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-18.png?v=2', label: 'BG 18' },
     { key: 'bg19', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-19.png', label: 'BG 19' },
     { key: 'bg20', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-20.png', label: 'BG 20' },
-    { key: 'bg22', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-22.png', label: 'BG 22' },
     { key: 'bg21', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-gb-21.png', label: 'BG 21' },
   ];
 
@@ -7827,8 +7826,9 @@ setTimeout(()=>{
     LOGO_IMAGES.forEach((logo,i)=>{
       const div=document.createElement('div');
       div.className='xp-logo-thumb';
-      div.style.borderColor=i===0?'#00ff88':'transparent';
+      div.style.borderColor='transparent';
       if(logo.key==='none'){
+        if(state.logos.length===0) div.style.borderColor='#7dff9b';
         div.innerHTML=`<span style="font-family:'Cinzel',serif;font-size:9px;color:rgba(255,255,255,.35);letter-spacing:1px">None</span>`;
       } else {
         const imgEl=document.createElement('img');
