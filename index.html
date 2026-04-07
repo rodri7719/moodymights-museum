@@ -7530,6 +7530,10 @@ setTimeout(()=>{
     { key: 'bg19', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-19.png', label: 'BG 19' },
     { key: 'bg20', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-20.png', label: 'BG 20' },
     { key: 'bg21', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-gb-21.png', label: 'BG 21' },
+    { key: 'bg22', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-22.png', label: 'BG 22' },
+    { key: 'bg23', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-23.png', label: 'BG 23' },
+    { key: 'bg24', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-24.png', label: 'BG 24' },
+    { key: 'bg25', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-25.png', label: 'BG 25' },
   ];
 
   const LOGO_IMAGES = [
@@ -8139,8 +8143,6 @@ setTimeout(()=>{
 
     ctx.clearRect(0,0,W,H);
     ctx.save();
-    roundedRect(ctx,0,0,W,H,R);
-    ctx.clip();
 
     const nickname=(document.getElementById('xpNickname')?.value||'').trim();
     const xpAmount=(document.getElementById('xpAmount')?.value||'').trim();
@@ -8519,12 +8521,8 @@ setTimeout(()=>{
     await xpRender();
     const src=document.getElementById('xpCanvas');
     const out=document.createElement('canvas');
-    out.width=src.width;out.height=src.height;
+    out.width=src.width; out.height=src.height;
     const octx=out.getContext('2d');
-    octx.fillStyle='#07090d';
-    octx.fillRect(0,0,out.width,out.height);
-    roundedRect(octx,0,0,out.width,out.height,60);
-    octx.clip();
     octx.drawImage(src,0,0);
     return await new Promise(resolve=>out.toBlob(resolve,'image/png'));
   }
