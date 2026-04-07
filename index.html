@@ -1389,8 +1389,8 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 .xp-color-swatch{width:34px;height:34px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .2s;flex-shrink:0}
 .xp-color-swatch:hover{transform:scale(1.2)}
 .xp-color-swatch.selected{border-color:#fff;box-shadow:0 0 10px rgba(255,255,255,.55)}
-.xp-color-custom{width:34px;height:34px;border-radius:50%;cursor:pointer;border:2px solid rgba(125,255,155,.34);overflow:hidden;flex-shrink:0;padding:0}
-.xp-color-custom input[type=color]{width:200%;height:200%;margin:-50%;border:none;cursor:pointer;padding:0}
+.xp-color-custom{width:34px;height:34px;border-radius:50%;cursor:pointer;border:2px solid rgba(255,255,255,.55);overflow:hidden;flex-shrink:0;padding:0;position:relative;background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);box-shadow:0 0 0 1px rgba(0,0,0,.4),0 0 8px rgba(255,255,255,.18)}
+.xp-color-custom input[type=color]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;padding:0;border:none}
 .xp-upload-logo-btn{width:100%;padding:9px 12px;border-radius:9px;border:1px dashed rgba(125,255,155,.42);background:rgba(125,255,155,.05);color:rgba(125,255,155,.82);font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:1.4px;cursor:pointer;transition:all .2s;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:6px}
 .xp-upload-logo-btn:hover{background:rgba(125,255,155,.12);border-color:rgba(125,255,155,.72);color:#7dff9b;border-style:solid;transform:translateY(-1px)}
 .pfp-wrap{width:min(1480px,100%);max-height:96vh;overflow-y:auto;overflow-x:hidden;border-radius:26px;background:linear-gradient(180deg,rgba(10,6,22,.80),rgba(5,3,14,.83));border:1px solid rgba(157,124,255,.18);box-shadow:0 0 80px rgba(120,60,255,.14),0 24px 70px rgba(0,0,0,.7);display:flex;flex-direction:column;gap:0;position:relative}
@@ -4889,6 +4889,7 @@ setTimeout(()=>{
     const cv=document.getElementById('pfpCanvas');
     if(!cv)return;
     let dragging=false;
+    let dragOffX=0, dragOffY=0;
 
     function getPos(e){
       const rect=cv.getBoundingClientRect();
@@ -4918,22 +4919,31 @@ setTimeout(()=>{
       if(!anyActive)return;
       const p=getPos(e);
       pfpDragTarget=findNearestLogo(p);
-      if(pfpDragTarget){ dragging=true; e.preventDefault(); }
+      if(pfpDragTarget){
+        // Save offset so logo doesn't jump to cursor
+        let cx=0.5, cy=0.5;
+        if(pfpLogoState[pfpDragTarget]){cx=pfpLogoState[pfpDragTarget].x;cy=pfpLogoState[pfpDragTarget].y;}
+        else{const item=pfpUploadedLogos.find(x=>x.id===pfpDragTarget);if(item){cx=item.x;cy=item.y;}}
+        dragOffX=cx-p.x; dragOffY=cy-p.y;
+        dragging=true; e.preventDefault();
+      }
     }
     function onMove(e){
       if(!dragging||!pfpDragTarget)return;
       const p=getPos(e);
+      const nx=Math.max(0,Math.min(1,p.x+dragOffX));
+      const ny=Math.max(0,Math.min(1,p.y+dragOffY));
       if(pfpLogoState[pfpDragTarget]){
-        pfpLogoState[pfpDragTarget].x=p.x;
-        pfpLogoState[pfpDragTarget].y=p.y;
+        pfpLogoState[pfpDragTarget].x=nx;
+        pfpLogoState[pfpDragTarget].y=ny;
       }else{
         const item=pfpUploadedLogos.find(x=>x.id===pfpDragTarget);
-        if(item){item.x=p.x;item.y=p.y;}
+        if(item){item.x=nx;item.y=ny;}
       }
       pfpRender();
       e.preventDefault();
     }
-    function onUp(){ dragging=false; pfpDragTarget=null; }
+    function onUp(){ dragging=false; pfpDragTarget=null; dragOffX=0; dragOffY=0; }
 
     cv.addEventListener('mousedown',onDown);
     cv.addEventListener('mousemove',onMove);
@@ -4958,6 +4968,7 @@ setTimeout(()=>{
     const cv=document.getElementById('pfpBannerCanvas');
     if(!cv)return;
     let dragging=false;
+    let dragOffX=0, dragOffY=0;
 
     function getPos(e){
       const rect=cv.getBoundingClientRect();
@@ -4985,22 +4996,30 @@ setTimeout(()=>{
       if(!anyActive)return;
       const p=getPos(e);
       pfpBannerDragTarget=findNearestBannerLogo(p);
-      if(pfpBannerDragTarget){dragging=true;e.preventDefault();}
+      if(pfpBannerDragTarget){
+        let cx=0.5, cy=0.5;
+        if(pfpBannerLogoState[pfpBannerDragTarget]){cx=pfpBannerLogoState[pfpBannerDragTarget].x;cy=pfpBannerLogoState[pfpBannerDragTarget].y;}
+        else{const item=pfpBannerUploadedLogos.find(x=>x.id===pfpBannerDragTarget);if(item){cx=item.x;cy=item.y;}}
+        dragOffX=cx-p.x; dragOffY=cy-p.y;
+        dragging=true;e.preventDefault();
+      }
     }
     function onMove(e){
       if(!dragging||!pfpBannerDragTarget)return;
       const p=getPos(e);
+      const nx=Math.max(0,Math.min(1,p.x+dragOffX));
+      const ny=Math.max(0,Math.min(1,p.y+dragOffY));
       if(pfpBannerLogoState[pfpBannerDragTarget]){
-        pfpBannerLogoState[pfpBannerDragTarget].x=p.x;
-        pfpBannerLogoState[pfpBannerDragTarget].y=p.y;
+        pfpBannerLogoState[pfpBannerDragTarget].x=nx;
+        pfpBannerLogoState[pfpBannerDragTarget].y=ny;
       }else{
         const item=pfpBannerUploadedLogos.find(x=>x.id===pfpBannerDragTarget);
-        if(item){item.x=p.x;item.y=p.y;}
+        if(item){item.x=nx;item.y=ny;}
       }
       pfpBannerRender();
       e.preventDefault();
     }
-    function onUp(){dragging=false;pfpBannerDragTarget=null;}
+    function onUp(){dragging=false;pfpBannerDragTarget=null;dragOffX=0;dragOffY=0;}
 
     cv.addEventListener('mousedown',onDown);
     cv.addEventListener('mousemove',onMove);
@@ -6801,7 +6820,7 @@ setTimeout(()=>{
       }
       pfpSetupRetouchFromCurrentResult();
       syncPfpRemovalUi();
-      setStatus('✓ Moody Might #'+id+' loaded.','ok');
+      setStatus('✓ Moody Might #'+id+' loaded from nobg.','ok');
       pfpRender();
     });
   };
@@ -8566,8 +8585,6 @@ setTimeout(()=>{
     loadImg(ABSTRACT_LOGO_SRC).then(img=>{state.abstractLogoImg=img; xpRender();});
     // Preload all backgrounds in background so they're instant on click
     BG_IMAGES.forEach((bg,i)=>setTimeout(()=>preloadImg(bg.src), i*60));
-    // Preload all logos so they're instant on first click
-    LOGO_IMAGES.forEach((logo,i)=>{if(logo.src)setTimeout(()=>preloadImg(logo.src), i*40);});
     buildBgGrid();
     buildLogoGrid();
     buildTierGrid();
