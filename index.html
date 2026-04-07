@@ -6801,7 +6801,7 @@ setTimeout(()=>{
       }
       pfpSetupRetouchFromCurrentResult();
       syncPfpRemovalUi();
-      setStatus('✓ Moody Might #'+id+' loaded from nobg.','ok');
+      setStatus('✓ Moody Might #'+id+' loaded.','ok');
       pfpRender();
     });
   };
@@ -8566,6 +8566,8 @@ setTimeout(()=>{
     loadImg(ABSTRACT_LOGO_SRC).then(img=>{state.abstractLogoImg=img; xpRender();});
     // Preload all backgrounds in background so they're instant on click
     BG_IMAGES.forEach((bg,i)=>setTimeout(()=>preloadImg(bg.src), i*60));
+    // Preload all logos so they're instant on first click
+    LOGO_IMAGES.forEach((logo,i)=>{if(logo.src)setTimeout(()=>preloadImg(logo.src), i*40);});
     buildBgGrid();
     buildLogoGrid();
     buildTierGrid();
