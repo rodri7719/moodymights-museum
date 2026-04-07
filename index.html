@@ -7647,20 +7647,21 @@ setTimeout(()=>{
     requestAnimationFrame(()=>{ _xpRafPending=false; xpRender(); });
   }
   // Preload image into cache via proxy
-  function preloadImg(src){
+  // skipBust=true for static logos (no cache-bust needed, keeps them cached across opens)
+  function preloadImg(src,skipBust){
     if(imgCache[src]) return;
-    const busted=bustSrc(src);
+    const busted=skipBust?src:bustSrc(src);
     const proxied=busted.includes('r2.dev')?'/api/proxy?url='+encodeURIComponent(busted):busted;
     const img=new Image();
     img.crossOrigin='anonymous';
     img.onload=()=>{imgCache[src]=img;}
     img.src=proxied;
   }
-  function loadImg(src){
+  function loadImg(src,skipBust){
     return new Promise(resolve=>{
       if(!src){resolve(null);return;}
       if(imgCache[src]){resolve(imgCache[src]);return;}
-      const busted=bustSrc(src);
+      const busted=skipBust?src:bustSrc(src);
       const proxied=busted.includes('r2.dev')?'/api/proxy?url='+encodeURIComponent(busted):busted;
       const img=new Image();
       img.crossOrigin='anonymous';
@@ -7893,7 +7894,7 @@ setTimeout(()=>{
           xpRender();
           return;
         }
-        loadImg(logo.src).then(img=>{
+        loadImg(logo.src, true).then(img=>{
           if(!img)return;
           const id=`${logo.key}-${Date.now()}-${Math.random().toString(16).slice(2,7)}`;
           const placement=getDefaultLogoPlacement(state.logos.length,img,1,1160);
@@ -8573,16 +8574,20 @@ setTimeout(()=>{
 
   // ── Open / Close ─────────────────────────
   window.openXPCard=function(){
-    // Fresh timestamp each open → forces Cloudflare to bypass cache for updated images
+    // Fresh timestamp each open → forces Cloudflare to bypass cache for updated BG images only
     _xpCacheBust = Date.now();
-    // Clear internal image cache so BGs reload with new bust param
-    Object.keys(imgCache).forEach(k=>{if(k.includes('r2.dev')) delete imgCache[k];});
+    // Clear internal image cache ONLY for BG images (logos are static, keep them cached)
+    Object.keys(imgCache).forEach(k=>{
+      if(k.includes('r2.dev') && !LOGO_IMAGES.some(l=>l.src===k)) delete imgCache[k];
+    });
     // Reset loaded bg so it reloads
     if(state.bgKey && state.bgKey!=='custom'){state.bgImg=null;}
     const modal=document.getElementById('xpModal');
     modal.style.display='';
     requestAnimationFrame(()=>modal.classList.add('open'));
     loadImg(ABSTRACT_LOGO_SRC).then(img=>{state.abstractLogoImg=img; xpRender();});
+    // Preload all logos immediately (static images, skip cache-bust so they stay cached)
+    LOGO_IMAGES.forEach(logo=>{ if(logo.src) preloadImg(logo.src, true); });
     // Preload all backgrounds in background so they're instant on click
     BG_IMAGES.forEach((bg,i)=>setTimeout(()=>preloadImg(bg.src), i*60));
     buildBgGrid();
