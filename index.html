@@ -7614,6 +7614,12 @@ setTimeout(()=>{
   };
 
   const imgCache = {};
+  // Cache-buster: timestamp refreshed each time XP card is opened (forces Cloudflare to serve latest image)
+  let _xpCacheBust = Date.now();
+  function bustSrc(src){
+    if(!src||!src.includes('r2.dev')) return src;
+    return src.split('?')[0]+'?v='+_xpCacheBust;
+  }
   // RAF-based render throttle so drag stays fluid
   let _xpRafPending = false;
   function xpRenderRAF(){
@@ -7624,7 +7630,8 @@ setTimeout(()=>{
   // Preload image into cache via proxy
   function preloadImg(src){
     if(imgCache[src]) return;
-    const proxied=src.includes('r2.dev')?'/api/proxy?url='+encodeURIComponent(src):src;
+    const busted=bustSrc(src);
+    const proxied=busted.includes('r2.dev')?'/api/proxy?url='+encodeURIComponent(busted):busted;
     const img=new Image();
     img.crossOrigin='anonymous';
     img.onload=()=>{imgCache[src]=img;}
@@ -7634,7 +7641,8 @@ setTimeout(()=>{
     return new Promise(resolve=>{
       if(!src){resolve(null);return;}
       if(imgCache[src]){resolve(imgCache[src]);return;}
-      const proxied=src.includes('r2.dev')?'/api/proxy?url='+encodeURIComponent(src):src;
+      const busted=bustSrc(src);
+      const proxied=busted.includes('r2.dev')?'/api/proxy?url='+encodeURIComponent(busted):busted;
       const img=new Image();
       img.crossOrigin='anonymous';
       img.onload=()=>{imgCache[src]=img;resolve(img);}
@@ -8546,6 +8554,12 @@ setTimeout(()=>{
 
   // ── Open / Close ─────────────────────────
   window.openXPCard=function(){
+    // Fresh timestamp each open → forces Cloudflare to bypass cache for updated images
+    _xpCacheBust = Date.now();
+    // Clear internal image cache so BGs reload with new bust param
+    Object.keys(imgCache).forEach(k=>{if(k.includes('r2.dev')) delete imgCache[k];});
+    // Reset loaded bg so it reloads
+    if(state.bgKey && state.bgKey!=='custom'){state.bgImg=null;}
     const modal=document.getElementById('xpModal');
     modal.style.display='';
     requestAnimationFrame(()=>modal.classList.add('open'));
