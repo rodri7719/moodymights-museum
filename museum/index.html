@@ -7576,7 +7576,7 @@ setTimeout(()=>{
     { key: 'bg18', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-18.png?v=2', label: 'BG 18' },
     { key: 'bg19', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-19.png?v=2', label: 'BG 19' },
     { key: 'bg20', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-20.png?v=2', label: 'BG 20' },
-    { key: 'bg21', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-21.png?v=2', label: 'BG 21' },
+    { key: 'bg21', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-gb-21.png?v=2', label: 'BG 21' },
     { key: 'bg22', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-22.png?v=2', label: 'BG 22' },
     { key: 'bg23', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-23.png?v=2', label: 'BG 23' },
     { key: 'bg24', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-24.png?v=2', label: 'BG 24' },
@@ -7594,6 +7594,10 @@ setTimeout(()=>{
     { key: 'logo2', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/logomoody2.png', label: 'Moody 2' },
     { key: 'logo3', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/logomoody3.png', label: 'Moody 3' },
     { key: 'logo4', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/logomoody4.png', label: 'Moody 4' },
+    { key: 'drops', src: 'assets/xp-logo-moody-drops.png',   label: 'Moody Drops' },
+    { key: 'madness', src: 'assets/xp-logo-moody-madness.png', label: 'Moody Madness' },
+    { key: 'vault', src: 'assets/xp-logo-the-vault.png',     label: 'The Vault' },
+    { key: 'mights', src: 'assets/xp-logo-moody-mights.png', label: 'Moody Mights' },
   ];
 
   const ABSTRACT_LOGO_SRC = 'logitoabstract.png';
@@ -7684,7 +7688,7 @@ setTimeout(()=>{
   function preloadImg(src,skipBust){
     if(imgCache[src]) return;
     const busted=skipBust?src:bustSrc(src);
-    const proxied=busted.includes('r2.dev')?'/api/proxy?url='+encodeURIComponent(busted)+'&cb='+_xpCacheBust:busted;
+    const proxied=busted.includes('r2.dev')?'/api/proxy?url='+encodeURIComponent(busted):busted;
     const img=new Image();
     img.crossOrigin='anonymous';
     img.onload=()=>{imgCache[src]=img;}
@@ -7695,7 +7699,7 @@ setTimeout(()=>{
       if(!src){resolve(null);return;}
       if(imgCache[src]){resolve(imgCache[src]);return;}
       const busted=skipBust?src:bustSrc(src);
-      const proxied=busted.includes('r2.dev')?'/api/proxy?url='+encodeURIComponent(busted)+'&cb='+_xpCacheBust:busted;
+      const proxied=busted.includes('r2.dev')?'/api/proxy?url='+encodeURIComponent(busted):busted;
       const img=new Image();
       img.crossOrigin='anonymous';
       img.onload=()=>{imgCache[src]=img;resolve(img);}
@@ -8025,15 +8029,14 @@ setTimeout(()=>{
       // Load thumbs with staggered delay to avoid R2 rate limiting
       setTimeout(()=>{
         const testImg=new Image();
-        const thumbSrc=bustSrc(bg.src);
-        testImg.onload=()=>{div.style.backgroundImage=`url('${thumbSrc}')`;}
+        testImg.onload=()=>{div.style.backgroundImage=`url('${bg.src}')`;}
         testImg.onerror=()=>{
           div.style.background=`linear-gradient(135deg,hsl(${i*55},50%,16%),hsl(${i*55+40},60%,10%))`;
           div.style.display='flex';div.style.alignItems='center';div.style.justifyContent='center';
           div.style.fontSize='7px';div.style.fontFamily='Cinzel,serif';div.style.color='rgba(255,255,255,.35)';
           div.textContent=bg.label;
         }
-        testImg.src=thumbSrc;
+        testImg.src=bg.src;
       }, i * 80);
       div.onclick=()=>{
         document.querySelectorAll('.xp-bg-thumb').forEach(t=>{t.style.borderColor='transparent';});
