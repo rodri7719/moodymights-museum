@@ -852,6 +852,165 @@ body.edit-mode #codeUnit{outline-color:rgba(170,255,16,.78)}
 }
 </style>
 
+
+<style id="mobile-mafia-orgmap-v4">
+@media(max-width:767px){
+  /* Remove the broken/empty cinematic rectangle on mobile.
+     Desktop hero remains untouched. */
+  .mafia-hero{display:none!important}
+  .hierarchy-head{
+    padding:26px 8px 12px!important;
+    margin-top:0!important;
+  }
+
+  /* Compact organization-map layout instead of one giant dossier per row */
+  .board{padding:10px 2px 22px!important}
+  .tree{width:100%!important;max-width:100%!important}
+
+  /* Boss stays centered and slightly larger */
+  .tree > .level:first-child{
+    display:flex!important;
+    justify-content:center!important;
+    margin:0 auto 18px!important;
+  }
+  .tree > .level:first-child .card.boss{
+    --w:156px!important;
+    --photoH:112px!important;
+  }
+
+  /* Inner Circle = 3 across */
+  .level.inner-circle-expanded{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:15px 6px!important;
+    align-items:start!important;
+    justify-items:center!important;
+    width:100%!important;
+    margin:0 auto 22px!important;
+  }
+  .level.inner-circle-expanded .level-title{
+    grid-column:1/-1!important;
+  }
+  .level.inner-circle-expanded .card{
+    --w:108px!important;
+    --photoH:78px!important;
+  }
+
+  /* Caporegimes = compact 3/2 formation */
+  .level.capos-five{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:15px 6px!important;
+    align-items:start!important;
+    justify-items:center!important;
+    width:100%!important;
+    margin:0 auto 22px!important;
+  }
+  .level.capos-five .level-title{
+    grid-column:1/-1!important;
+  }
+  .level.capos-five .card{
+    --w:106px!important;
+    --photoH:76px!important;
+  }
+
+  /* Open soldiers = 3 across */
+  .level.soldiers.open-soldiers{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:15px 6px!important;
+    align-items:start!important;
+    justify-items:center!important;
+    width:100%!important;
+    margin:0 auto 20px!important;
+  }
+  .level.soldiers.open-soldiers .level-title{
+    grid-column:1/-1!important;
+  }
+  .level.soldiers.open-soldiers .card{
+    --w:100px!important;
+    --photoH:66px!important;
+  }
+
+  /* Overview cards: image + name + short rank only.
+     Full info remains available in the existing tap dossier modal. */
+  .tree .card-data{
+    padding:6px 6px 8px!important;
+    min-height:46px!important;
+  }
+  .tree .card-name{
+    font-size:10px!important;
+    line-height:1.05!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  .tree .card-name-row{gap:3px!important}
+  .tree .rankline{
+    margin-top:4px!important;
+    gap:3px!important;
+  }
+  .tree .rank{
+    font-size:5px!important;
+    letter-spacing:.8px!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  .tree .file,
+  .tree .role,
+  .tree .open-note{
+    display:none!important;
+  }
+  .tree .x-mini{
+    width:16px!important;height:16px!important;
+    min-width:16px!important;
+    font-size:8px!important;
+  }
+
+  /* Small rank tabs that still keep the mafia hierarchy look */
+  .tree .rank-tab{
+    top:-8px!important;
+    min-width:58px!important;
+    max-width:100px!important;
+    padding:4px 5px!important;
+    font-size:5.5px!important;
+    letter-spacing:1px!important;
+    white-space:nowrap!important;
+  }
+  .tree .card.boss .rank-tab{
+    top:-9px!important;
+    min-width:70px!important;
+    padding:4px 7px!important;
+    font-size:6px!important;
+  }
+
+  .section-label{margin-bottom:14px!important}
+  .level-title{
+    margin:5px 0 7px!important;
+    font-size:7px!important;
+    letter-spacing:2.3px!important;
+  }
+  .connector{display:none!important}
+
+  /* Give the overview a subtle chart rail so it feels intentional */
+  .tree{
+    position:relative!important;
+    padding:4px 0 8px!important;
+  }
+  .tree:before{
+    content:"";
+    position:absolute;
+    left:50%;top:70px;bottom:18px;
+    width:1px;
+    background:linear-gradient(180deg,rgba(170,255,16,.28),rgba(211,179,108,.18),transparent);
+    pointer-events:none;
+    z-index:0;
+  }
+  .tree .level{position:relative!important;z-index:1!important}
+}
+</style>
+
 </head>
 <body>
 <div class="page">
