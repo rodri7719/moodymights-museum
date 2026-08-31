@@ -986,6 +986,109 @@
 }
 </style>
 
+
+<style id="mobile-final-home-v1">
+/* MOBILE ONLY — desktop composition remains untouched */
+@media (max-width: 767px){
+  html,body{max-width:100%;overflow-x:hidden!important}
+  body{background:#08080b!important}
+  .shell{width:calc(100% - 24px)!important;max-width:none!important}
+  .portal-stage{width:100%!important;max-width:100%!important;min-height:0!important;margin:0!important;transform:none!important;overflow:hidden!important}
+  .topbar{position:sticky!important;top:0!important;z-index:100!important}
+  .nav{
+    width:calc(100% - 20px)!important;
+    min-height:0!important;height:auto!important;
+    padding:8px 0 7px!important;
+    display:grid!important;grid-template-columns:1fr auto!important;
+    align-items:center!important;gap:7px 10px!important;
+  }
+  .brand-logo-v29{display:flex!important;align-items:center!important;min-width:0!important}
+  .brand-logo-v29 img{width:138px!important;height:auto!important;max-width:100%!important}
+  .socials{display:flex!important;gap:6px!important;margin:0!important;justify-self:end!important}
+  .social{width:32px!important;height:32px!important;border-radius:9px!important}
+  .tools.stable-tools{
+    grid-column:1/-1!important;order:3!important;width:100%!important;
+    display:flex!important;flex-wrap:nowrap!important;justify-content:flex-start!important;
+    gap:6px!important;overflow-x:auto!important;overflow-y:hidden!important;
+    padding:2px 1px 3px!important;scrollbar-width:none!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+  .tools.stable-tools::-webkit-scrollbar{display:none!important}
+  .stable-tool{
+    flex:0 0 auto!important;height:30px!important;padding:0 8px!important;
+    border-radius:9px!important;font-size:8px!important;letter-spacing:.45px!important;
+  }
+  .stable-tool .st-icon{min-width:18px!important;height:18px!important;font-size:7px!important}
+  .stable-tool .st-abs{width:18px!important;height:18px!important}
+
+  .portal-bg{
+    top:0!important;left:0!important;right:0!important;bottom:auto!important;
+    height:710px!important;transform:none!important;
+    background-image:
+      linear-gradient(180deg,rgba(5,5,8,.10) 0%,rgba(5,5,8,.30) 38%,rgba(5,5,8,.91) 78%,#08080b 100%),
+      linear-gradient(90deg,rgba(5,5,8,.48),rgba(5,5,8,.05) 65%),
+      url('assets/hero-moodyworld.png')!important;
+    background-size:auto 710px!important;background-position:63% top!important;background-repeat:no-repeat!important;
+    filter:brightness(1.08) saturate(1.10)!important;
+  }
+  .portal-stage:after{background:linear-gradient(180deg,transparent 0%,transparent 54%,rgba(8,8,11,.82) 78%,#08080b 100%)!important}
+  .hero,.hero-inner{
+    min-height:610px!important;height:auto!important;
+  }
+  .hero-inner{display:flex!important;align-items:flex-end!important}
+  .hero-copy{
+    width:100%!important;max-width:100%!important;
+    padding:260px 0 28px!important;
+  }
+  .hero-copy h1{
+    margin:0 0 10px!important;
+    font-size:clamp(48px,14vw,62px)!important;
+    line-height:.91!important;letter-spacing:-2.4px!important;
+  }
+  .hero-copy h1 .to{font-size:.42em!important;margin-bottom:5px!important}
+  .tagline{font-size:12px!important;margin:12px 0 5px!important;letter-spacing:.05em!important}
+  .sub{font-size:13px!important;line-height:1.5!important;max-width:94%!important}
+  .hero-games{width:100%!important;max-width:100%!important;margin-top:18px!important}
+  .hero-games-row{display:grid!important;gap:7px!important;width:100%!important;margin:0!important}
+  .hero-games-top{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .hero-games-bottom{grid-template-columns:repeat(2,minmax(0,1fr))!important;width:72%!important;margin:7px 0 0!important}
+  .hero-game-link{
+    width:100%!important;min-width:0!important;height:54px!important;
+    padding:3px 5px!important;border-radius:13px!important;animation:none!important;
+    transform:none!important;
+  }
+  .hero-game-link.vault{height:54px!important}
+  .hero-game-link img,.hero-game-link.vault img{max-width:100%!important;max-height:49px!important;transform:none!important}
+  .hero-games-bottom .hero-game-link{height:48px!important}
+  .hero-games-bottom .hero-game-link img{max-height:44px!important}
+  .logo-shine{display:none!important}
+
+  .worlds{padding:20px 0 26px!important;margin:0!important}
+  .portal-head{margin:0 0 16px!important;text-align:center!important}
+  .portal-head .section-kicker{font-size:9px!important}
+  .portal-head h2{font-size:30px!important;line-height:1!important;margin:8px 0 5px!important}
+  .portal-head p{font-size:12px!important}
+  .cards{display:grid!important;grid-template-columns:1fr!important;gap:12px!important}
+  .world-card{
+    width:100%!important;aspect-ratio:4/3!important;border-radius:18px!important;
+    transform:none!important;animation:none!important;
+  }
+  .world-card:hover{transform:none!important}
+  .world-content{left:16px!important;right:16px!important;bottom:15px!important}
+  .world-label{font-size:8px!important;letter-spacing:1.5px!important}
+  .world-title{font-size:27px!important;line-height:1!important;margin:4px 0!important}
+  .world-desc{font-size:11px!important;line-height:1.35!important;max-width:100%!important}
+  .world-enter{font-size:10px!important;margin-top:9px!important}
+  .footer-row{flex-direction:column!important;text-align:center!important;gap:8px!important;padding:18px 0 20px!important}
+}
+@media (min-width:768px) and (max-width:1024px){
+  .portal-stage{transform:none!important;width:100%!important}
+  .hero-copy{width:58%!important}
+  .cards{grid-template-columns:1fr!important;max-width:760px;margin:0 auto}
+  .world-card{aspect-ratio:16/8.5!important}
+}
+</style>
+
 </head>
 <body>
   <header class="topbar">

@@ -1526,6 +1526,154 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 .back-moodyworld-museum:hover{border-color:#e0c36d;color:#fff}
 </style>
 
+
+<style id="mobile-final-museum-v1">
+/* MOBILE ONLY — desktop museum stays untouched */
+@media (max-width: 767px){
+  html,body{max-width:100%;overflow-x:hidden!important}
+  body{min-width:0!important}
+  .app{width:100%!important;max-width:100%!important;padding:10px 12px 26px!important;overflow:hidden!important}
+  .back-moodyworld-museum{
+    left:8px!important;top:8px!important;height:27px!important;padding:0 7px!important;
+    font-size:6px!important;letter-spacing:.55px!important;border-radius:8px!important;
+  }
+
+  .header{padding-top:26px!important;min-height:0!important}
+  .museum-top-logo{
+    position:relative!important;top:auto!important;right:auto!important;left:auto!important;
+    display:block!important;width:150px!important;max-width:46vw!important;height:auto!important;
+    margin:5px auto 5px!important;transform:none!important;opacity:.95!important;
+  }
+  .logo-box{width:100%!important;max-width:100%!important;margin:0 auto!important}
+  .logo{
+    font-size:clamp(25px,7.6vw,34px)!important;letter-spacing:3px!important;
+    line-height:1.05!important;word-spacing:0!important;padding:0 3px!important;
+  }
+  .logo-line{margin-top:8px!important}
+  #activityTicker{
+    width:100%!important;max-width:100%!important;margin:10px auto 6px!important;
+    overflow:hidden!important;
+  }
+
+  .toolbar{width:100%!important;max-width:100%!important;margin:8px 0 8px!important;overflow:hidden!important}
+  .controls-main{
+    width:100%!important;display:flex!important;flex-wrap:nowrap!important;justify-content:flex-start!important;
+    gap:7px!important;padding:6px 1px 9px!important;overflow-x:auto!important;overflow-y:hidden!important;
+    scrollbar-width:none!important;-webkit-overflow-scrolling:touch!important;
+  }
+  .controls-main::-webkit-scrollbar{display:none!important}
+  .vbtn-main{
+    flex:0 0 auto!important;min-width:max-content!important;
+    padding:10px 12px!important;font-size:9px!important;letter-spacing:.7px!important;
+    border-radius:10px!important;white-space:nowrap!important;
+  }
+  #vbtn-xpcard img{height:16px!important;margin-right:4px!important}
+
+  .carousel-outer{
+    width:100%!important;max-width:100%!important;margin:8px auto 0!important;
+    padding:10px 0 16px!important;overflow:hidden!important;
+  }
+  .carousel-outer::before,.carousel-outer::after{width:18px!important}
+  .carousel-track{gap:14px!important}
+  .card-outer.in-carousel{width:min(68vw,255px)!important}
+  .card-outer{max-width:100%!important}
+  .card{border-radius:12px!important}
+  .nft-name{font-size:11px!important}
+
+  .collection-panel{width:100%!important;max-width:100%!important;margin:0 auto 14px!important}
+  .col-layout{grid-template-columns:1fr!important;gap:12px!important}
+  .col-sidebar{
+    position:relative!important;top:auto!important;width:100%!important;
+    padding:15px 13px!important;border-radius:16px!important;gap:13px!important;
+  }
+  .col-sidebar-title{font-size:18px!important}
+  .col-sidebar-section{gap:6px!important}
+  .col-sidebar-input,.col-sidebar-scan,.col-sidebar-action{min-height:42px!important}
+  .col-sidebar-pills{display:flex!important;flex-wrap:wrap!important;gap:6px!important}
+  .gallery-shell{width:100%!important;border-radius:16px!important;overflow:hidden!important}
+  .gallery-search-bar{position:relative!important;top:auto!important;right:auto!important;padding:10px 10px 0!important}
+  .gallery-search-input{width:100%!important;max-width:100%!important;box-sizing:border-box!important}
+  .gallery-search-input:focus{width:100%!important}
+  .grid,.g2,.g4,.g6,.g10,.g12{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;
+  }
+  .grid .card-outer,.g10 .card-outer,.g12 .card-outer{width:100%!important;max-width:100%!important}
+  .g10 .nft-name,.g12 .nft-name{font-size:9px!important}
+
+  .bottom-links{
+    width:100%!important;grid-template-columns:1fr!important;justify-items:stretch!important;
+    gap:18px!important;padding:26px 0 12px!important;
+  }
+  .social-links,.creator-links,.footer-links{
+    width:100%!important;align-items:stretch!important;justify-content:flex-start!important;
+    margin:0!important;text-align:center!important;
+  }
+  .social-title{text-align:center!important;margin:0 0 5px!important}
+  .social-grid{grid-template-columns:1fr 1fr!important;gap:7px!important;width:100%!important}
+  .social-link,.footer-link{font-size:9px!important;padding:10px 8px!important;white-space:normal!important;line-height:1.3!important}
+  .footer-links-row{display:grid!important;grid-template-columns:1fr 1fr!important;gap:7px!important;width:100%!important}
+
+  .share-overlay{padding:10px!important;overflow:auto!important}
+  .share-canvas-wrap{max-width:100%!important}
+  .share-actions{flex-wrap:wrap!important}
+  .gif-machine-card{width:calc(100vw - 24px)!important;max-width:none!important;padding:26px 18px!important}
+
+  .modal-overlay,.v2-modal,.keys-modal{padding:8px!important;align-items:flex-start!important;overflow:auto!important}
+  .v6-modal,.v2-modal-card{width:100%!important;max-width:none!important;max-height:none!important;margin:0!important}
+  .modal-body,.v2-modal-grid{grid-template-columns:1fr!important}
+  .modal-body{padding:48px 14px 18px!important}
+
+  #gifStudio{padding:6px!important;align-items:flex-start!important;overflow:auto!important}
+  .gs-wrap{
+    width:100%!important;max-width:none!important;height:auto!important;min-height:0!important;
+    grid-template-columns:1fr!important;border-radius:14px!important;overflow:visible!important;
+  }
+  .gs-left{padding:12px!important}
+  .gs-cv-wrap{min-height:330px!important;height:55vh!important;max-height:500px!important}
+  .gs-right{width:100%!important;max-width:100%!important;padding:12px!important}
+  .gs-tabs{overflow-x:auto!important;flex-wrap:nowrap!important}
+
+  #raffleModal,#pfpModal,#xpModal{padding:6px!important;align-items:flex-start!important;overflow:auto!important}
+  .rf-card,.pfp-card,.xp-card{
+    width:100%!important;max-width:none!important;height:auto!important;max-height:none!important;
+    min-height:calc(100dvh - 12px)!important;border-radius:14px!important;overflow:visible!important;
+  }
+  .rf-cols,.pfp-body,.xp-body{grid-template-columns:1fr!important;overflow:visible!important}
+  .rf-lcol,.rf-rcol,.pfp-controls-col,.pfp-canvas-col,.xp-controls-col,.xp-controls-col-right,.xp-preview-col{
+    width:100%!important;max-width:100%!important;overflow:visible!important;padding:14px!important;
+  }
+  .pfp-canvas-wrap,.xp-canvas-wrap{width:100%!important;max-width:100%!important}
+  .pfp-token-row{flex-wrap:wrap!important}
+  .pfp-load-btn{min-width:100%!important}
+  .pfp-swatch-grid,.pfp-frame-grid{grid-template-columns:repeat(4,1fr)!important}
+  .pfp-badge-grid{grid-template-columns:repeat(4,1fr)!important}
+  .xp-dl-btn{max-width:100%!important}
+}
+@media (min-width:768px) and (max-width:1024px){
+  .museum-top-logo{right:-80px!important;transform:none!important;width:260px!important}
+  .controls-main{flex-wrap:wrap!important}
+  .col-layout{grid-template-columns:1fr!important}
+  .col-sidebar{position:relative!important;top:auto!important}
+}
+</style>
+
+
+<style id="mobile-final-museum-tools-v1">
+@media (max-width:767px){
+  #raffleModal,#pfpModal,#xpModal{align-items:flex-start!important;overflow:auto!important;padding:6px!important}
+  .rf-wrap,.pfp-wrap,.xp-wrap{
+    width:100%!important;max-width:none!important;height:auto!important;max-height:none!important;
+    min-height:calc(100dvh - 12px)!important;border-radius:14px!important;overflow:visible!important;
+  }
+  .rf-wrap{display:flex!important;flex-direction:column!important}
+  .pfp-wrap,.xp-wrap{display:flex!important;flex-direction:column!important}
+  .pfp-head,.xp-head{padding:13px 12px!important;gap:8px!important}
+  .pfp-title{font-size:17px!important}
+  .xp-title{font-size:20px!important;letter-spacing:1.2px!important}
+  .pfp-view-tab{padding:9px 12px!important;font-size:10px!important}
+}
+</style>
+
 </head>
 <body>
 <a class="back-moodyworld-museum" href="../">← MOODYWORLD</a>

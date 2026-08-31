@@ -1471,6 +1471,197 @@ html{scroll-behavior:smooth}
   height:122%!important;
 }
 </style>
+
+<style id="mobile-final-mights-v1">
+/* MOBILE ONLY — desktop layout and all desktop tuning are preserved */
+@media (max-width: 767px){
+  html,body{max-width:100%;overflow-x:hidden!important}
+  body{background:#08070d!important}
+  .wrap{width:calc(100% - 24px)!important;max-width:none!important}
+  nav{position:sticky!important;top:0!important;z-index:100!important}
+  .navin{
+    min-height:0!important;height:auto!important;padding:7px 0!important;
+    display:grid!important;grid-template-columns:1fr auto!important;
+    gap:7px 8px!important;align-items:center!important;
+  }
+  .brand{min-width:0!important}
+  .brand img{width:142px!important;height:auto!important;max-width:100%!important}
+  .social{
+    width:auto!important;margin:0!important;display:flex!important;align-items:center!important;
+    justify-content:flex-end!important;gap:5px!important;
+  }
+  .social-logo-btn{width:30px!important;height:30px!important;border-radius:8px!important}
+  .back-moodyworld-mights{
+    height:30px!important;padding:0 7px!important;font-size:6px!important;letter-spacing:.55px!important;
+  }
+  .navlinks-v15{
+    grid-column:1/-1!important;order:3!important;width:100%!important;
+    display:flex!important;flex-wrap:nowrap!important;justify-content:flex-start!important;
+    gap:6px!important;overflow-x:auto!important;padding:1px 0 3px!important;
+    scrollbar-width:none!important;-webkit-overflow-scrolling:touch!important;
+  }
+  .navlinks-v15::-webkit-scrollbar{display:none!important}
+  .navlinks-v15 a{
+    flex:0 0 auto!important;min-height:29px!important;padding:0 10px!important;
+    font-size:8px!important;letter-spacing:.65px!important;border-radius:9px!important;
+  }
+
+  .hero-shell{
+    background-position:64% center!important;
+    background-image:
+      linear-gradient(180deg,rgba(8,5,17,.32) 0%,rgba(8,5,17,.58) 42%,rgba(8,5,17,.95) 84%,#090612 100%),
+      url('assets/hero-bg.png')!important;
+  }
+  .hero{
+    min-height:0!important;display:grid!important;grid-template-columns:1fr!important;
+    gap:12px!important;padding:30px 0 28px!important;
+  }
+  .eyebrow{
+    max-width:100%!important;padding:7px 9px!important;font-size:8px!important;
+    letter-spacing:.65px!important;line-height:1.25!important;white-space:normal!important;
+  }
+  .meet-logo{width:min(92%,340px)!important;margin:13px 0 8px!important}
+  .lead{font-size:13px!important;line-height:1.55!important;max-width:100%!important;margin:0!important}
+  .hero-actions{
+    display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:7px!important;width:100%!important;margin-top:18px!important;overflow:visible!important;
+  }
+  .hero-actions .logo-access,
+  .hero-actions .drops-access,
+  .hero-actions .vault-access-v16{
+    position:relative!important;left:auto!important;top:auto!important;
+    width:100%!important;min-width:0!important;height:66px!important;flex:none!important;
+    padding:5px 7px!important;margin:0!important;border-radius:14px!important;
+    transform:none!important;
+  }
+  .hero-actions .logo-access img{
+    width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
+    object-fit:contain!important;transform:none!important;margin:auto!important;
+  }
+  .hero-actions .vault-access-v16 img{
+    width:112%!important;height:112%!important;max-width:none!important;transform:translate(2%,2%)!important;
+  }
+  .hero-actions .logo-access:hover,.hero-actions .vault-access-v16:hover{transform:none!important}
+  .collection-logo-actions{
+    display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:7px!important;width:100%!important;margin-top:10px!important;
+  }
+  .collection-logo-btn,.top-assets-link-v10{
+    width:100%!important;min-width:0!important;height:78px!important;margin:0!important;
+    border-radius:14px!important;transform:none!important;
+  }
+  .collection-logo-btn img{max-width:104%!important;max-height:72px!important}
+  .top-assets-link-v10 img{width:108%!important;height:108%!important;max-width:none!important}
+  .top-assets-link-v10::before{display:none!important}
+
+  .hero-art{
+    height:315px!important;width:100%!important;margin-top:4px!important;
+    transform:none!important;overflow:hidden!important;
+  }
+  .hero-logo{width:235px!important;max-width:68%!important}
+  .nft{width:112px!important;border-radius:16px!important}
+  .n5{width:105px!important}
+  .n1{left:1%!important}.n2{left:21%!important}.n3{left:45%!important}.n4{right:8%!important}.n5{right:0!important}
+
+  .games-showcase-v3{padding:10px 0 12px!important}
+  .race-feature,.drops-feature,.vault-feature{
+    display:grid!important;grid-template-columns:1fr!important;min-height:0!important;
+    margin:12px 0 0!important;border-radius:20px!important;overflow:hidden!important;
+  }
+  .race-media,.race-media video,.drops-media,.drops-media video,.vault-media,.vault-media img,.vault-media video{
+    min-height:0!important;height:auto!important;aspect-ratio:16/9!important;width:100%!important;object-fit:cover!important;
+  }
+  .race-media:after,.drops-media:after,.vault-media:after{display:none!important}
+  .race-info,.drops-info,.vault-info{
+    min-height:0!important;width:100%!important;padding:22px 18px 20px!important;
+  }
+  .race-info h3,.drops-info h3{font-size:26px!important}
+  .race-info p,.drops-info p,.vault-info p{font-size:13px!important;line-height:1.55!important}
+  .mini-tag{font-size:8px!important;letter-spacing:.65px!important;padding:6px 8px!important;margin-bottom:12px!important}
+  .game-direct{max-width:190px!important}
+  .vault-info .vault-logo-link-v10{
+    width:210px!important;max-width:72%!important;margin:18px auto 0!important;transform:none!important;
+  }
+  .vault-info .vault-logo-link-v10 img{transform:none!important}
+
+  .about-epic{padding:54px 0 48px!important}
+  .about-epic-head{max-width:100%!important}
+  .section-title{font-size:clamp(34px,10vw,46px)!important;line-height:.98!important}
+  .section-copy{font-size:13px!important;line-height:1.55!important}
+  .about-epic-grid{display:grid!important;grid-template-columns:1fr!important;gap:12px!important}
+  .about-story{height:auto!important;min-height:0!important;padding:26px 20px!important;border-radius:20px!important}
+  .about-story h3{font-size:27px!important;margin:14px 0!important}
+  .about-story p{font-size:13px!important;line-height:1.58!important}
+  .about-stats{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}
+  .about-stat{min-height:0!important;padding:20px!important;border-radius:18px!important}
+  .about-stat .big{font-size:34px!important}
+  .about-stat.eth .about-opensea,.about-stat.abstract .about-opensea{
+    width:205px!important;max-width:78%!important;align-self:flex-start!important;
+    transform:none!important;padding-top:12px!important;
+  }
+  .about-assets-link{
+    width:230px!important;max-width:88%!important;margin:8px 0 0!important;
+    transform:translateX(-4px)!important;padding-top:4px!important;
+  }
+  .about-assets-link img{height:118px!important}
+
+  .museum-entry{padding:28px 0 34px!important}
+  .museum-entry-card{grid-template-columns:1fr!important;min-height:0!important;border-radius:22px!important}
+  .museum-entry-copy{padding:30px 22px 18px!important}
+  .museum-entry-copy .section-title{font-size:38px!important}
+  .museum-entry-btn{min-height:44px!important;padding:0 17px!important;font-size:10px!important}
+  .museum-entry-art{min-height:245px!important}
+  .museum-frame{border-radius:13px!important}
+  .museum-frame-a{width:102px!important;height:135px!important;left:2%!important;top:22%!important}
+  .museum-frame-b{width:105px!important;height:138px!important;left:27%!important;top:10%!important}
+  .museum-frame-c{width:105px!important;height:138px!important;left:52%!important;top:25%!important}
+  .museum-frame-d{width:98px!important;height:130px!important;left:75%!important;top:12%!important}
+
+  .gif-community-showcase{padding:46px 0 48px!important}
+  .gif-community-head{margin-bottom:20px!important}
+  .gif-community-grid{
+    display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;
+  }
+  .gif-community-card{height:auto!important;aspect-ratio:1/1!important;border-radius:16px!important}
+  .gif-community-card:first-child img{object-fit:contain!important}
+
+  .bottom-racing-promo-v3{padding:14px 0 24px!important}
+  .top-race-card{min-height:350px!important;border-radius:20px!important;background-position:68% center!important}
+  .top-race-card:before{
+    background:linear-gradient(180deg,rgba(5,4,14,.10) 0%,rgba(5,4,14,.24) 30%,rgba(5,4,14,.92) 68%,rgba(5,4,14,.99) 100%)!important;
+  }
+  .top-race-copy{width:100%!important;min-height:350px!important;padding:195px 18px 20px!important}
+  .top-race-copy h2{font-size:27px!important}
+  .top-race-copy p{font-size:12px!important;line-height:1.45!important}
+  footer .foot{grid-template-columns:1fr!important;gap:10px!important;padding:22px 0!important}
+  .foot-brand img{width:190px!important}
+  .foot-meta{font-size:11px!important;line-height:1.45!important}
+}
+@media (min-width:768px) and (max-width:1024px){
+  .hero{grid-template-columns:1fr!important}
+  .hero-art{height:500px!important}
+  .hero-actions .vault-access-v16{position:relative!important;left:auto!important;top:auto!important}
+  .collection-logo-actions{flex-wrap:wrap!important}
+  .about-epic-grid{grid-template-columns:1fr!important}
+}
+</style>
+
+
+<style id="mobile-final-mights-heroart-v1">
+@media(max-width:767px){
+  .hero-art .nft{position:absolute!important;max-width:none!important}
+  .hero-art .hero-logo{
+    left:50%!important;top:43%!important;right:auto!important;bottom:auto!important;
+    width:230px!important;max-width:62vw!important;transform:translate(-50%,-50%)!important;
+  }
+  .hero-art .n1{left:-3%!important;right:auto!important;top:37%!important;bottom:auto!important;transform:rotate(-9deg)!important}
+  .hero-art .n2{right:-3%!important;left:auto!important;top:2%!important;bottom:auto!important;transform:rotate(8deg)!important}
+  .hero-art .n3{right:18%!important;left:auto!important;top:36%!important;bottom:auto!important;transform:rotate(-6deg)!important}
+  .hero-art .n4{right:-2%!important;left:auto!important;top:auto!important;bottom:0!important;transform:rotate(8deg)!important}
+  .hero-art .n5{left:8%!important;right:auto!important;top:auto!important;bottom:0!important;transform:rotate(6deg)!important}
+}
+</style>
+
 </head>
 <body>
 <nav><div class="wrap navin"><a class="brand" href="#top"><img src="assets/moodymights-logo.png" alt="Moody Mights logo"></a><div class="navlinks navlinks-v15">
