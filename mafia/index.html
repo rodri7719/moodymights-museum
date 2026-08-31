@@ -1011,6 +1011,48 @@ body.edit-mode #codeUnit{outline-color:rgba(170,255,16,.78)}
 }
 </style>
 
+
+<style id="mobile-mafia-backgrounds-v5">
+@media(max-width:767px){
+  /* Lightweight portrait backgrounds made only for phones. */
+  body{
+    background:#010301!important;
+  }
+  .page{
+    position:relative!important;
+    isolation:isolate!important;
+    background:
+      linear-gradient(180deg,rgba(1,3,1,.18) 0%,rgba(1,3,1,.72) 18%,rgba(1,3,1,.82) 47%,rgba(1,3,1,.88) 76%,#010301 100%),
+      url('assets/mafia-mobile-bg-1.webp') center 120px/100% auto no-repeat,
+      url('assets/mafia-mobile-bg-2.webp') center 1220px/100% auto no-repeat,
+      #010301!important;
+  }
+  /* Third soft repeat lower down so the long hierarchy never becomes flat black. */
+  .page:before{
+    content:"";
+    position:absolute;
+    z-index:-1;
+    left:0;right:0;
+    top:2280px;
+    height:1250px;
+    pointer-events:none;
+    background:
+      linear-gradient(180deg,rgba(1,3,1,.94),rgba(1,3,1,.58) 20%,rgba(1,3,1,.76) 78%,#010301),
+      url('assets/mafia-mobile-bg-1.webp') center top/100% auto no-repeat;
+    opacity:.72;
+  }
+  /* Keep all content readable over the images */
+  .hierarchy-head,.layout,.allies,.the-code,.site-footer{
+    position:relative!important;
+    z-index:2!important;
+  }
+  .board{
+    background:linear-gradient(180deg,rgba(0,4,1,.25),rgba(0,4,1,.08))!important;
+    border-radius:22px!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="page">
