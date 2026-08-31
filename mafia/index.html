@@ -1053,10 +1053,51 @@ body.edit-mode #codeUnit{outline-color:rgba(170,255,16,.78)}
 }
 </style>
 
+
+<style id="mafia-ambience-v6">
+.top-actions{display:flex;align-items:center;gap:9px}
+.mafia-audio-btn{
+  appearance:none;border:1px solid rgba(170,255,16,.24);background:rgba(1,5,2,.38);
+  color:#aeb8aa;padding:9px 12px;cursor:pointer;
+  font:900 8px/1 monospace;letter-spacing:1.25px;text-transform:uppercase;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  transition:border-color .18s ease,color .18s ease,box-shadow .18s ease,background .18s ease
+}
+.mafia-audio-btn:hover{color:var(--green);border-color:rgba(170,255,16,.58)}
+.mafia-audio-btn.is-on{
+  color:var(--green);border-color:rgba(170,255,16,.5);
+  background:rgba(19,35,8,.55);box-shadow:0 0 16px rgba(170,255,16,.08)
+}
+.mafia-audio-btn .mobile-audio-label{display:none}
+@media(max-width:767px){
+  .topbar{gap:8px!important}
+  .top-actions{gap:5px;min-width:0}
+  .mafia-audio-btn{padding:8px 8px;font-size:6.5px;letter-spacing:.65px;white-space:nowrap}
+  .mafia-audio-btn .desktop-audio-label{display:none}
+  .mafia-audio-btn .mobile-audio-label{display:inline}
+}
+@media(max-width:390px){
+  .mafia-audio-btn{padding:7px 6px;font-size:6px}
+  .back{padding-left:6px!important;padding-right:6px!important}
+}
+</style>
+
 </head>
 <body>
 <div class="page">
-  <header class="topbar"><div class="brand">MOODY <span>MAFIA</span></div><a class="back" href="../">← BACK TO MOODYWORLD</a></header>
+  <header class="topbar">
+    <div class="brand">MOODY <span>MAFIA</span></div>
+    <div class="top-actions">
+      <button class="mafia-audio-btn" id="mafiaAudioBtn" type="button" aria-pressed="true" title="Toggle Moody Mafia ambience">
+        <span class="desktop-audio-label">♪ MAFIA AMBIENCE · <b id="mafiaAudioState">ON</b></span>
+        <span class="mobile-audio-label">♪ AMBIENCE · <b id="mafiaAudioStateMobile">ON</b></span>
+      </button>
+      <a class="back" href="../">← BACK TO MOODYWORLD</a>
+    </div>
+  </header>
+  <audio id="mafiaAmbience" loop preload="none">
+    <source src="assets/moody-mafia-ambience.mp3" type="audio/mpeg">
+  </audio>
   <section class="mafia-hero" aria-label="Moody Mafia">
     <div class="bg-edit-unit" id="backgroundUnit" data-bg-edit-key="background">
       
@@ -1100,13 +1141,13 @@ body.edit-mode #codeUnit{outline-color:rgba(170,255,16,.78)}
 </div>
 <script>
 const members={
- alex:{name:'Alex Maze',rank:'The Don · Boss',tab:'Boss',file:'MM-001',img:'assets/alex.webp',x:'https://x.com/AlexMaze_',role:'Project Leadership',family:'Moody Mafia',specialty:'Strategy · Leadership · Vision',strengths:'Visionary · Decisive · Loyal',joined:'Day One',classification:'Family Leadership',status:'ACTIVE · VERIFIED',notes:'The head of the family. Sets direction, protects the project and keeps the whole organization moving as one.',pos:'center 36%'},
+ alex:{name:'Alex Maze',rank:'The Don · Boss',tab:'Boss',file:'MM-001',img:'assets/alex.webp',x:'https://x.com/AlexMaze_',role:'Project Leadership',family:'Moody Mafia',specialty:'Strategy · Leadership · Vision',strengths:'Visionary · Decisive · Loyal',joined:'Day One',classification:'Family Leadership',status:'ACTIVE · VERIFIED',notes:'The head of the family. Sets direction, protects the project and keeps the whole organization moving as one.',pos:'center 12%'},
  nedi:{name:'Nedi',rank:'Consigliere',tab:'Consigliere',file:'MM-002',img:'assets/nedi.webp',x:'https://x.com/Nedi_Games',role:'Co-Founder / Game Director',family:'Moody Mafia',specialty:'Game Direction · Strategy',strengths:'Creative · Technical · Trusted',joined:'Day One',classification:'Inner Circle',status:'ACTIVE · VERIFIED',notes:'Trusted counselor of the family and one of the minds behind the game. Strategy, direction and long-term vision.',pos:'center 28%'},
  bota:{name:'Bota',rank:'Underboss',tab:'Underboss',file:'MM-003',img:'assets/bota.png',x:'',role:'Co-Founder',family:'Moody Mafia',specialty:'Development · Production',strengths:'Builder · Quiet · Essential',joined:'Day One',classification:'Inner Circle',status:'ACTIVE · VERIFIED',notes:'A quiet force behind the operation. Part of the core team building the game and keeping the machine running.',pos:'center 26%'},
  deepak:{name:'Deepak',rank:'Chief Advisor · Growth',tab:'Chief',file:'MM-004',img:'assets/deepak.webp',x:'https://x.com/Deepak_Khatrii',role:'Head of Growth',family:'Moody Mafia',specialty:'Growth · Community · Partnerships',strengths:'Connected · Active · Strategic',joined:'Core Era',classification:'Inner Circle',status:'ACTIVE · VERIFIED',notes:'The growth operator. Expands reach, builds connections and keeps the family visible across the ecosystem.',pos:'center 38%'},
  jordan:{name:'Jordan23',rank:'Caporegime',tab:'Capo',file:'MM-005',img:'assets/jordan.webp',x:'https://x.com/Jordan23Zk',role:'Content Creator · Moody Mafia Creator',family:'Moody Mafia',specialty:'Content · Community · Culture',strengths:'Creative · Loyal · Relentless',joined:'OG Era',classification:'Caporegime',status:'ACTIVE · VERIFIED',notes:'Content creator and the mind behind the Moody Mafia identity. Turns community energy into culture, stories and visibility.',pos:'center 44%'},
  meta:{name:'Meta Tomix',rank:'Caporegime',tab:'Capo',file:'MM-006',img:'assets/meta.webp',x:'https://x.com/Meta_Tomix',role:'Content Creator · Top Racer',family:'Moody Mafia',specialty:'Racing · Memes · Content',strengths:'Fast · Competitive · Creative',joined:'OG Era',classification:'Caporegime',status:'ACTIVE · WANTED',notes:'Elite racer and content creator. Frequently linked to high-speed meme trafficking and suspicious amounts of community activity.',pos:'left center'},
- dan:{name:'Dan_Win',rank:'Caporegime',tab:'Capo',file:'MM-007',img:'assets/dan.webp',x:'https://x.com/DAN_IOI',role:'Content Creator · Veteran Player',family:'Moody Mafia',specialty:'Content · Community',strengths:'Loyal · Consistent · OG',joined:'Early Era',classification:'Caporegime',status:'ACTIVE · VERIFIED',notes:'Long-time player and content creator. A trusted soldier with history, presence and loyalty to the family.',pos:'left center'},
+ dan:{name:'Dan_Win',rank:'Caporegime',tab:'Capo',file:'MM-007',img:'assets/dan.webp',x:'https://x.com/DAN_IOI',role:'Content Creator · Veteran Player',family:'Moody Mafia',specialty:'Content · Community',strengths:'Loyal · Consistent · OG',joined:'Early Era',classification:'Soldier',status:'ACTIVE · VERIFIED',notes:'Long-time player and content creator. A trusted soldier with history, presence and loyalty to the family.',pos:'left center'},
  harmony:{name:'HarmonyQ',rank:'Caporegime',tab:'Capo',file:'MM-008',img:'assets/harmony.webp',x:'https://x.com/MoodyLegends',role:'Content Creator · Veteran Player',family:'Moody Mafia',specialty:'Content · Community',strengths:'Positive · Loyal · Consistent',joined:'Early Era',classification:'Caporegime',status:'ACTIVE · VERIFIED',notes:'Veteran player and creator known for keeping the community active and the Moody spirit visible.',pos:'center center'},
  zkm:{name:'ZKMessirve',rank:'Caporegime',tab:'Capo',file:'MM-009',img:'assets/zkm.webp',x:'https://x.com/ZKM_ETH',role:'Content Creator · Early Player',family:'Moody Mafia',specialty:'Content · OG Knowledge',strengths:'Experienced · Loyal · Active',joined:'Early Era',classification:'Caporegime',status:'ACTIVE · VERIFIED',notes:'One of the early players and a familiar face in the community. OG knowledge, content and long-term loyalty.',pos:'left center'},
  sauciii:{name:'Sauciii',rank:'Capo of AbstractChain',tab:'Allied Capo',file:'AC-001',img:'assets/sauciii.webp',x:'https://x.com/sauciii',role:'Culturemaxxing & Communitymaxxing',family:'AbstractChain · Allied Family',specialty:'Culture · Community',strengths:'Influence · Energy · Connection',joined:'Allied',classification:'AbstractChain Capo',status:'ALLIED · VERIFIED',notes:'A respected allied capo focused on culture and community across AbstractChain.',pos:'left center'},
@@ -1185,6 +1226,91 @@ document.addEventListener('click',e=>{const el=e.target.closest('[data-id]');if(
   document.addEventListener('mouseleave', function(){
     document.documentElement.style.cursor = '';
   }, true);
+})();
+</script>
+
+
+<script id="mafia-ambience-script-v6">
+(function(){
+  const audio=document.getElementById('mafiaAmbience');
+  const btn=document.getElementById('mafiaAudioBtn');
+  const state=document.getElementById('mafiaAudioState');
+  const stateMobile=document.getElementById('mafiaAudioStateMobile');
+  if(!audio||!btn)return;
+
+  const targetVolume=.12;
+  let userStopped=false;
+  let fadeTimer=null;
+
+  function paint(on){
+    btn.classList.toggle('is-on',on);
+    btn.setAttribute('aria-pressed',on?'true':'false');
+    if(state) state.textContent=on?'ON':'OFF';
+    if(stateMobile) stateMobile.textContent=on?'ON':'OFF';
+  }
+
+  function fadeTo(to,ms,pauseAfter){
+    clearInterval(fadeTimer);
+    const from=audio.volume;
+    const steps=12,stepMs=Math.max(16,Math.round(ms/steps));
+    let i=0;
+    fadeTimer=setInterval(()=>{
+      i++;
+      audio.volume=Math.max(0,Math.min(1,from+(to-from)*(i/steps)));
+      if(i>=steps){
+        clearInterval(fadeTimer);
+        audio.volume=to;
+        if(pauseAfter)audio.pause();
+      }
+    },stepMs);
+  }
+
+  async function startMusic(){
+    userStopped=false;
+    clearInterval(fadeTimer);
+    audio.volume=.01;
+    try{
+      await audio.play();
+      paint(true);
+      fadeTo(targetVolume,450,false);
+    }catch(e){
+      paint(false);
+    }
+  }
+
+  function stopMusic(){
+    userStopped=true;
+    paint(false);
+    if(!audio.paused)fadeTo(0,260,true);
+  }
+
+  btn.addEventListener('click',function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    if(audio.paused)startMusic();else stopMusic();
+  });
+
+  function firstInteraction(e){
+    if(userStopped||!audio.paused)return;
+    if(e.target.closest&&(e.target.closest('#mafiaAudioBtn')||e.target.closest('.back')))return;
+    startMusic();
+  }
+  document.addEventListener('pointerdown',firstInteraction,{passive:true});
+  document.addEventListener('keydown',firstInteraction,{passive:true});
+
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden&&!audio.paused)audio.pause();
+  });
+
+  /* Start enabled by default. Desktop browsers may allow this immediately.
+     iPhone/Safari can block audio until the first user gesture; in that case
+     the control still starts as ON and the existing first-interaction handler
+     begins playback on the first tap anywhere in Mafia. */
+  btn.classList.add('is-on');
+  btn.setAttribute('aria-pressed','true');
+  if(state) state.textContent='ON';
+  if(stateMobile) stateMobile.textContent='ON';
+  startMusic();
 })();
 </script>
 
