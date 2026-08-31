@@ -1674,6 +1674,29 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 }
 </style>
 
+
+<style id="mobile-safari-stability-museum-v2">
+@media(max-width:767px), (pointer:coarse){
+  /* Static mobile atmosphere: dramatically lighter than permanent canvas/GPU FX. */
+  #bgCanvas{display:none!important}
+  body{
+    background:
+      radial-gradient(circle at 18% 8%,rgba(157,124,255,.12),transparent 28%),
+      radial-gradient(circle at 82% 25%,rgba(201,168,76,.10),transparent 30%),
+      #050402!important;
+  }
+  #activityTicker{display:none!important}
+  .aura,.holo-layer,.rainbow-border,.scan-wrap,.glitch-wrap,
+  .v2-card-aura,.v2-card-holo,.v2-card-rb,.v2-card-scan,.v2-card-glitch,
+  .pc,.v2-card-pc{
+    animation:none!important;
+  }
+  .card,.v2-card{transform:none!important}
+  .museum-top-logo{filter:drop-shadow(0 8px 18px rgba(0,0,0,.34))!important}
+  .controls-main{margin-top:2px!important}
+}
+</style>
+
 </head>
 <body>
 <a class="back-moodyworld-museum" href="../">← MOODYWORLD</a>
@@ -3578,6 +3601,13 @@ function drawBg(t){
 // ══ MAIN LOOP ══
 // ══ MAIN LOOP ══
 function mainLoop(ts){
+  // Mobile/Safari stability: the museum's permanent canvas + 3D card FX can
+  // exhaust the GPU process on iPhone. Mobile keeps the same content/tools,
+  // but uses the static CSS atmosphere instead of the perpetual animation loop.
+  if(isMobileLite()){
+    if(bgC) bgC.style.display='none';
+    return;
+  }
   const t=ts*.001;
   drawBg(t);
   const mobileLite=isMobileLite();
