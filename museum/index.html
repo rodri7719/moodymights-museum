@@ -1526,190 +1526,6 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 .back-moodyworld-museum:hover{border-color:#e0c36d;color:#fff}
 </style>
 
-
-<style id="mobile-final-museum-v1">
-/* MOBILE ONLY — desktop museum stays untouched */
-@media (max-width: 767px){
-  html,body{max-width:100%;overflow-x:hidden!important}
-  body{min-width:0!important}
-  .app{width:100%!important;max-width:100%!important;padding:10px 12px 26px!important;overflow:hidden!important}
-  .back-moodyworld-museum{
-    left:8px!important;top:8px!important;height:27px!important;padding:0 7px!important;
-    font-size:6px!important;letter-spacing:.55px!important;border-radius:8px!important;
-  }
-
-  .header{padding-top:26px!important;min-height:0!important}
-  .museum-top-logo{
-    position:relative!important;top:auto!important;right:auto!important;left:auto!important;
-    display:block!important;width:150px!important;max-width:46vw!important;height:auto!important;
-    margin:5px auto 5px!important;transform:none!important;opacity:.95!important;
-  }
-  .logo-box{width:100%!important;max-width:100%!important;margin:0 auto!important}
-  .logo{
-    font-size:clamp(25px,7.6vw,34px)!important;letter-spacing:3px!important;
-    line-height:1.05!important;word-spacing:0!important;padding:0 3px!important;
-  }
-  .logo-line{margin-top:8px!important}
-  #activityTicker{
-    width:100%!important;max-width:100%!important;margin:10px auto 6px!important;
-    overflow:hidden!important;
-  }
-
-  .toolbar{width:100%!important;max-width:100%!important;margin:8px 0 8px!important;overflow:hidden!important}
-  .controls-main{
-    width:100%!important;display:flex!important;flex-wrap:nowrap!important;justify-content:flex-start!important;
-    gap:7px!important;padding:6px 1px 9px!important;overflow-x:auto!important;overflow-y:hidden!important;
-    scrollbar-width:none!important;-webkit-overflow-scrolling:touch!important;
-  }
-  .controls-main::-webkit-scrollbar{display:none!important}
-  .vbtn-main{
-    flex:0 0 auto!important;min-width:max-content!important;
-    padding:10px 12px!important;font-size:9px!important;letter-spacing:.7px!important;
-    border-radius:10px!important;white-space:nowrap!important;
-  }
-  #vbtn-xpcard img{height:16px!important;margin-right:4px!important}
-
-  .carousel-outer{
-    width:100%!important;max-width:100%!important;margin:8px auto 0!important;
-    padding:10px 0 16px!important;overflow:hidden!important;
-  }
-  .carousel-outer::before,.carousel-outer::after{width:18px!important}
-  .carousel-track{gap:14px!important}
-  .card-outer.in-carousel{width:min(68vw,255px)!important}
-  .card-outer{max-width:100%!important}
-  .card{border-radius:12px!important}
-  .nft-name{font-size:11px!important}
-
-  .collection-panel{width:100%!important;max-width:100%!important;margin:0 auto 14px!important}
-  .col-layout{grid-template-columns:1fr!important;gap:12px!important}
-  .col-sidebar{
-    position:relative!important;top:auto!important;width:100%!important;
-    padding:15px 13px!important;border-radius:16px!important;gap:13px!important;
-  }
-  .col-sidebar-title{font-size:18px!important}
-  .col-sidebar-section{gap:6px!important}
-  .col-sidebar-input,.col-sidebar-scan,.col-sidebar-action{min-height:42px!important}
-  .col-sidebar-pills{display:flex!important;flex-wrap:wrap!important;gap:6px!important}
-  .gallery-shell{width:100%!important;border-radius:16px!important;overflow:hidden!important}
-  .gallery-search-bar{position:relative!important;top:auto!important;right:auto!important;padding:10px 10px 0!important}
-  .gallery-search-input{width:100%!important;max-width:100%!important;box-sizing:border-box!important}
-  .gallery-search-input:focus{width:100%!important}
-  .grid,.g2,.g4,.g6,.g10,.g12{
-    grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;
-  }
-  .grid .card-outer,.g10 .card-outer,.g12 .card-outer{width:100%!important;max-width:100%!important}
-  .g10 .nft-name,.g12 .nft-name{font-size:9px!important}
-
-  .bottom-links{
-    width:100%!important;grid-template-columns:1fr!important;justify-items:stretch!important;
-    gap:18px!important;padding:26px 0 12px!important;
-  }
-  .social-links,.creator-links,.footer-links{
-    width:100%!important;align-items:stretch!important;justify-content:flex-start!important;
-    margin:0!important;text-align:center!important;
-  }
-  .social-title{text-align:center!important;margin:0 0 5px!important}
-  .social-grid{grid-template-columns:1fr 1fr!important;gap:7px!important;width:100%!important}
-  .social-link,.footer-link{font-size:9px!important;padding:10px 8px!important;white-space:normal!important;line-height:1.3!important}
-  .footer-links-row{display:grid!important;grid-template-columns:1fr 1fr!important;gap:7px!important;width:100%!important}
-
-  .share-overlay{padding:10px!important;overflow:auto!important}
-  .share-canvas-wrap{max-width:100%!important}
-  .share-actions{flex-wrap:wrap!important}
-  .gif-machine-card{width:calc(100vw - 24px)!important;max-width:none!important;padding:26px 18px!important}
-
-  .modal-overlay,.v2-modal,.keys-modal{padding:8px!important;align-items:flex-start!important;overflow:auto!important}
-  .v6-modal,.v2-modal-card{width:100%!important;max-width:none!important;max-height:none!important;margin:0!important}
-  .modal-body,.v2-modal-grid{grid-template-columns:1fr!important}
-  .modal-body{padding:48px 14px 18px!important}
-
-  #gifStudio{padding:6px!important;align-items:flex-start!important;overflow:auto!important}
-  .gs-wrap{
-    width:100%!important;max-width:none!important;height:auto!important;min-height:0!important;
-    grid-template-columns:1fr!important;border-radius:14px!important;overflow:visible!important;
-  }
-  .gs-left{padding:12px!important}
-  .gs-cv-wrap{min-height:330px!important;height:55vh!important;max-height:500px!important}
-  .gs-right{width:100%!important;max-width:100%!important;padding:12px!important}
-  .gs-tabs{overflow-x:auto!important;flex-wrap:nowrap!important}
-
-  #raffleModal,#pfpModal,#xpModal{padding:6px!important;align-items:flex-start!important;overflow:auto!important}
-  .rf-card,.pfp-card,.xp-card{
-    width:100%!important;max-width:none!important;height:auto!important;max-height:none!important;
-    min-height:calc(100dvh - 12px)!important;border-radius:14px!important;overflow:visible!important;
-  }
-  .rf-cols,.pfp-body,.xp-body{grid-template-columns:1fr!important;overflow:visible!important}
-  .rf-lcol,.rf-rcol,.pfp-controls-col,.pfp-canvas-col,.xp-controls-col,.xp-controls-col-right,.xp-preview-col{
-    width:100%!important;max-width:100%!important;overflow:visible!important;padding:14px!important;
-  }
-  .pfp-canvas-wrap,.xp-canvas-wrap{width:100%!important;max-width:100%!important}
-  .pfp-token-row{flex-wrap:wrap!important}
-  .pfp-load-btn{min-width:100%!important}
-  .pfp-swatch-grid,.pfp-frame-grid{grid-template-columns:repeat(4,1fr)!important}
-  .pfp-badge-grid{grid-template-columns:repeat(4,1fr)!important}
-  .xp-dl-btn{max-width:100%!important}
-}
-@media (min-width:768px) and (max-width:1024px){
-  .museum-top-logo{right:-80px!important;transform:none!important;width:260px!important}
-  .controls-main{flex-wrap:wrap!important}
-  .col-layout{grid-template-columns:1fr!important}
-  .col-sidebar{position:relative!important;top:auto!important}
-}
-</style>
-
-
-<style id="mobile-final-museum-tools-v1">
-@media (max-width:767px){
-  #raffleModal,#pfpModal,#xpModal{align-items:flex-start!important;overflow:auto!important;padding:6px!important}
-  .rf-wrap,.pfp-wrap,.xp-wrap{
-    width:100%!important;max-width:none!important;height:auto!important;max-height:none!important;
-    min-height:calc(100dvh - 12px)!important;border-radius:14px!important;overflow:visible!important;
-  }
-  .rf-wrap{display:flex!important;flex-direction:column!important}
-  .pfp-wrap,.xp-wrap{display:flex!important;flex-direction:column!important}
-  .pfp-head,.xp-head{padding:13px 12px!important;gap:8px!important}
-  .pfp-title{font-size:17px!important}
-  .xp-title{font-size:20px!important;letter-spacing:1.2px!important}
-  .pfp-view-tab{padding:9px 12px!important;font-size:10px!important}
-}
-</style>
-
-
-<style id="mobile-safari-stability-museum-v2">
-@media(max-width:767px), (pointer:coarse){
-  /* Static mobile atmosphere: dramatically lighter than permanent canvas/GPU FX. */
-  #bgCanvas{display:none!important}
-  body{
-    background:
-      radial-gradient(circle at 18% 8%,rgba(157,124,255,.12),transparent 28%),
-      radial-gradient(circle at 82% 25%,rgba(201,168,76,.10),transparent 30%),
-      #050402!important;
-  }
-  #activityTicker{display:none!important}
-  .aura,.holo-layer,.rainbow-border,.scan-wrap,.glitch-wrap,
-  .v2-card-aura,.v2-card-holo,.v2-card-rb,.v2-card-scan,.v2-card-glitch,
-  .pc,.v2-card-pc{
-    animation:none!important;
-  }
-  .card,.v2-card{transform:none!important}
-  .museum-top-logo{filter:drop-shadow(0 8px 18px rgba(0,0,0,.34))!important}
-  .controls-main{margin-top:2px!important}
-}
-</style>
-
-
-<style id="mobile-museum-emergency-lite-v3">
-@media(max-width:767px), (pointer:coarse){
-  /* iPhone emergency-lite mode: same museum, far fewer composited layers. */
-  #bgCanvas,#activityTicker,#soldPopup{display:none!important}
-  .carousel-track{animation:none!important;transform:none!important;display:flex!important;overflow-x:auto!important;scroll-snap-type:x mandatory!important;padding-bottom:12px!important}
-  .carousel-outer{overflow-x:auto!important}
-  .card{scroll-snap-align:center!important;flex:0 0 min(72vw,270px)!important}
-  .holo-layer,.rainbow-border,.scan-wrap,.glitch-wrap,.aura,.pc{display:none!important}
-  *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-}
-</style>
-
 </head>
 <body>
 <a class="back-moodyworld-museum" href="../">← MOODYWORLD</a>
@@ -1960,22 +1776,13 @@ function isMobileLite(){
   return (window.matchMedia&&window.matchMedia('(max-width: 820px), (pointer: coarse)').matches)||((navigator.maxTouchPoints||0)>0);
 }
 
-// Load from storage. On iPhone/mobile we intentionally avoid restoring the
-// large cached NFT payload during startup; Safari can kill/reload the page when
-// memory spikes while parsing cache + rendering cards + network responses together.
-if(isMobileLite()){
-  allNFTs=[];streamNFTs=[];
-}else{
-  try{allNFTs=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');}catch{allNFTs=[];}
-  try{streamNFTs=JSON.parse(localStorage.getItem(STREAM_KEY)||'[]');}catch{streamNFTs=[];}
-}
+// Load from storage
+try{allNFTs=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');}catch{allNFTs=[];}
+try{streamNFTs=JSON.parse(localStorage.getItem(STREAM_KEY)||'[]');}catch{streamNFTs=[];}
 
 function save(){
-  if(isMobileLite())return;
-  try{
-    localStorage.setItem(STORAGE_KEY,JSON.stringify(allNFTs));
-    localStorage.setItem(STREAM_KEY,JSON.stringify(streamNFTs));
-  }catch(e){}
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(allNFTs));
+  localStorage.setItem(STREAM_KEY,JSON.stringify(streamNFTs));
 }
 
 // ══ HELPERS ══
@@ -2139,29 +1946,14 @@ async function expandFullscreenMuseumPool(){
   if(curView==='carousel'&&museumFullscreen)renderAll();
 }
 function getMuseumItems(){
-  if(isMobileLite()&&!streamNFTs.length&&!allNFTs.length){
-    return FEATURED_STREAM_IDS_ORDERED.slice(0,8).map(id=>({
-      id:String(id),
-      name:`Moody Might #${id}`,
-      image:moodyImgUrl(String(id)),
-      imageCandidates:[moodyImgUrl(String(id))],
-      description:'',
-      traits:[],
-      chain:'ethereum',
-      contractAddress:ETH_CONTRACT,
-      price:'',
-      source:'mobile-featured'
-    }));
-  }
   const base=streamNFTs.length?streamNFTs:allNFTs.filter(n=>!isAbstract(n));
   let pool=museumFullscreen
     ?[...new Map([...base,...allNFTs.filter(n=>!isAbstract(n))].map(n=>[nftKey(n),n])).values()]
     :base;
   return applyTraitFilters(pool);
 }
-// Desktop can refresh the museum stream automatically. Mobile starts from a
-// lightweight local featured set and only performs network work after user actions.
-if(!isMobileLite())fetchStreamNFTs().catch(()=>{});
+// Try fetching stream on load via proxy, falling back to browser key if present
+fetchStreamNFTs().catch(()=>{});
 
 // ══ ACTIVITY TICKER — REAL SALES & LISTINGS ══
 function timeAgo(ts){
@@ -2338,10 +2130,8 @@ async function fetchTickerActivity(){
   if(_soldPool.length&&!_soldPopupTimer) scheduleSoldPopup();
 }
 
-if(!isMobileLite()){
-  fetchTickerActivity().catch(()=>{});
-  setInterval(()=>fetchTickerActivity().catch(()=>{}),60000);
-}
+fetchTickerActivity().catch(()=>{});
+setInterval(()=>fetchTickerActivity().catch(()=>{}),60000);
 
 // ══ TOAST — SALES ONLY ══
 // ══ SOLD POPUP ══
@@ -3476,7 +3266,7 @@ function renderAll(){
     if(!items.length){container.innerHTML=`<div class="grid g4" style="margin-top:40px"><div class="empty"><div class="empty-icon">◆</div><div>Loading museum stream or scan a wallet to populate the Museum</div></div></div>`;return;}
     const outer=document.createElement('div');outer.className='carousel-outer';
     const track=document.createElement('div');track.className='carousel-track';
-    const copies=isMobileLite()?1:3;
+    const copies=isMobileLite()?2:3;
     for(let copy=0;copy<copies;copy++)items.forEach((nft,i)=>track.appendChild(buildCard(nft,i,true,false,items.length)));
     outer.appendChild(track);container.appendChild(outer);
     requestAnimationFrame(()=>{const cardW=isMobileLite()?Math.min(window.innerWidth*.72,270):356;const setW=(cardW+28)*items.length;track.style.setProperty('--sd',`-${setW}px`);track.style.animationDuration=(setW/(isMobileLite()?55:110))+'s';});
@@ -3640,13 +3430,6 @@ function drawBg(t){
 // ══ MAIN LOOP ══
 // ══ MAIN LOOP ══
 function mainLoop(ts){
-  // Mobile/Safari stability: the museum's permanent canvas + 3D card FX can
-  // exhaust the GPU process on iPhone. Mobile keeps the same content/tools,
-  // but uses the static CSS atmosphere instead of the perpetual animation loop.
-  if(isMobileLite()){
-    if(bgC) bgC.style.display='none';
-    return;
-  }
   const t=ts*.001;
   drawBg(t);
   const mobileLite=isMobileLite();
@@ -7793,7 +7576,7 @@ setTimeout(()=>{
     { key: 'bg18', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-18.png?v=2', label: 'BG 18' },
     { key: 'bg19', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-19.png?v=2', label: 'BG 19' },
     { key: 'bg20', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-20.png?v=2', label: 'BG 20' },
-    { key: 'bg21', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-gb-21.png?v=2', label: 'BG 21' },
+    { key: 'bg21', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-21.png?v=2', label: 'BG 21' },
     { key: 'bg22', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-22.png?v=2', label: 'BG 22' },
     { key: 'bg23', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-23.png?v=2', label: 'BG 23' },
     { key: 'bg24', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/xp-bg-24.png?v=2', label: 'BG 24' },
@@ -8242,14 +8025,15 @@ setTimeout(()=>{
       // Load thumbs with staggered delay to avoid R2 rate limiting
       setTimeout(()=>{
         const testImg=new Image();
-        testImg.onload=()=>{div.style.backgroundImage=`url('${bg.src}')`;}
+        const thumbSrc=bustSrc(bg.src);
+        testImg.onload=()=>{div.style.backgroundImage=`url('${thumbSrc}')`;}
         testImg.onerror=()=>{
           div.style.background=`linear-gradient(135deg,hsl(${i*55},50%,16%),hsl(${i*55+40},60%,10%))`;
           div.style.display='flex';div.style.alignItems='center';div.style.justifyContent='center';
           div.style.fontSize='7px';div.style.fontFamily='Cinzel,serif';div.style.color='rgba(255,255,255,.35)';
           div.textContent=bg.label;
         }
-        testImg.src=bg.src;
+        testImg.src=thumbSrc;
       }, i * 80);
       div.onclick=()=>{
         document.querySelectorAll('.xp-bg-thumb').forEach(t=>{t.style.borderColor='transparent';});
