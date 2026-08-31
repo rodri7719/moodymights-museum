@@ -773,46 +773,6 @@ body.edit-mode #codeUnit{outline-color:rgba(170,255,16,.78)}
 }
 </style>
 
-
-<style id="mobile-screenshot-fixes-mafia-v2">
-@media(max-width:767px){
-  /* On portrait, center crop was landing on the empty dark middle of the banner.
-     Shift toward the actual character / Moody Mafia signage. */
-  .bg-edit-unit img{
-    object-position:18% center!important;
-    filter:saturate(1.12) contrast(1.05) brightness(.92)!important;
-  }
-  .mafia-hero{aspect-ratio:16/9!important;margin-bottom:14px!important}
-  .hierarchy-head{padding-top:14px!important}
-  .hierarchy-head .title{font-size:clamp(37px,10.5vw,47px)!important}
-
-  /* Mobile dossiers: keep the same art/design, but stop one card filling an entire screen. */
-  .card.boss{
-    --w:min(255px,72vw)!important;
-    --photoH:220px!important;
-  }
-  .card.upper,.level.inner-circle-expanded .card{
-    --w:min(225px,66vw)!important;
-    --photoH:184px!important;
-  }
-  .card{
-    --w:min(215px,64vw)!important;
-    --photoH:170px!important;
-  }
-  .card.soldier{
-    --w:min(190px,58vw)!important;
-    --photoH:140px!important;
-  }
-  .card-data{padding:10px 11px 16px!important;min-height:84px!important}
-  .card-name{font-size:20px!important}
-  .soldier .card-name{font-size:16px!important}
-  .role{font-size:7px!important}
-  .rank-tab{top:-12px!important;padding:6px 10px!important;font-size:8px!important;min-width:92px!important}
-  .card.boss .rank-tab{top:-14px!important;min-width:112px!important;padding:7px 12px!important;font-size:9px!important}
-  .level,.level.two,.level.three,.level.soldiers,.level.inner-circle-expanded{gap:12px!important}
-}
-</style>
-
 </head>
 <body>
 <div class="page">
