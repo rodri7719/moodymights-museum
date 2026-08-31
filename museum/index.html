@@ -7684,7 +7684,7 @@ setTimeout(()=>{
   function preloadImg(src,skipBust){
     if(imgCache[src]) return;
     const busted=skipBust?src:bustSrc(src);
-    const proxied=busted.includes('r2.dev')?'/api/proxy?url='+encodeURIComponent(busted):busted;
+    const proxied=busted.includes('r2.dev')?'/api/proxy?url='+encodeURIComponent(busted)+'&cb='+_xpCacheBust:busted;
     const img=new Image();
     img.crossOrigin='anonymous';
     img.onload=()=>{imgCache[src]=img;}
@@ -7695,7 +7695,7 @@ setTimeout(()=>{
       if(!src){resolve(null);return;}
       if(imgCache[src]){resolve(imgCache[src]);return;}
       const busted=skipBust?src:bustSrc(src);
-      const proxied=busted.includes('r2.dev')?'/api/proxy?url='+encodeURIComponent(busted):busted;
+      const proxied=busted.includes('r2.dev')?'/api/proxy?url='+encodeURIComponent(busted)+'&cb='+_xpCacheBust:busted;
       const img=new Image();
       img.crossOrigin='anonymous';
       img.onload=()=>{imgCache[src]=img;resolve(img);}
