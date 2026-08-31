@@ -1,0 +1,52 @@
+functionsDirectory = "C:\\Users\\jorda\\OneDrive\\Desktop\\museum moody\\netlify\\functions"
+functionsDirectoryOrigin = "default"
+redirectsOrigin = "config"
+plugins = []
+headers = []
+
+[build]
+publish = "C:\\Users\\jorda\\OneDrive\\Desktop\\museum moody"
+publishOrigin = "config"
+functions = "C:\\Users\\jorda\\OneDrive\\Desktop\\museum moody\\netlify\\functions"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
+
+[functions]
+
+[functions."*"]
+
+[[redirects]]
+from = "/moody_album_v6.html"
+to = "/"
+status = 301.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/"
+to = "/moody_album_v6.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
