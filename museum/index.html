@@ -4671,7 +4671,7 @@ setTimeout(()=>{
 // ══ PFP BUILDER ══
 (function(){
   const $p=id=>document.getElementById(id);
-  let pfpNFTImg=null, pfpTokenId='', pfpBg='bg_ciudad', pfpBannerBg='bg_playa', pfpFrame='none', pfpEffect='none', pfpRendering=false;
+  let pfpNFTImg=null, pfpTokenId='', pfpBg='bg_ciudad', pfpBannerBg='bg_banner_1', pfpFrame='none', pfpEffect='none', pfpRendering=false;
   let pfpNFTPixels=null; // ImageData saved at strip time — always clean, never tainted
   let pfpNFTMeta=null, pfpBgHint=null;
   let pfpNFTObjectUrl='';
@@ -5128,6 +5128,27 @@ setTimeout(()=>{
     {id:'scanlines',label:'Scan Lines'},
   ];
 
+  function pfpBackgroundOptionsForView(view=pfpView){
+    return BG_IMAGE_OPTIONS.filter(opt=>view==='banner'?!!opt.bannerOnly:!opt.bannerOnly);
+  }
+
+  function pfpPreloadBackgroundsForView(view=pfpView){
+    const allowed=pfpBackgroundOptionsForView(view);
+    const activeBgId=view==='banner'?pfpBannerBg:pfpBg;
+    const active=allowed.find(o=>o.id===activeBgId);
+    if(active && !(bgImageCache[active.id] instanceof HTMLImageElement)){
+      delete bgImageCache[active.id];
+      loadBgImage(active,()=>{buildUI();pfpRender();});
+    }
+    allowed.forEach(o=>{
+      if(o.id===activeBgId) return;
+      if(!(bgImageCache[o.id] instanceof HTMLImageElement)){
+        delete bgImageCache[o.id];
+        loadBgImage(o,()=>buildUI());
+      }
+    });
+  }
+
   function buildUI(){
     const currentBg=pfpCurrentBg();
     // Gradient BG grid — hidden completely
@@ -5152,10 +5173,10 @@ setTimeout(()=>{
     const imgBgGrid=$p('pfpImgBgGrid');
     if(imgBgGrid){
       imgBgGrid.innerHTML='';
-      BG_IMAGE_OPTIONS.filter(opt=>pfpView==='banner'?true:!opt.bannerOnly).forEach(opt=>{
+      pfpBackgroundOptionsForView().forEach((opt,index)=>{
         const d=document.createElement('div');
         d.className='pfp-swatch'+(currentBg===opt.id?' active':'');
-        d.title=opt.label;
+        d.title=pfpView==='banner'?opt.label:String(index+1);
         d.style.cssText='position:relative;overflow:hidden;background:#1a1030;';
         const cachedImg=bgImageCache[opt.id];
         if(cachedImg){
@@ -5167,7 +5188,7 @@ setTimeout(()=>{
         }
         const lbl=document.createElement('span');
         lbl.style.cssText='position:absolute;bottom:0;left:0;right:0;text-align:center;font-family:Cinzel,serif;font-size:7.5px;font-weight:700;letter-spacing:.8px;color:#fff;pointer-events:none;line-height:1;padding:4px 2px 3px;background:linear-gradient(transparent,rgba(0,0,0,.72));text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.9);';
-        lbl.textContent=opt.label;
+        lbl.textContent=pfpView==='banner'?opt.label:String(index+1);
         d.appendChild(lbl);
         d.onclick=()=>{
           pfpSetCurrentBg(opt.id);
@@ -6468,6 +6489,7 @@ setTimeout(()=>{
     pfpView=view==='banner'?'banner':'pfp';
     pfpMountRetouchOnCurrentView();
     pfpSyncRetouchUi();
+    pfpPreloadBackgroundsForView(pfpView);
     buildUI();
     pfpRender();
   };
@@ -6922,19 +6944,7 @@ setTimeout(()=>{
   window.openPFPBuilder=function(){
     $p('pfpModal').classList.add('open');
     syncPfpRemovalUi();
-    const _activeBgId=pfpCurrentBg();
-    const _activeBgOpt=BG_IMAGE_OPTIONS.find(o=>o.id===_activeBgId);
-    if(_activeBgOpt && !(bgImageCache[_activeBgOpt.id] instanceof HTMLImageElement)){
-      delete bgImageCache[_activeBgOpt.id];
-      loadBgImage(_activeBgOpt,()=>{buildUI();pfpRender();});
-    }
-    BG_IMAGE_OPTIONS.forEach(o=>{
-      if(o.id===_activeBgId) return;
-      if(!(bgImageCache[o.id] instanceof HTMLImageElement)){
-        delete bgImageCache[o.id];
-        loadBgImage(o,()=>buildUI());
-      }
-    });
+    pfpPreloadBackgroundsForView(pfpView);
     buildUI();
     pfpRender();
     const inp=$p('pfpTokenInput');
@@ -7594,10 +7604,6 @@ setTimeout(()=>{
     { key: 'logo2', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/logomoody2.png', label: 'Moody 2' },
     { key: 'logo3', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/logomoody3.png', label: 'Moody 3' },
     { key: 'logo4', src: 'https://pub-9e48c0c112364c929102a426b79d48d8.r2.dev/logomoody4.png', label: 'Moody 4' },
-    { key: 'drops', src: 'assets/xp-logo-moody-drops.png',   label: 'Moody Drops' },
-    { key: 'madness', src: 'assets/xp-logo-moody-madness.png', label: 'Moody Madness' },
-    { key: 'vault', src: 'assets/xp-logo-the-vault.png',     label: 'The Vault' },
-    { key: 'mights', src: 'assets/xp-logo-moody-mights.png', label: 'Moody Mights' },
   ];
 
   const ABSTRACT_LOGO_SRC = 'logitoabstract.png';
