@@ -1547,7 +1547,10 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
   .controls.controls-main .vbtn-main img{height:17px!important;margin-right:3px!important}
   #container,.collection-panel,.col-layout,.col-main,.gallery-shell{width:100%;max-width:100%;min-width:0}
   .carousel-outer{width:calc(100vw - 24px)!important;max-width:100%;margin:18px auto 0!important;padding:8px 0 18px!important;overflow:hidden!important}
+  .carousel-outer.mobile-static{overflow-x:auto!important;overflow-y:hidden!important;-webkit-overflow-scrolling:touch;scrollbar-width:none;touch-action:pan-x}
+  .carousel-outer.mobile-static::-webkit-scrollbar{display:none}
   .carousel-track{gap:18px}
+  .carousel-track.mobile-static{animation:none!important;transform:none!important;will-change:auto!important;width:max-content}
   .card-outer.in-carousel{width:min(72vw,260px)!important;max-width:260px}
   .bottom-links{width:100%;max-width:100%;min-width:0;padding-left:0;padding-right:0;overflow:hidden}
   .social-links,.creator-links,.footer-links,.social-grid,.footer-links-row{max-width:100%;min-width:0}
@@ -3302,12 +3305,13 @@ function renderAll(){
   if(v==='carousel'){
     const items=getMuseumItems();
     if(!items.length){container.innerHTML=`<div class="grid g4" style="margin-top:40px"><div class="empty"><div class="empty-icon">◆</div><div>Loading museum stream or scan a wallet to populate the Museum</div></div></div>`;return;}
-    const outer=document.createElement('div');outer.className='carousel-outer';
-    const track=document.createElement('div');track.className='carousel-track';
-    const copies=isMobileLite()?2:3;
+    const mobileStatic=isMobileLite();
+    const outer=document.createElement('div');outer.className='carousel-outer'+(mobileStatic?' mobile-static':'');
+    const track=document.createElement('div');track.className='carousel-track'+(mobileStatic?' mobile-static':'');
+    const copies=mobileStatic?1:3;
     for(let copy=0;copy<copies;copy++)items.forEach((nft,i)=>track.appendChild(buildCard(nft,i,true,false,items.length)));
     outer.appendChild(track);container.appendChild(outer);
-    requestAnimationFrame(()=>{const cardW=isMobileLite()?Math.min(window.innerWidth*.72,270):356;const setW=(cardW+28)*items.length;track.style.setProperty('--sd',`-${setW}px`);track.style.animationDuration=(setW/(isMobileLite()?55:110))+'s';});
+    if(!mobileStatic) requestAnimationFrame(()=>{const cardW=356;const setW=(cardW+28)*items.length;track.style.setProperty('--sd',`-${setW}px`);track.style.animationDuration=(setW/110)+'s';});
   } else if(v==='auto'){
     const filtered=getFilteredV2();
     if(!filtered.length){container.innerHTML=`<div class="grid g4" style="margin-top:40px"><div class="empty"><div class="empty-icon">◆</div><div>No NFTs in My Collection yet</div></div></div>`;return;}
