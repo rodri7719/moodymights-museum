@@ -1573,10 +1573,22 @@ body.museum-fullscreen .card-outer.in-carousel{transform:scale(1.05)}
 @media (max-width:820px){
   /* Dedicated portrait artwork supplied for phones */
   #bg{
+    position:fixed!important;
+    top:0!important;
+    right:auto!important;
+    bottom:auto!important;
+    left:0!important;
+    width:100vw!important;
+    height:100lvh!important;
+    min-height:100lvh!important;
+    transform:none!important;
     background:
       linear-gradient(180deg,rgba(8,5,2,.05),rgba(10,7,3,.32)),
       url('fondo-mobile.png') center top/cover no-repeat #050402!important;
-    background-attachment:scroll!important;
+    background-attachment:fixed!important;
+    background-position:center top!important;
+    background-size:cover!important;
+    will-change:auto!important;
   }
   /* The animated canvas adds little on phones and can make Safari repaint/jump */
   #bgCanvas{display:none!important}
