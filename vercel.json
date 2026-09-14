@@ -1,0 +1,48 @@
+{
+  "headers": [
+    {
+      "source": "/vendettacourt/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/vendettacourt/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/vendettacourt/wallet/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/vendettacourt/(replay|online-story).js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    }
+  ],
+  "functions": {
+    "api/vendetta.js": {
+      "maxDuration": 300,
+      "memory": 2048,
+      "includeFiles": "{vendettacourt/**,server/**,node_modules/@sparticuz/chromium/bin/**}",
+      "excludeFiles": "{vendettacourt/wallet/**,server/test/**}"
+    }
+  }
+}

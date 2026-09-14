@@ -1,0 +1,11 @@
+{
+  "network": "abstract-mainnet",
+  "status": "deployed-private-mainnet",
+  "walletType": "AGW",
+  "proposedAdmin": "0x764FeD7B6629067a603Cd376B0ba49Cd7dFfE2f5",
+  "proposedTreasury": "0x764FeD7B6629067a603Cd376B0ba49Cd7dFfE2f5",
+  "gasSponsored": false,
+  "adminPanel": "/vendettacourt-admin/",
+  "initialTestPoints": 30000,
+  "contractAddress": "0x4c91e87964b9ad926fd162d7eb2eea71d19ec894"
+}

@@ -1,0 +1,1 @@
+{"name":"moodyworld-vendetta","private":true,"scripts":{"test":"node --test server/test/*.test.cjs"},"dependencies":{"@upstash/redis":"1.35.3","@sparticuz/chromium":"133.0.0","playwright-core":"1.51.1","viem":"2.56.5"}}

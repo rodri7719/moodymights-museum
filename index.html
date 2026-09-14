@@ -1113,7 +1113,10 @@
 }
 </style>
 
-</head>
+<style>
+#vendettaHeader{position:fixed;z-index:1001;display:flex;align-items:center;justify-content:center;gap:6px;height:44px;padding:0 14px;border:1px solid #bca0ed;border-top:2px solid #cdff46;border-radius:10px;background:linear-gradient(125deg,#251334,#10091c);box-shadow:0 0 15px #a455ec38,inset 0 0 12px #c6ff4212;color:#caff4b;font:900 19px/1 Impact,Arial,sans-serif;letter-spacing:.5px;text-decoration:none;white-space:nowrap;visibility:hidden}
+#vendettaHeader span{color:#c49af2}#vendettaHeader:hover{filter:brightness(1.18)}#vendettaHeader:focus-visible{outline:3px solid #caff4b;outline-offset:3px}
+</style></head>
 <body>
   <header class="topbar">
     <div class="shell nav">
@@ -1230,7 +1233,8 @@
 <a class="abstract-v23" href="https://abs.xyz/" target="_blank" rel="noreferrer" aria-label="Abstract"><img src="assets/abstract-logo.png" alt="Abstract"></a>
 
 
-</body>
+<a id="vendettaHeader" href="/vendettacourt/" aria-label="Play Vendetta Court">VENDETTA <span>COURT</span></a>
+<script>(()=>{const button=document.getElementById('vendettaHeader');function position(){const gif=document.querySelector('a[href="museum/?tool=gif"]'),brand=document.querySelector('.brand-logo-v29'),g=gif.getBoundingClientRect(),b=brand.getBoundingClientRect();const available=g.left-b.right-26;if(g.width&&available>=130){const width=Math.min(210,available);button.style.width=width+'px';button.style.left=(g.left-width-12)+'px';button.style.top=(g.top+(g.height-44)/2)+'px';button.style.fontSize=width<175?'15px':'19px'}else{button.style.width='170px';button.style.left='12px';button.style.top='82px';button.style.fontSize='16px'}button.style.visibility='visible'}addEventListener('resize',position);addEventListener('load',position);position();document.fonts?.ready.then(position)})();</script></body>
 <style>
 /* Game logos: visual buttons, preserving current Play Moody layout */
 .game-slot.game-logo{

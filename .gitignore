@@ -4,3 +4,8 @@ Desktop.ini
 node_modules/
 .DS_Store
 .windsurf/
+
+.env
+.env.*
+!.env.example
+
