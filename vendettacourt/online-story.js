@@ -89,12 +89,15 @@
  function balanceCard(){return '<div class="vc-balance"><div class="vc-coin" aria-hidden="true">V</div><div class="vc-balance-copy"><span class="vc-kicker">Your Vendetta balance</span><strong class="vc-amount" data-vc-points>—</strong><p class="vc-balance-note" data-vc-balance-note></p></div><span class="vc-balance-tag" data-vc-balance-tag>ABSTRACT</span></div>'}
  function updateBalance(){const w=window.vendettaWallet;document.querySelectorAll('[data-vc-points]').forEach(el=>{el.textContent=w?.ready?number(w.points):'—';const unit=document.createElement('small');unit.textContent='POINTS';el.append(unit)});document.querySelectorAll('[data-vc-balance-note]').forEach(el=>el.textContent=!w?.address?'Connect your wallet to view your balance.':w.ready?'In your wallet · Spend points to unlock champions.':'Reading your wallet balance…');document.querySelectorAll('[data-vc-balance-tag]').forEach(el=>el.textContent=w?.ready?'ON-CHAIN':'ABSTRACT')}
  const rewardsHome=storyHome;
- storyHome=function(){rewardsHome();if(!window.vendettaOnlineConfig?.enabled)return;const stats=document.querySelector('.story-panel>.story-stats');if(stats){const old=[...stats.children].find(el=>el.textContent.includes('ON-CHAIN POINTS'));old?.remove();stats.insertAdjacentHTML('beforebegin',balanceCard());updateBalance()}};
+ storyHome=function(){rewardsHome();const stats=document.querySelector('.story-panel>.story-stats');if(stats){const old=[...stats.children].find(el=>el.textContent.includes('ON-CHAIN POINTS')||el.textContent.includes('LOCAL PREVIEW POINTS'));old?.remove();stats.insertAdjacentHTML('beforebegin',balanceCard());updateBalance()}};
+ window.addEventListener('vendetta-economy',()=>{if(document.querySelector('.story-panel #ecoRewards'))storyHome();else if(document.getElementById('vcRewardsState'))rewardsPanel183()});
  const localRewards=rewardsPanel183;
  let rewardsRefresh=null;
  window.addEventListener('vendetta-wallet',e=>{updateBalance();if(document.getElementById('vcRewardsState'))rewardsRefresh?.(e.detail?.ready||!e.detail?.address)});
  rewardsPanel183=function(){
-  if(!window.vendettaOnlineConfig?.enabled)return localRewards();
+  if(!window.vendettaOnlineConfig?.enabled){
+   localRewards();const root=document.querySelector('.story-panel');if(root){root.querySelector('.eyebrow').textContent='REWARDS · LOCAL TEST';const stats=root.querySelector('.story-stats');if(stats){stats.insertAdjacentHTML('beforebegin',balanceCard());stats.remove()}const title=document.createElement('div');title.className='vc-reward-state';title.innerHTML='<span class="vc-kicker">Local preview only</span><h2>'+(pending183()?'TEST REWARDS AVAILABLE':'NO TEST REWARDS YET')+'</h2><p>This local server is for testing gameplay. Test rewards are separate from your wallet and cannot be claimed on-chain here.</p>';root.querySelector('.vc-balance').after(title);updateBalance()}return;
+  }
   storyPanel('<div class="eyebrow">THE REWARD VAULT</div><h1>YOUR REWARDS</h1>'+balanceCard()+'<div class="vc-reward-state" id="vcRewardsState" aria-live="polite"><span class="vc-kicker" id="vcRewardKicker"></span><h2 id="vcRewardTitle"></h2><p id="verifiedRewardStatus"></p><div id="vcRewardList" class="vc-reward-list"></div></div><div class="row"><button class="primary" id="loadVerifiedRewards">CHECK REWARDS</button><button class="secondary" id="ecoBack">BACK TO STORY</button></div><p class="vc-reward-footer">Earned points enter your wallet after a successful claim. Claim fee: approximately $0.01 in ETH, plus the network fee.</p><div id="storyWalletSlot"></div>');
   updateBalance();$('ecoBack').onclick=storyHome;
   const root=$('vcRewardsState'),button=$('loadVerifiedRewards');let request=0,busy=false,readyRun=null;
@@ -123,4 +126,34 @@
   rewardsRefresh=force=>{if(force)refresh(true)};
   refresh();
  };
+})();
+
+// Presentation-only fixes: keep the recorded match engine unchanged.
+(()=>{
+ const drawOriginal=drawSauciii;
+ drawSauciii=function(a,player){
+  const id=sauciiiPose(a);
+  if(id<4||id>7||a.mx>=-.15)return drawOriginal(a,player);
+  const v=sauciiiView(a,player);if(!v.image)return;
+  const q=project(a.x,a.y),unit=q.f*.88,u=unit*SAUCIII_SCALE*sauciiiPoseScale(v,id);
+  c.save();c.translate(q.x,q.y);c.fillStyle='#07192355';c.beginPath();c.ellipse(a.emergencyT>0?sauciiiBodyMotion(a).x*unit:0,3,24*unit,5*unit,0,0,Math.PI*2);c.fill();
+  const motion=sauciiiBodyMotion(a);c.translate(motion.x*unit,motion.y*unit);c.rotate(motion.angle);
+  c.scale(-u,u);c.drawImage(v.image,id%4*512,Math.floor(id/4)*512,512,512,-256,-440,512,512);c.restore();
+ };
+ const css=document.createElement('style');css.textContent=`
+ body.epic-home #staticMenuBackground{display:none!important}
+ body.epic-home #overlay{background:#160d26!important}
+ body.epic-home #overlay::before{content:none!important;background:none!important}
+ body.epic-home .epic-art{mask-image:none!important}
+ body.epic-home #overlay>.card{width:100vw!important;height:100dvh!important;max-height:none!important;display:grid;place-items:center;padding:0!important;overflow:hidden!important}
+ body.epic-home .epic-stage{margin:0;width:min(100vw,calc(100dvh * 1672 / 941));height:auto;aspect-ratio:1672/941}
+ body.epic-home.home-art-loading .epic-stage{visibility:hidden}
+ body.epic-home.home-art-loading #overlay::before{background-image:none}
+ body.epic-home.home-art-loading #overlay::after{content:'LOADING VENDETTA COURT…';position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;color:#c2ff45;font:700 12px Arial,sans-serif;letter-spacing:3px}
+ body.epic-home .epic-stage,body.epic-home .epic-art{animation:none!important;transition:none!important}
+ `;document.head.append(css);
+ const current=document.querySelector('.epic-art');
+ if(!current?.complete||!current.naturalWidth)document.body.classList.add('home-art-loading');
+ const load=src=>new Promise(resolve=>{const im=new Image();im.onload=()=>im.decode().catch(()=>{}).then(resolve);im.onerror=resolve;im.src=src});
+ Promise.all([load(epicMenuImage)]).then(()=>document.body.classList.remove('home-art-loading'));
 })();
