@@ -149,7 +149,7 @@
  body.epic-home .epic-stage{margin:0;width:100vw;height:100dvh;aspect-ratio:auto;position:absolute;left:0;top:0;transform:none}
  body.epic-home .epic-stage,body.epic-home .epic-art{animation:none!important;transition:none!important}
  `;document.head.append(css);
- const fullMenuImage='/vendettacourt/assets/7da95ebead84e26d6ee7.png';
+ const fullMenuImage='/vendettacourt/assets/ca57fe7d2d471d2dcdb6.png';
  function applyFullMenu(){const art=document.querySelector('.epic-art');if(art)art.src=fullMenuImage;if($('epicStory'))$('epicStory').onclick=()=>storyHome()}
  const previousMenu=menu;menu=function(){previousMenu();applyFullMenu()};applyFullMenu();
 })();
