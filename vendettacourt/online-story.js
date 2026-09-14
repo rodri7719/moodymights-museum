@@ -77,19 +77,50 @@
   }catch(error){resultsPanel('Unable to save this match: '+error.message)}
  });
  window.addEventListener('vendetta-replay-limit',()=>{vendettaReplay.stop();storyPanel('<h2>MATCH TIME LIMIT</h2><p>This match exceeded 25 minutes of active play. You can restart this match.</p><button class="primary" id="onlineLimitBack">BACK TO STORY</button>');$('onlineLimitBack').onclick=storyHome});
+ const rewardStyle=document.createElement('style');rewardStyle.textContent=`
+ .vc-balance{position:relative;display:flex;align-items:center;gap:18px;padding:22px 26px;margin:22px 0;border:1px solid #9871c5;border-left:4px solid #c2ff45;border-radius:4px 20px 4px 20px;background:radial-gradient(ellipse at 100% 0,#7344a53b,transparent 65%),linear-gradient(115deg,#1d2623,#171222);box-shadow:0 12px 36px #0005;overflow:hidden}
+ .vc-coin{display:grid;place-items:center;flex-shrink:0;width:58px;height:58px;border:2px solid #c2ff45;border-radius:50%;box-shadow:inset 0 0 0 5px #263927,0 0 24px #c2ff4519;color:#c2ff45;font-size:27px;font-weight:900;transform:rotate(-12deg)}
+ .vc-balance-copy{flex:1}.vc-kicker{display:block;font-size:10px;font-weight:800;letter-spacing:2px;color:#c3acd9;text-transform:uppercase}.vc-amount{display:block;font-family:Impact,'Arial Narrow',sans-serif;font-size:clamp(38px,5vw,58px);line-height:1.15;letter-spacing:1px;color:#c2ff45;text-shadow:0 2px 0 #071406}.vc-amount small{font-family:Arial,sans-serif;font-size:12px;letter-spacing:2px;color:#d6c6e5;margin-left:10px}.vc-balance-note{margin:5px 0 0!important;font-size:12px!important;color:#c6b8d2!important}.vc-balance-tag{align-self:flex-start;padding:7px 10px;border:1px solid #5c6c48;border-radius:4px;color:#c2ff45;font-size:9px;letter-spacing:1.5px;font-weight:800}
+ .vc-reward-state{padding:24px;margin:20px 0;border:1px solid #63477e;border-radius:12px;background:linear-gradient(130deg,#23182f,#141a24);min-height:130px}.vc-reward-state[data-state=ready]{border-color:#b1e848;background:linear-gradient(130deg,#263022,#191725)}.vc-reward-state h2{font-family:Impact,'Arial Narrow',sans-serif!important;font-size:clamp(26px,4vw,40px)!important;letter-spacing:1px!important;margin:10px 0!important;color:#f3eaff}.vc-reward-state p{max-width:650px;color:#cdbfdc;line-height:1.6;font-size:14px}.vc-reward-state[data-state=ready] h2{color:#c2ff45}.vc-reward-list{display:grid;gap:12px;margin-top:18px}.vc-reward-item{display:flex;justify-content:space-between;align-items:center;gap:18px;border:1px solid #806a96;border-radius:8px;padding:18px;background:#0d131ec4}.vc-reward-item strong{display:block;font:32px Impact,'Arial Narrow',sans-serif;color:#c2ff45}.vc-reward-item small{display:block;margin-top:5px;color:#c6b6d5;font-size:12px}.vc-reward-item button{flex-shrink:0}.vc-reward-state progress{width:min(320px,100%);height:6px;accent-color:#c2ff45}.vc-reward-footer{font-size:12px!important;color:#a998bc!important}.vc-balance~.story-stats:empty{display:none}
+ @media(min-width:1000px){.story-panel:has(>#ecoContinue) .vc-balance{max-width:500px}}
+ @media(max-width:600px){.vc-balance{padding:18px 16px;gap:12px}.vc-coin{width:42px;height:42px;font-size:21px}.vc-balance-tag{display:none}.vc-reward-item{align-items:stretch;flex-direction:column}.vc-reward-state{padding:18px}}
+ `;document.head.append(rewardStyle);
+ const number=value=>{try{return BigInt(value).toLocaleString('en-US')}catch{return '—'}};
+ function balanceCard(){return '<div class="vc-balance"><div class="vc-coin" aria-hidden="true">V</div><div class="vc-balance-copy"><span class="vc-kicker">Your Vendetta balance</span><strong class="vc-amount" data-vc-points>—</strong><p class="vc-balance-note" data-vc-balance-note></p></div><span class="vc-balance-tag" data-vc-balance-tag>ABSTRACT</span></div>'}
+ function updateBalance(){const w=window.vendettaWallet;document.querySelectorAll('[data-vc-points]').forEach(el=>{el.textContent=w?.ready?number(w.points):'—';const unit=document.createElement('small');unit.textContent='POINTS';el.append(unit)});document.querySelectorAll('[data-vc-balance-note]').forEach(el=>el.textContent=!w?.address?'Connect your wallet to view your balance.':w.ready?'In your wallet · Spend points to unlock champions.':'Reading your wallet balance…');document.querySelectorAll('[data-vc-balance-tag]').forEach(el=>el.textContent=w?.ready?'ON-CHAIN':'ABSTRACT')}
+ const rewardsHome=storyHome;
+ storyHome=function(){rewardsHome();if(!window.vendettaOnlineConfig?.enabled)return;const stats=document.querySelector('.story-panel>.story-stats');if(stats){const old=[...stats.children].find(el=>el.textContent.includes('ON-CHAIN POINTS'));old?.remove();stats.insertAdjacentHTML('beforebegin',balanceCard());updateBalance()}};
  const localRewards=rewardsPanel183;
+ let rewardsRefresh=null;
+ window.addEventListener('vendetta-wallet',e=>{updateBalance();if(document.getElementById('vcRewardsState'))rewardsRefresh?.(e.detail?.ready||!e.detail?.address)});
  rewardsPanel183=function(){
   if(!window.vendettaOnlineConfig?.enabled)return localRewards();
-  storyPanel('<div class="eyebrow">STORY REWARDS</div><h1>YOUR REWARDS</h1><div id="storyWalletSlot"></div><p id="verifiedRewardStatus">Finish your story or use your three lives to collect your results.</p><div class="row"><button class="primary" id="loadVerifiedRewards">CHECK REWARDS</button><button class="secondary" id="ecoBack">BACK TO STORY</button></div>');$('ecoBack').onclick=storyHome;
-  $('loadVerifiedRewards').onclick=async()=>{try{
-   if(!window.vendettaOnline)throw Error('Connect AGW first.');
-   const queue=await loadPending(window.vendettaOnline.wallet);
-   const ready=queue.find(x=>!x.ticket.deferred||x.nextRun?.closed);
-   if(ready){pendingRun=ready.ticket.serverRunId;await submit();return}
-   const {run,pendingRuns=[]}=await window.vendettaOnline.status();
-   if(pendingRuns.length){$('verifiedRewardStatus').textContent='Your rewards are ready:';$('loadVerifiedRewards').hidden=true;for(const item of pendingRuns){const button=document.createElement('button');button.className='primary';button.textContent='CLAIM '+item.earned+' POINTS';button.onclick=()=>window.dispatchEvent(new CustomEvent('vendetta-claim',{detail:{runId:item.id}}));$('verifiedRewardStatus').after(button)}return}
-   $('verifiedRewardStatus').textContent=run?(run.claimed?'Rewards already claimed.':run.closed?run.earned+' points earned.':'Your current story is still in progress.'):'No completed story yet.';
-   if(run?.closed&&!run.claimed&&run.earned>0){$('loadVerifiedRewards').textContent='CLAIM '+run.earned+' POINTS';$('loadVerifiedRewards').onclick=()=>window.dispatchEvent(new CustomEvent('vendetta-claim',{detail:{runId:run.id}}))}
-  }catch(e){const status=$('verifiedRewardStatus');if(status)status.textContent=e.message}};
+  storyPanel('<div class="eyebrow">THE REWARD VAULT</div><h1>YOUR REWARDS</h1>'+balanceCard()+'<div class="vc-reward-state" id="vcRewardsState" aria-live="polite"><span class="vc-kicker" id="vcRewardKicker"></span><h2 id="vcRewardTitle"></h2><p id="verifiedRewardStatus"></p><div id="vcRewardList" class="vc-reward-list"></div></div><div class="row"><button class="primary" id="loadVerifiedRewards">CHECK REWARDS</button><button class="secondary" id="ecoBack">BACK TO STORY</button></div><p class="vc-reward-footer">Earned points enter your wallet after a successful claim. Claim fee: approximately $0.01 in ETH, plus the network fee.</p><div id="storyWalletSlot"></div>');
+  updateBalance();$('ecoBack').onclick=storyHome;
+  const root=$('vcRewardsState'),button=$('loadVerifiedRewards');let request=0,busy=false,readyRun=null;
+  function show(kind,kicker,title,message){root.dataset.state=kind;$('vcRewardKicker').textContent=kicker;$('vcRewardTitle').textContent=title;$('verifiedRewardStatus').textContent=message;$('vcRewardList').replaceChildren()}
+  async function refresh(force=false){
+   if(!root.isConnected||busy&&!force)return;
+   const version=++request,service=window.vendettaOnline,wallet=window.vendettaWallet?.address;busy=true;readyRun=null;button.disabled=true;button.textContent='CHECKING…';
+   const current=()=>root.isConnected&&version===request&&window.vendettaOnline===service&&window.vendettaWallet?.address===wallet;
+   try{
+    if(!service||!wallet){show('empty','Wallet required','CONNECT TO VIEW REWARDS','Connect your AGW below to check rewards linked to your wallet.');return}
+    show('loading','Checking your rewards','LOADING YOUR REWARDS…','Checking saved results and unclaimed rewards. Please wait.');const progress=document.createElement('progress');progress.setAttribute('aria-label','Checking rewards');$('vcRewardList').append(progress);
+    const queue=await loadPending(service.wallet);if(!current())return;
+    const ready=queue.find(x=>!x.ticket.deferred||x.nextRun?.closed);
+    if(ready){readyRun=ready.ticket.serverRunId;show('pending','Results saved on this device','RESULTS NEED VERIFICATION','Your story has ended. Load your saved results to confirm your earned points before claiming.');return}
+    const {run,pendingRuns=[]}=await service.status();if(!current())return;
+    const rewards=[...new Map(pendingRuns.filter(r=>r.earned>0&&!r.claimed).map(r=>[r.id,r])).values()];
+    if(!rewards.length&&run?.closed&&!run.claimed&&run.earned>0)rewards.push(run);
+    if(rewards.length){const total=rewards.reduce((sum,r)=>sum+BigInt(r.earned),0n);show('ready','Ready to claim',number(total)+' POINTS WAITING',rewards.length===1?'Your results are confirmed. Claim these points to add them to your wallet.':rewards.length+' separate story runs are ready. Each run has its own claim.');for(const item of rewards){const card=document.createElement('div');card.className='vc-reward-item';const copy=document.createElement('div'),amount=document.createElement('strong'),detail=document.createElement('small'),claim=document.createElement('button');amount.textContent=number(item.earned)+' POINTS';detail.textContent=(item.stage===5?'Story complete':'Run ended')+' · '+item.stage+'/5 rivals defeated · Run '+item.id.slice(-6).toUpperCase();copy.append(amount,detail);claim.className='primary';claim.textContent='CLAIM '+number(item.earned)+' POINTS';claim.onclick=()=>window.dispatchEvent(new CustomEvent('vendetta-claim',{detail:{runId:item.id}}));card.append(copy,claim);$('vcRewardList').append(card)}return}
+    if(run?.claimed)show('claimed','Rewards collected','ALL CLAIMED','Your completed story rewards have already been added to your wallet. There is nothing left to claim.');
+    else if(run&&!run.closed)show('progress','Story in progress','FINISH YOUR RUN',number(run.earned||0)+' points confirmed so far. Complete the story or use all three lives, then load your results to claim.');
+    else show('empty','No pending rewards','NOTHING TO CLAIM YET',run?.closed?'This run ended without reward points. Defeat a rival in your next story to earn points.':'Play Story Mode and defeat rivals to earn points. Rewards become available when your run ends.');
+   }catch(e){if(current())show('error','Could not check rewards','TRY AGAIN','Your balance has not been reset. '+e.message)}
+   finally{if(root.isConnected&&version===request){busy=false;button.disabled=false;button.textContent=readyRun?'LOAD RESULTS':'REFRESH REWARDS'}}
+  }
+  button.onclick=()=>{if(readyRun){pendingRun=readyRun;submit()}else refresh()};
+  rewardsRefresh=force=>{if(force)refresh(true)};
+  refresh();
  };
 })();
