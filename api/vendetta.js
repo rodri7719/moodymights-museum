@@ -1,13 +1,13 @@
 const crypto=require('node:crypto');
 const {createPublicClient,http,isAddress,parseAbi}=require('viem');const {abstract}=require('viem/chains');const {privateKeyToAccount}=require('viem/accounts');
 const {config}=require('../server/config.cjs'),{db,key,limited,withLock}=require('../server/store.cjs'),auth=require('../server/auth.cjs'),{ethUsd,weiForUsd}=require('../server/prices.cjs'),{applyResult}=require('../server/run-rules.cjs'),{verifyMatch}=require('../server/replay-verifier.cjs');
-const abi=parseAbi(['function ownsCharacter(address,uint8) view returns(bool)','function claimedRuns(bytes32) view returns(bool)','function signerEpoch() view returns(uint256)','function priceEpoch() view returns(uint256)','function rewardSigner() view returns(address)','function priceSigner() view returns(address)','function claimsEnabled() view returns(bool)','function privateMode() view returns(bool)','function testers(address) view returns(bool)','function paused() view returns(bool)','function legacy() view returns(address)']);
+const abi=parseAbi(['function ownsCharacter(address,uint8) view returns(bool)','function claimedRuns(bytes32) view returns(bool)','function signerEpoch() view returns(uint256)','function priceEpoch() view returns(uint256)','function rewardSigner() view returns(address)','function priceSigner() view returns(address)','function claimsEnabled() view returns(bool)','function privateMode() view returns(bool)','function testers(address) view returns(bool)','function paused() view returns(bool)','function legacy() view returns(address)','function economyVersion() view returns(uint256)','function original() view returns(address)']);
 const chars=['penguin','moody','sauciii','luca','spartano'];
 const rewardTypes={Reward:[{name:'player',type:'address'},{name:'runId',type:'bytes32'},{name:'points',type:'uint256'},{name:'feeWei',type:'uint256'},{name:'deadline',type:'uint256'},{name:'epoch',type:'uint256'}]};
 const priceTypes={Price:[{name:'player',type:'address'},{name:'priceWei',type:'uint256'},{name:'deadline',type:'uint256'},{name:'epoch',type:'uint256'}]};
 module.exports=async function handler(req,res){res.setHeader('Cache-Control','no-store');const send=(code,data)=>res.status(code).json(JSON.parse(JSON.stringify(data,(_,v)=>typeof v==='bigint'?v.toString():v)));try{
  const c=config(),action=String(req.query?.action||'config');
- if(action==='config'&&req.method==='GET')return send(200,{enabled:c.enabled,contract:c.contract||null,chainId:2741,engineVersion:c.engineVersion});
+ if(action==='config'&&req.method==='GET')return send(200,{enabled:c.enabled,contract:c.contract||null,chainId:2741,contractVersion:c.contractVersion,engineVersion:c.engineVersion});
  if(req.method!=='POST')return send(405,{error:'POST required'});
  if(!c.enabled||!isAddress(c.contract||''))return send(503,{error:'Online rewards are not activated yet.'});
  if(req.headers.origin!==c.origin)return send(403,{error:'Origin rejected'});
@@ -16,14 +16,48 @@ module.exports=async function handler(req,res){res.setHeader('Cache-Control','no
  if(['challenge','login'].includes(action)){if(!isAddress(body.wallet||''))return send(400,{error:'Invalid wallet'});const wallet=body.wallet.toLowerCase();await limited(wallet,'auth',15,300);if(action==='challenge')return send(200,await auth.challenge(wallet,c.origin));return send(200,{token:await auth.login(wallet,body.nonce,body.signature,rpc)})}
  const {wallet}=auth.decode(String(req.headers.authorization||'').replace(/^Bearer /,''));await limited(wallet,'requests',180,60);
  const previous=await read('legacy');if(!previous||!await rpc.readContract({address:previous,abi,functionName:'paused'}))throw Error('Migration is not activated yet');if(await read('paused'))throw Error('The game contract is paused');if(await read('privateMode')&&!await read('testers',[wallet]))throw Error('Private testing is not open to this wallet');
- const domain={name:'VendettaCourt',version:'2',chainId:2741,verifyingContract:c.contract};
+ if(c.contractVersion===3){if(await read('economyVersion')!==3n)throw Error('Contract version mismatch');const root=await read('original');if(!await rpc.readContract({address:root,abi,functionName:'paused'}))throw Error('The original contract must stay paused');}
+ const domain={name:'VendettaCourt',version:String(c.contractVersion||2),chainId:2741,verifyingContract:c.contract};
  async function signed(kind,message){const env=kind==='Price'?'VENDETTA_PRICE_SIGNER_KEY':'VENDETTA_REWARD_SIGNER_KEY';if(!/^0x[0-9a-fA-F]{64}$/.test(process.env[env]||''))throw Error('Signing service unavailable');const signer=privateKeyToAccount(process.env[env]);const expected=await read(kind==='Price'?'priceSigner':'rewardSigner');if(signer.address.toLowerCase()!==expected.toLowerCase())throw Error('Signer configuration mismatch');return signer.signTypedData({domain,types:kind==='Price'?priceTypes:rewardTypes,primaryType:kind,message})}
  if(action==='price'){await limited(wallet,'price',10,60);const rate=await ethUsd(),price={player:wallet,priceWei:weiForUsd(100000000n,rate),deadline:BigInt(Math.floor(Date.now()/1000)+180),epoch:await read('priceEpoch')};return send(200,{price,signature:await signed('Price',price),ethUsdE8:rate})}
  if(action==='status'){const current=await db().get(key(wallet,'active'));const completed=await db().smembers(key(wallet,'completed'));const pendingRuns=[];for(const id of completed.slice(0,50)){if(await read('claimedRuns',[id]))await db().srem(key(wallet,'completed'),id);else{const r=await db().get(key(wallet,'run:'+id));if(r)pendingRuns.push(r)}}const currentRun=current?await db().get(key(wallet,'run:'+current)):null;if(currentRun?.closed)currentRun.claimed=await read('claimedRuns',[currentRun.id]);return send(200,{run:currentRun,pendingRuns})}
  if(action==='new-run')return send(200,await withLock(wallet,async()=>{const id=chars.indexOf(body.character);if(id<0||!await read('ownsCharacter',[wallet,id]))throw Error('Character not owned');await limited(wallet,'runs',15,3600);const run={id:'0x'+crypto.randomBytes(32).toString('hex'),wallet,character:body.character,stage:0,lives:3,earned:0,closed:false,revision:0,createdAt:Date.now(),match:null};await db().set(key(wallet,'run:'+run.id),run);await db().set(key(wallet,'active'),run.id);return{run}}));
  if(!/^0x[a-fA-F0-9]{64}$/.test(body.runId||''))throw Error('Invalid run');
- if(action==='match')return send(200,await withLock(wallet,async()=>{let run=await db().get(key(wallet,'run:'+body.runId));if(!run||run.wallet!==wallet||run.closed)throw Error('Run unavailable');if(run.match&&run.match.engineVersion!==c.engineVersion)throw Error('Game updated. Start a new run.');if(!run.match){run.match={id:crypto.randomUUID(),stage:run.stage,character:run.character,seed:crypto.randomInt(1,2147483647),issuedAt:Date.now(),engineVersion:c.engineVersion};await db().set(key(wallet,'run:'+run.id),run)}return{ticket:run.match,run}}));
- if(action==='result')return send(200,await withLock(wallet,async()=>{const k=key(wallet,'run:'+body.runId),run=await db().get(k);if(run?.lastResult?.matchId===body.matchId)return{run,result:run.lastResult.result};if(!run||!run.match||run.match.id!==body.matchId||run.match.engineVersion!==c.engineVersion)throw Error('Match is stale or already checked');const frames=body.proof?.frames;if(!Array.isArray(frames)||frames.length>180000||frames.length<1)throw Error('Invalid replay');if(frames.length/120*1000>Date.now()-run.match.issuedAt+5000)throw Error('Replay is faster than elapsed play time');await limited(wallet,'verification',30,3600);const result=await verifyMatch(run.match,body.proof),next=applyResult(run,run.match,result);next.lastResult={matchId:body.matchId,result};await db().set(k,next);if(next.closed&&next.earned>0)await db().sadd(key(wallet,'completed'),next.id);return{run:next,result}}));
+
+ if(action==='match')return send(200,await withLock(wallet,async()=>{
+  const k=key(wallet,'run:'+body.runId),run=await db().get(k);
+  if(!run||run.wallet!==wallet||run.closed)throw Error('Run unavailable');
+  if(body.deferred===true){
+   const attempt=body.attempt===undefined?run.revision:body.attempt,stage=body.stage;
+   if(!Number.isInteger(attempt)||attempt<run.revision||attempt>6||!Number.isInteger(stage)||stage<run.stage||stage>4)throw Error('Invalid match order');
+   if(run.match)throw Error('Load the previous match results before continuing.');
+   run.issued??={};let ticket=run.issued[attempt];
+   if(!ticket){
+    if(attempt===run.revision){if(stage!==run.stage)throw Error('Invalid match order')}
+    else {const previous=run.issued[attempt-1];if(!previous||stage<previous.stage||stage>previous.stage+1)throw Error('Invalid match order')}
+    ticket={id:crypto.randomUUID(),stage,attempt,deferred:true,character:run.character,seed:crypto.randomInt(1,2147483647),issuedAt:Date.now(),engineVersion:c.engineVersion};run.issued[attempt]=ticket;await db().set(k,run);
+   }
+   if(ticket.engineVersion!==c.engineVersion||ticket.stage!==stage)throw Error('Game updated or match changed. Load your saved results first.');
+   return{ticket,run};
+  }
+  if(run.match&&run.match.engineVersion!==c.engineVersion)throw Error('Game updated. Start a new run.');
+  if(!run.match){run.match={id:crypto.randomUUID(),stage:run.stage,character:run.character,seed:crypto.randomInt(1,2147483647),issuedAt:Date.now(),engineVersion:c.engineVersion};await db().set(k,run)}return{ticket:run.match,run};
+ }));
+ if(action==='result')return send(200,await withLock(wallet,async()=>{
+  const k=key(wallet,'run:'+body.runId),run=await db().get(k);
+  const completed=Object.hasOwn(run?.results||{},body.matchId)?run.results[body.matchId]:(run?.lastResult?.matchId===body.matchId?run.lastResult.result:null);
+  if(completed)return{run,result:completed};
+  if(!run||run.wallet!==wallet||run.closed)throw Error('Run unavailable');
+  const match=run.match||Object.values(run.issued||{}).find(m=>m.id===body.matchId);
+  if(!match||match.id!==body.matchId||match.engineVersion!==c.engineVersion)throw Error('Match is stale or already checked');
+  if(match.stage!==run.stage||(match.deferred&&match.attempt!==run.revision))throw Error('The saved results do not match the story order.');
+  const frames=body.proof?.frames;if(!Array.isArray(frames)||frames.length>180000||frames.length<1)throw Error('Invalid replay');
+  if(frames.length/120*1000>Date.now()-match.issuedAt+5000)throw Error('Replay is faster than elapsed play time');
+  await limited(wallet,'verification',30,3600);const result=await verifyMatch(match,body.proof);
+  run.match=match;const next=applyResult(run,match,result);next.lastResult={matchId:body.matchId,result};next.results={...next.results,[body.matchId]:result};
+  if(match.deferred)delete next.issued[match.attempt];
+  await db().set(k,next);if(next.closed&&next.earned>0)await db().sadd(key(wallet,'completed'),next.id);return{run:next,result};
+ }));
  if(action==='claim'){await limited(wallet,'claim',10,60);const run=await db().get(key(wallet,'run:'+body.runId));if(!run||run.wallet!==wallet||!run.closed||run.earned<1)throw Error('Finish a verified run before claiming');if(await read('claimedRuns',[run.id]))throw Error('This run has already been claimed');if(!await read('claimsEnabled'))throw Error('Claims are not enabled');const rate=await ethUsd(),reward={player:wallet,runId:run.id,points:BigInt(run.earned),feeWei:weiForUsd(1000000n,rate),deadline:BigInt(Math.floor(Date.now()/1000)+180),epoch:await read('signerEpoch')};return send(200,{reward,signature:await signed('Reward',reward)})}
  return send(404,{error:'Unknown action'});
- }catch(error){console.error('Vendetta request failed:',error.name);return send(400,{error:error.shortMessage||error.message||'Request failed'})}};
+ }catch(error){console.error('Vendetta request failed:',error.name);return send(error.status===503?503:400,{error:error.shortMessage||error.message||'Request failed'})}};
