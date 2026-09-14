@@ -146,27 +146,52 @@
  body.epic-home #overlay::before{content:none!important;background:none!important}
  body.epic-home .epic-art{mask-image:none!important}
  body.epic-home #overlay>.card{width:100vw!important;height:100dvh!important;max-height:none!important;display:grid;place-items:center;padding:0!important;overflow:hidden!important}
- body.epic-home .epic-stage{margin:0;width:max(100vw,calc(100dvh * 1916 / 821));height:auto;aspect-ratio:1916/821;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
- body.epic-home.home-art-loading .epic-stage{visibility:hidden}
- body.epic-home.home-art-loading #overlay::before{background-image:none}
- body.epic-home.home-art-loading #overlay::after{content:'LOADING VENDETTA COURT…';position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;color:#c2ff45;font:700 12px Arial,sans-serif;letter-spacing:3px}
+ body.epic-home .epic-stage{margin:0;width:100vw;height:100dvh;aspect-ratio:auto;position:absolute;left:0;top:0;transform:none}
  body.epic-home .epic-stage,body.epic-home .epic-art{animation:none!important;transition:none!important}
  `;document.head.append(css);
- const fullMenuImage='/vendettacourt/assets/16d6bfe021463d85c374.jpg';
- const fullStyle=document.createElement('style');fullStyle.textContent=`
- #epicStory{left:14.2%;top:49.5%;width:26.5%;height:13.2%}
- #epicPvp{left:15.6%;top:63.7%;width:23.5%;height:11.1%}
- #epicTournament{left:15.6%;top:75%;width:23.5%;height:11.4%}
- #epicOptions{left:15.5%;top:91%;width:5.8%;height:5%}
- #epicCredits{left:23%;top:91%;width:5.8%;height:5%}
- .epic-world-link{position:absolute;left:78.8%;top:93.4%;width:6%;height:3.9%;display:grid;place-items:center;background:#171027;color:#c2ff45;border:1px solid #9c76b7;border-radius:4px;font:10px Arial;text-decoration:none;z-index:2}
- body.epic-home #backMoodyworld{display:none}
- @media(max-aspect-ratio:3/2){body.epic-home .epic-stage{left:calc(-1 * 100dvh * 250 / 821);transform:translateY(-50%)}}
- `;document.head.append(fullStyle);
- function applyFullMenu(){const art=document.querySelector('.epic-art');if(!art)return;art.src=fullMenuImage;if(!art.parentElement.querySelector('.epic-world-link')){const link=document.createElement('a');link.href='/';link.textContent='MOODYWORLD';link.className='epic-world-link';art.parentElement.append(link)}}
+ const fullMenuImage='/vendettacourt/assets/7da95ebead84e26d6ee7.png';
+ function applyFullMenu(){const art=document.querySelector('.epic-art');if(art)art.src=fullMenuImage;if($('epicStory'))$('epicStory').onclick=()=>storyHome()}
  const previousMenu=menu;menu=function(){previousMenu();applyFullMenu()};applyFullMenu();
- const current=document.querySelector('.epic-art');
- if(!current?.complete||!current.naturalWidth)document.body.classList.add('home-art-loading');
- const load=src=>new Promise(resolve=>{const im=new Image();im.onload=()=>im.decode().catch(()=>{}).then(resolve);im.onerror=resolve;im.src=src});
- Promise.all([load(fullMenuImage)]).then(()=>document.body.classList.remove('home-art-loading'));
+})();
+
+// Responsive presentation stays outside the deterministic match engine.
+(()=>{
+ const style=document.createElement('style');style.textContent=`
+ @media(max-width:700px){
+  body:not(.epic-home) #overlay{padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));align-items:flex-start}
+  body:not(.epic-home) #overlay>.card,body.cinema-ui:not(.epic-home) #overlay>.card{width:100%;max-width:100%;max-height:calc(100dvh - 24px);padding:18px 14px;overflow:auto;overscroll-behavior:contain;margin:auto}
+  .story-panel{min-width:0}.story-panel>h1{font-size:clamp(28px,8vw,42px)!important;overflow-wrap:anywhere}
+  .story-panel>.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.story-panel>.row>button{width:100%;padding:12px 8px;min-height:46px;font-size:11px;letter-spacing:.7px}
+  .story-stats{gap:7px;font-size:12px}.story-stats span{padding:8px}.controls{grid-template-columns:1fr}
+  .cinema-route{display:flex;overflow-x:auto;gap:12px;scroll-snap-type:x mandatory;padding:10px 3px 15px;margin:16px 0;overscroll-behavior-x:contain}
+  .cinema-stop{flex:0 0 170px;min-height:205px;scroll-snap-align:start;transform:none!important}.cinema-stop.current{transform:none!important}
+  .story-roster{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px}.story-character{min-width:0;padding:12px 8px}.story-character b{font-size:14px}.story-character button{min-height:44px;padding:10px 5px;font-size:10px}.story-character [data-eco-portrait]{height:145px}.story-character .cinema-roster-art{max-height:130px}
+  .game-wallet{gap:12px;padding:12px}.game-wallet>div{width:100%}.game-wallet>div:last-child{display:flex;flex-wrap:wrap;gap:8px}.game-wallet button{margin:0;min-height:44px;flex:1;padding:10px 8px}.game-wallet small{overflow-wrap:anywhere;line-height:1.5}
+  .game-purchase-dialog{width:calc(100vw - 24px);max-height:calc(100dvh - 30px);padding:20px 15px;overflow:auto}.game-purchase-dialog button{min-height:44px}.game-purchase-dialog p{overflow-wrap:anywhere}
+  .vc-balance{padding:15px 12px;gap:12px}.vc-amount{font-size:42px}.vc-kicker{letter-spacing:1.3px}.vc-reward-item button{min-height:46px}
+  input,select{font-size:16px!important}
+ }
+ @media(max-width:700px) and (orientation:portrait){
+  body.epic-home #overlay>.card{display:block!important;overflow-y:auto!important;overscroll-behavior:contain}
+  body.epic-home .epic-stage{position:relative;inset:auto;transform:none;width:100%;height:auto;min-height:100dvh;aspect-ratio:auto;padding:0 16px max(52px,env(safe-area-inset-bottom));display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start;background:linear-gradient(#211033,#100d19)}
+  body.epic-home .epic-art{grid-column:1/-1;width:calc(100% + 32px);max-width:none;height:auto;aspect-ratio:1672/941;margin:0 -16px 8px;object-fit:contain}
+  body.epic-home .epic-hit{position:relative;inset:auto!important;width:100%!important;height:auto!important;min-height:48px;color:#e9dbfa;border:1px solid #8766a5;border-radius:8px;background:linear-gradient(130deg,#332244,#171321);font:bold 12px Arial;letter-spacing:1px}
+  body.epic-home .epic-hit::after{content:attr(aria-label)}
+  body.epic-home #epicStory,body.epic-home #epicPvp,body.epic-home #epicTournament{grid-column:1/-1}
+  body.epic-home #epicStory{background:linear-gradient(120deg,#c2ff45,#8dde75);border-color:#c2ff45;color:#131b15;min-height:58px;font-size:17px}
+  body.epic-home .epic-hit:disabled{color:#b5a5c5;opacity:.65}
+  body.epic-home #backMoodyworld{left:12px;bottom:max(8px,env(safe-area-inset-bottom));padding:10px;font-size:10px}
+  body.coarse .tennis-score{left:8px!important;top:max(8px,env(safe-area-inset-top))!important;width:calc(100vw - 104px)!important;max-width:290px;min-width:0;padding:8px!important}
+  body.coarse .score-head,body.coarse .score-row{grid-template-columns:minmax(65px,1fr) 25px 30px 35px!important}.hud-title{font-size:16px!important}.hud-title em{font-size:8px}
+  body.coarse .top{left:auto;right:8px;top:max(8px,env(safe-area-inset-top));width:80px}.coarse .tools{display:flex;flex-wrap:wrap;gap:5px}.coarse .tools button{padding:8px 6px;min-height:36px;min-width:35px;font-size:10px}
+  body.coarse .stick{left:max(14px,env(safe-area-inset-left));bottom:max(22px,env(safe-area-inset-bottom))}.coarse .shots{right:max(14px,env(safe-area-inset-right));bottom:max(25px,env(safe-area-inset-bottom));gap:9px}
+  body.coarse #serveMeter.serve-meter{left:auto!important;right:10px!important;top:calc(50% - 65px)!important;bottom:auto!important}
+ }
+ @media(pointer:coarse) and (orientation:landscape) and (max-height:600px){
+  body:not(.epic-home) #overlay>.card{max-height:calc(100dvh - 16px);padding:14px 18px!important}
+  .stick{left:max(14px,env(safe-area-inset-left));bottom:max(12px,env(safe-area-inset-bottom));width:96px;height:96px}.knob{left:27px;top:27px}
+  .shots{right:max(14px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom))}.shots button{width:65px;height:65px}.shots button:last-child{width:56px;height:56px}
+ }
+ `;document.head.append(style);
+ if($('normal'))$('normal').textContent='SHOT';if($('lob'))$('lob').textContent='LOB';
 })();
