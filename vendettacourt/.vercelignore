@@ -1,0 +1,6 @@
+# Administrative tools are local-only, even if an old copy remains in the repo.
+vendettacourt-admin/
+vendetta-admin/
+vendetta-private-admin/
+VERIFICACION-V3/
+CONTRATOS-Y-PRUEBAS/
