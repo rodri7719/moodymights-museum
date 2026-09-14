@@ -146,14 +146,27 @@
  body.epic-home #overlay::before{content:none!important;background:none!important}
  body.epic-home .epic-art{mask-image:none!important}
  body.epic-home #overlay>.card{width:100vw!important;height:100dvh!important;max-height:none!important;display:grid;place-items:center;padding:0!important;overflow:hidden!important}
- body.epic-home .epic-stage{margin:0;width:min(100vw,calc(100dvh * 1672 / 941));height:auto;aspect-ratio:1672/941}
+ body.epic-home .epic-stage{margin:0;width:max(100vw,calc(100dvh * 1916 / 821));height:auto;aspect-ratio:1916/821;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
  body.epic-home.home-art-loading .epic-stage{visibility:hidden}
  body.epic-home.home-art-loading #overlay::before{background-image:none}
  body.epic-home.home-art-loading #overlay::after{content:'LOADING VENDETTA COURT…';position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;color:#c2ff45;font:700 12px Arial,sans-serif;letter-spacing:3px}
  body.epic-home .epic-stage,body.epic-home .epic-art{animation:none!important;transition:none!important}
  `;document.head.append(css);
+ const fullMenuImage='/vendettacourt/assets/16d6bfe021463d85c374.jpg';
+ const fullStyle=document.createElement('style');fullStyle.textContent=`
+ #epicStory{left:14.2%;top:49.5%;width:26.5%;height:13.2%}
+ #epicPvp{left:15.6%;top:63.7%;width:23.5%;height:11.1%}
+ #epicTournament{left:15.6%;top:75%;width:23.5%;height:11.4%}
+ #epicOptions{left:15.5%;top:91%;width:5.8%;height:5%}
+ #epicCredits{left:23%;top:91%;width:5.8%;height:5%}
+ .epic-world-link{position:absolute;left:78.8%;top:93.4%;width:6%;height:3.9%;display:grid;place-items:center;background:#171027;color:#c2ff45;border:1px solid #9c76b7;border-radius:4px;font:10px Arial;text-decoration:none;z-index:2}
+ body.epic-home #backMoodyworld{display:none}
+ @media(max-aspect-ratio:3/2){body.epic-home .epic-stage{left:calc(-1 * 100dvh * 250 / 821);transform:translateY(-50%)}}
+ `;document.head.append(fullStyle);
+ function applyFullMenu(){const art=document.querySelector('.epic-art');if(!art)return;art.src=fullMenuImage;if(!art.parentElement.querySelector('.epic-world-link')){const link=document.createElement('a');link.href='/';link.textContent='MOODYWORLD';link.className='epic-world-link';art.parentElement.append(link)}}
+ const previousMenu=menu;menu=function(){previousMenu();applyFullMenu()};applyFullMenu();
  const current=document.querySelector('.epic-art');
  if(!current?.complete||!current.naturalWidth)document.body.classList.add('home-art-loading');
  const load=src=>new Promise(resolve=>{const im=new Image();im.onload=()=>im.decode().catch(()=>{}).then(resolve);im.onerror=resolve;im.src=src});
- Promise.all([load(epicMenuImage)]).then(()=>document.body.classList.remove('home-art-loading'));
+ Promise.all([load(fullMenuImage)]).then(()=>document.body.classList.remove('home-art-loading'));
 })();
