@@ -2,6 +2,49 @@
  function applyEconomy(config){const v3=config?.enabled&&config?.contractVersion===3;const luca=champions183.find(c=>c.id==='luca'),spartan=champions183.find(c=>c.id==='spartano');delete luca.usd;delete spartan.usd;luca.price=v3?0:15000;spartan.price=v3?15000:0;(v3?luca:spartan).usd=1;}
  window.addEventListener('vendetta-economy',e=>applyEconomy(e.detail));if(window.vendettaOnlineConfig)applyEconomy(window.vendettaOnlineConfig);
  const startLocal=start;
+
+ // ---- DEMO MATCH (no wallet) --------------------------------------------
+ // Free practice match vs the first rival. It runs on the local engine only:
+ // nothing is sent to the server, no points, no progress saved, and the real
+ // story run in storage is never touched.
+ let demoSnap=null,demoEndedAt=0;
+ const isDemo=()=>storyActive&&storyMemory.run?.demo===true;
+ function restoreDemo(){if(demoSnap){storyMemory.run=demoSnap.run;demoSnap=null}}
+ function startDemo(){
+  const first=storyStages[0];
+  if(!demoSnap)demoSnap={run:storyMemory.run};
+  storyMemory.run={id:'demo',stage:0,lives:3,earned:0,character:'penguin',closed:false,demo:true};
+  window.vendettaReplay?.stop();
+  selectedCharacter='penguin';selectedRival=first.rival;selectedStadium=first.arena;arenaCache=null;
+  storyActive=true;mode='normal';
+  startLocal();
+ }
+ function demoOffer(){
+  restoreDemo();
+  storyPanel('<div class="eyebrow">ONLINE STORY</div><h2>CONNECT AGW TO PLAY ONLINE</h2><p>Connect your Abstract wallet to play verified matches and earn points.</p><div id="storyWalletSlot"></div><div class="row"><button class="primary" id="onlineDemo">TRY A FREE DEMO MATCH</button><button class="secondary" id="onlineStartBack">BACK</button></div><p class="note">Demo: no wallet needed. No points are earned and no progress is saved. After connecting, press BACK and then PLAY MATCH.</p>');
+  $('onlineDemo').onclick=startDemo;$('onlineStartBack').onclick=storyHome;
+ }
+ function demoResult(win){
+  window.vendettaReplay?.stop();silenceCourtSounds();
+  storyActive=false;restoreDemo();
+  storyPanel('<div class="eyebrow">DEMO MATCH</div><h1>'+(win?'NICE ONE!':'GOOD TRY!')+'</h1><p>This was a free demo. No points were earned and no progress was saved.</p><p>Connect your Abstract wallet to play the full Story Mode, earn verified points and unlock characters.</p><div id="storyWalletSlot"></div><div class="row"><button class="primary" id="demoAgain">PLAY DEMO AGAIN</button><button class="secondary" id="demoHome">STORY MENU</button></div>');
+  $('demoAgain').onclick=startDemo;$('demoHome').onclick=storyHome;
+ }
+ const finishBeforeDemo=finish;
+ finish=function(win){
+  if(isDemo()){if(G&&!G.demoDone){G.demoDone=true;demoEndedAt=Date.now();demoResult(!!win)}return}
+  // a repeated finish() right after the demo ended must not open a second results screen
+  if(!G&&Date.now()-demoEndedAt<1500)return;
+  return finishBeforeDemo(win);
+ };
+ const hudBeforeDemo=hud;
+ hud=function(){
+  hudBeforeDemo();
+  if(!isDemo())return;
+  const hm=$('hudMode'),rally=$('rally');
+  if(hm)hm.textContent='DEMO MATCH';
+  if(rally&&/ATTEMPTS LEFT/.test(rally.textContent))rally.textContent='NO POINTS · NO WALLET';
+ };
  let starting=false,submitting=false,pendingRun=null;
  const dbReady=new Promise((resolve,reject)=>{const req=indexedDB.open('vendetta-verified-replays',1);req.onupgradeneeded=()=>req.result.createObjectStore('pending',{keyPath:'key'});req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)});
  async function savePending(value){const db=await dbReady;return new Promise((resolve,reject)=>{const tx=db.transaction('pending','readwrite');tx.objectStore('pending').put(value);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)})}
@@ -47,7 +90,8 @@
  }
  start=async function(){
   if(!window.vendettaOnlineConfig?.enabled)return startLocal();if(starting)return;
-  if(!window.vendettaOnline){storyPanel('<h2>CONNECT AGW TO PLAY ONLINE</h2><div id="storyWalletSlot"></div><button class="secondary" id="onlineStartBack">BACK</button>');$('onlineStartBack').onclick=storyHome;return}
+  if(!window.vendettaOnline){demoOffer();return}
+  restoreDemo();
   starting=true;
   try{
    const r=storyMemory.run,service=window.vendettaOnline;
@@ -126,6 +170,8 @@
   rewardsRefresh=force=>{if(force)refresh(true)};
   refresh();
  };
+ const homeBeforeDemo=storyHome;
+ storyHome=function(){restoreDemo();return homeBeforeDemo()};
 })();
 
 // Presentation-only fixes: keep the recorded match engine unchanged.
